@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- 移动端适配 -->
+    <title>实用工具区</title>
+    <style>
+        :root{
+            --max-width:900px;
+            --gap:14px;
+            --bg:#ffffff;
+            --muted:#666;
+            --accent:#333;
+            --topbar-height:64px;
+        }
+        *{box-sizing:border-box}
+        html,body{
+            margin:0;
+            padding:0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            color:var(--accent);
+            background:#f5f6f7;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            font-size:16px;
+            -webkit-text-size-adjust:100%;
+        }
+
+        /* 顶部固定栏，包含返回按钮和标题 */
+        .topbar{
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--topbar-height);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:0 12px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,250,0.9));
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+            z-index:1000;
+        }
+        .topbar .back-button{
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:8px 12px;
+            background:var(--bg);
+            color:var(--accent);
+            border:1px solid #e2e2e2;
+            border-radius:8px;
+            text-decoration:none;
+            font-weight:600;
+            font-size:0.95rem;
+            box-shadow:0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .topbar .title {
+            font-size:1rem;
+            font-weight:700;
+            color:var(--accent);
+        }
+
+        /* 页面主容器，留出顶部高度 */
+        .page {
+            padding: calc(var(--topbar-height) + 12px) 16px 32px 16px;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .tools-container {
+            width:100%;
+            display:flex;
+            flex-direction:column;
+            gap:var(--gap);
+            padding-bottom: 8px;
+        }
+
+        .tool-section {
+            padding:16px;
+            border-radius:12px;
+            background:var(--bg);
+            box-shadow: 0 2px 6px rgba(16,24,40,0.04);
+            border:1px solid #ececec;
+        }
+
+        .tool-title{
+            font-size:1.05rem;
+            font-weight:700;
+            color:var(--accent);
+            margin:0 0 10px 0;
+        }
+
+        .content-box{
+            padding:12px;
+            background:#fafafa;
+            border-radius:8px;
+            border:1px solid #eee;
+            color:var(--muted);
+            font-size:0.98rem;
+            line-height:1.5;
+        }
+
+        .content-box a{ color:#0b66d1; text-decoration:none; }
+        .content-box a:active,.content-box a:hover{ text-decoration:underline; }
+
+        /* 小屏优化 */
+        @media (max-width:600px){
+            :root{ --gap:12px; --topbar-height:56px; }
+            .topbar .back-button{ padding:10px 14px; border-radius:10px; font-size:0.95rem; }
+            .page{ padding: calc(var(--topbar-height) + 10px) 12px 28px 12px; }
+            .tool-section{ padding:14px; border-radius:10px; }
+            .content-box{ font-size:0.98rem; padding:12px; }
+            .topbar .title{ font-size:0.98rem; }
+        }
+
+        /* 更小屏 */
+        @media (max-width:380px){
+            html,body{font-size:15px;}
+            .topbar .back-button{ left:8px; padding:8px 10px; font-size:0.92rem; }
+            .page{ padding-left:10px; padding-right:10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar" role="banner">
+        <a href="test1.html" class="back-button" aria-label="返回首页">← 返回</a>
+        <div class="title">实用工具区</div>
+    </div>
+
+    <main class="page" role="main">
+        <div class="tools-container">
+            <section class="tool-section" aria-labelledby="t1">
+                <h2 id="t1" class="tool-title">数分</h2>
+                <div class="content-box">
+                    每周总结：<a href="https://changjiang.yuketang.cn/m/v2" target="_blank" rel="noopener">长江雨课堂</a><br>
+                    作业提交：智慧树学习中心（请自行前往微信小程序）
+                </div>
+            </section>
+
+            <section class="tool-section" aria-labelledby="t2">
+                <h2 id="t2" class="tool-title">高代</h2>
+                <div class="content-box">
+                    作业提交：<a href="https://spoc.buaa.edu.cn/bhspoc/#/pages/main/index1" target="_blank" rel="noopener">SPOC教学平台</a>
+                </div>
+            </section>
+
+            <section class="tool-section" aria-labelledby="t3">
+                <h2 id="t3" class="tool-title">程设mook</h2>
+                <div class="content-box">
+                    <a href="https://coursehome.zhihuishu.com/courseHome/1000097595#teachTeam" target="_blank" rel="noopener">智慧树程序设计MOOK</a>
+                </div>
+            </section>
+
+            <section class="tool-section" aria-labelledby="t4">
+                <h2 id="t4" class="tool-title">习概网课</h2>
+                <div class="content-box">
+                    网课：<a href="https://changjiang.yuketang.cn/m/v2" target="_blank" rel="noopener">长江雨课堂</a><br>
+                    （温馨提示：DDL为2025年12月28日）
+                </div>
+            </section>
+
+            <section class="tool-section" aria-labelledby="t5">
+                <h2 id="t5" class="tool-title">安全教育</h2>
+                <div class="content-box">
+                    网课：<a href="https://weiban.mycourse.cn/#/course?projectType=pre&projectId=f4673d6f-c0f9-44a1-983d-4f8d40a02ccb" target="_blank" rel="noopener">MOOC安全教育</a>
+                </div>
+            </section>
+
+            <section class="tool-section" aria-labelledby="t6">
+                <h2 id="t6" class="tool-title">新生入学教育</h2>
+                <div class="content-box">
+                    网课：<a href="https://spoc.buaa.edu.cn/spocnew/jxkj2" target="_blank" rel="noopener">MOOC新生入学教育</a>
+                </div>
+            </section>
+
+            <section class="tool-section" aria-labelledby="t7">
+                <h2 id="t7" class="tool-title">数电实验</h2>
+                <div class="content-box">
+                    请输入文本...
+                </div>
+            </section>
+
+            <section class="tool-section" aria-labelledby="t8">
+                <h2 id="t8" class="tool-title">模电课程</h2>
+                <div class="content-box">
+                    请输入文本...
+                </div>
+            </section>
+        </div>
+    </main>
+</body>
+</html>
