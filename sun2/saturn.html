@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>土星 - 太阳系八大行星探索</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'space-dark': '#0a0e17',
+                        'space-light': '#121a29',
+                        'planet-saturn': '#e6b15f',
+                        'ring-saturn': '#d4a04e',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            }
+            .animate-spin-slow {
+                animation: spin 30000s linear infinite;
+            }
+            .neon-glow {
+                filter: drop-shadow(0 0 10px rgba(230, 177, 95, 0.6));
+            }
+            /* 土星发光效果 */
+            .saturn-glow {
+                filter: drop-shadow(0 0 15px rgba(230, 177, 95, 0.6)) drop-shadow(0 0 30px rgba(230, 177, 95, 0.3));
+            }
+            /* 土星自转动画 */
+            .saturn-rotate {
+                animation: saturn-rotate 10.6s linear infinite;
+            }
+            @keyframes saturn-rotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            /* 土星环效果 */
+            .saturn-ring {
+                position: absolute;
+                width: 200%;
+                height: 30%;
+                background: radial-gradient(ellipse at center, rgba(212, 160, 78, 0.8) 0%, rgba(212, 160, 78, 0.4) 50%, rgba(212, 160, 78, 0) 100%);
+                border-radius: 50%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                filter: blur(1px);
+            }
+            /* 土星环细节 */
+            .saturn-ring-detail {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: repeating-linear-gradient(90deg, transparent 0%, rgba(212, 160, 78, 0.1) 1%, transparent 2%);
+                border-radius: 50%;
+            }
+            /* 土星表面条纹 */
+            .saturn-stripe {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: repeating-linear-gradient(90deg, rgba(230, 177, 95, 0.1) 0%, rgba(212, 160, 78, 0.3) 50%, rgba(230, 177, 95, 0.1) 100%);
+                opacity: 0.6;
+                border-radius: 50%;
+            }
+        }
+    </style>
+</head>
+<body class="bg-space-dark min-h-screen text-white">
+    <!-- 返回按钮 -->
+    <div class="w-full max-w-7xl mx-auto px-4 py-6">
+        <a href="solor.html" class="back-button-hover flex items-center text-gray-300 hover:text-white">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回太阳系</span>
+        </a>
+    </div>
+    
+    <!-- 页面标题 -->
+    <header class="w-full max-w-7xl mx-auto px-4 mb-10 text-center">
+        <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-bold text-white mb-4">土星</h1>
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto">拥有壮观环系统的气态巨行星</p>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main class="w-full max-w-7xl mx-auto px-4 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- 左侧：行星可视化 -->
+                <div class="lg:col-span-1 flex flex-col items-center justify-center">
+                    <!-- 行星模型容器 - CSS实现 -->
+                    <div class="w-full aspect-square relative flex items-center justify-center bg-transparent mb-10">
+                        <!-- 土星本体 -->
+                        <div class="relative w-64 h-64 saturn-glow">
+                            <!-- 土星球体 -->
+                            <div class="absolute inset-0 rounded-full bg-gradient-to-br from-[#e6b15f] to-[#d4a04e] saturn-rotate overflow-hidden">
+                                <!-- 土星表面条纹 -->
+                                <div class="saturn-stripe"></div>
+                            </div>
+                            
+                            <!-- 土星环 -->
+                            <div class="saturn-ring">
+                                <div class="saturn-ring-detail"></div>
+                            </div>
+                            
+                            <!-- 更外侧的环 -->
+                            <div class="saturn-ring" style="width: 240%; height: 30%; background: radial-gradient(ellipse at center, rgba(212, 160, 78, 0.4) 0%, rgba(212, 160, 78, 0.2) 50%, rgba(212, 160, 78, 0) 100%);">
+                                <div class="saturn-ring-detail"></div>
+                            </div>
+                            
+                            <!-- 卡西尼缝模拟 -->
+                            <div class="absolute w-[180%] h-[1%] bg-black/30 rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+                        </div>
+                    </div>
+                <script>
+                    // 初始化场景
+                    const scene = new THREE.Scene();
+                    
+                    // 创建相机
+                    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                    camera.position.z = 200;
+                    
+                    // 创建渲染器
+                    const container = document.getElementById('saturn-container');
+                    const renderer = new THREE.WebGLRenderer({ antialias: true });
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                    renderer.setPixelRatio(window.devicePixelRatio);
+                    container.appendChild(renderer.domElement);
+                    
+                    // 创建星空背景
+                    function createStarfield() {
+                        const starGeometry = new THREE.BufferGeometry();
+                        const starCount = 1500;
+                        const positions = new Float32Array(starCount * 3);
+                        const colors = new Float32Array(starCount * 3);
+                        
+                        for (let i = 0; i < starCount; i++) {
+                            const i3 = i * 3;
+                            positions[i3] = (Math.random() - 0.5) * 2000;
+                            positions[i3 + 1] = (Math.random() - 0.5) * 2000;
+                            positions[i3 + 2] = -(Math.random() * 1000 + 100);
+                            
+                            const brightness = Math.random();
+                            colors[i3] = brightness;
+                            colors[i3 + 1] = brightness;
+                            colors[i3 + 2] = brightness;
+                        }
+                        
+                        starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                        starGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                        
+                        const starMaterial = new THREE.PointsMaterial({
+                            size: 2,
+                            vertexColors: true,
+                            transparent: true,
+                            opacity: 0.8
+                        });
+                        
+                        const starfield = new THREE.Points(starGeometry, starMaterial);
+                        scene.add(starfield);
+                    }
+                    
+                    // 创建土星本体
+                    function createSaturn() {
+                        // 创建土星材质
+                        const vertexShader = `
+                            varying vec2 vUv;
+                            void main() {
+                                vUv = uv;
+                                vec3 pos = position;
+                                float noise = sin(pos.y * 3.0) * 0.5 + 0.5;
+                                noise *= 0.02;
+                                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos + normal * noise, 1.0);
+                            }
+                        `;
+                        
+                        const fragmentShader = `
+                            varying vec2 vUv;
+                            uniform float time;
+                            void main() {
+                                vec3 baseColor = vec3(0.9, 0.75, 0.45);
+                                
+                                float stripe1 = sin(vUv.y * 30.0 + time * 0.2) * 0.5 + 0.5;
+                                float stripe2 = sin(vUv.y * 15.0 - time * 0.1 + 1.0) * 0.5 + 0.5;
+                                float intensity = stripe1 * 0.3 + stripe2 * 0.2;
+                                
+                                float darkBand = step(0.3, sin(vUv.x * 2.0 * 3.14159)) * 0.1;
+                                
+                                vec3 finalColor = baseColor - darkBand + intensity * 0.1;
+                                
+                                float equatorEffect = 1.0 - pow(abs(vUv.y - 0.5) * 2.0, 2.0) * 0.3;
+                                finalColor *= equatorEffect;
+                                
+                                gl_FragColor = vec4(finalColor, 1.0);
+                            }
+                        `;
+                        
+                        const uniforms = {
+                            time: { value: 0 }
+                        };
+                        
+                        const shaderMaterial = new THREE.ShaderMaterial({
+                            vertexShader: vertexShader,
+                            fragmentShader: fragmentShader,
+                            uniforms: uniforms,
+                            side: THREE.FrontSide,
+                            transparent: false
+                        });
+                        
+                        const saturnGeometry = new THREE.SphereGeometry(60, 64, 64);
+                        const saturn = new THREE.Mesh(saturnGeometry, shaderMaterial);
+                        scene.add(saturn);
+                        
+                        // 创建土星环
+                        createSaturnRings(saturn);
+                        
+                        return { saturn, shaderMaterial };
+                    }
+                    
+                    // 创建土星环
+                    function createSaturnRings(planet) {
+                        // 外环
+                        const outerRingGeometry = new THREE.RingGeometry(80, 130, 64, 2);
+                        const outerRingMaterial = new THREE.MeshPhongMaterial({
+                            color: 0xd4a04e,
+                            side: THREE.DoubleSide,
+                            transparent: true,
+                            opacity: 0.7,
+                            specular: 0xffffff,
+                            shininess: 5
+                        });
+                        
+                        // 内环
+                        const innerRingGeometry = new THREE.RingGeometry(70, 78, 64, 2);
+                        const innerRingMaterial = new THREE.MeshPhongMaterial({
+                            color: 0xc69245,
+                            side: THREE.DoubleSide,
+                            transparent: true,
+                            opacity: 0.8,
+                            specular: 0xffffff,
+                            shininess: 5
+                        });
+                        
+                        const outerRing = new THREE.Mesh(outerRingGeometry, outerRingMaterial);
+                        const innerRing = new THREE.Mesh(innerRingGeometry, innerRingMaterial);
+                        
+                        outerRing.position.copy(planet.position);
+                        innerRing.position.copy(planet.position);
+                        
+                        outerRing.rotation.x = Math.PI / 2;
+                        innerRing.rotation.x = Math.PI / 2;
+                        
+                        // 添加不规则性
+                        const outerVertices = outerRingGeometry.attributes.position.array;
+                        const innerVertices = innerRingGeometry.attributes.position.array;
+                        
+                        for (let i = 0; i < outerVertices.length; i += 3) {
+                            outerVertices[i + 2] += (Math.random() - 0.5) * 2;
+                        }
+                        
+                        for (let i = 0; i < innerVertices.length; i += 3) {
+                            innerVertices[i + 2] += (Math.random() - 0.5) * 1.5;
+                        }
+                        
+                        outerRingGeometry.attributes.position.needsUpdate = true;
+                        innerRingGeometry.attributes.position.needsUpdate = true;
+                        
+                        // 添加发光效果
+                        const outerGlowGeometry = new THREE.RingGeometry(85, 135, 64, 1);
+                        const outerGlowMaterial = new THREE.MeshBasicMaterial({
+                            color: 0xd4a04e,
+                            side: THREE.DoubleSide,
+                            transparent: true,
+                            opacity: 0.2,
+                            blending: THREE.AdditiveBlending
+                        });
+                        
+                        const outerGlow = new THREE.Mesh(outerGlowGeometry, outerGlowMaterial);
+                        outerGlow.position.copy(planet.position);
+                        outerGlow.rotation.x = Math.PI / 2;
+                        
+                        scene.add(innerRing);
+                        scene.add(outerRing);
+                        scene.add(outerGlow);
+                    }
+                    
+                    // 添加光源
+                    function addLights() {
+                        const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
+                        sunLight.position.set(200, 100, 300);
+                        scene.add(sunLight);
+                        
+                        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+                        scene.add(ambientLight);
+                        
+                        const saturnGlowLight = new THREE.PointLight(0xe6b15f, 0.5, 300, 0.5);
+                        scene.add(saturnGlowLight);
+                        
+                        return { sunLight, ambientLight, saturnGlowLight };
+                    }
+                    
+                    // 创建卫星
+                    function createMoons(saturn) {
+                        const moons = [];
+                        const moonDistances = [160, 200, 240];
+                        const moonSizes = [4, 3, 2.5];
+                        const moonColors = [0xcccccc, 0xaaaaaa, 0x999999];
+                        
+                        for (let i = 0; i < moonDistances.length; i++) {
+                            const moonGeometry = new THREE.SphereGeometry(moonSizes[i], 16, 16);
+                            const moonMaterial = new THREE.MeshPhongMaterial({
+                                color: moonColors[i],
+                                shininess: 5,
+                                specular: 0x444444
+                            });
+                            
+                            const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+                            const angle = Math.random() * Math.PI * 2;
+                            moon.position.x = saturn.position.x + Math.cos(angle) * moonDistances[i];
+                            moon.position.z = saturn.position.z + Math.sin(angle) * moonDistances[i];
+                            
+                            scene.add(moon);
+                            moons.push({ moon, distance: moonDistances[i], angle: angle, speed: 0.001 * (moonDistances.length - i) });
+                        }
+                        
+                        return moons;
+                    }
+                    
+                    // 添加交互功能
+                    function addInteraction(saturn) {
+                        let isRotating = true;
+                        let mouseX = 0;
+                        let mouseY = 0;
+                        let lastMouseX = 0;
+                        let lastMouseY = 0;
+                        let rotationSpeed = 0.005;
+                        
+                        container.addEventListener('mousedown', () => {
+                            isRotating = false;
+                        });
+                        
+                        container.addEventListener('mouseup', () => {
+                            isRotating = true;
+                        });
+                        
+                        container.addEventListener('mouseleave', () => {
+                            isRotating = true;
+                        });
+                        
+                </script>
+                
+                <!-- 快速数据 -->
+                <div class="w-full bg-space-light/50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 text-center">快速数据</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">直径:</span>
+                            <span>116,460 km</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">质量:</span>
+                            <span>5.683 × 10²⁶ kg</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">与太阳距离:</span>
+                            <span>9.54 AU</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">自转周期:</span>
+                            <span>10小时34分钟</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">公转周期:</span>
+                            <span>29.46 地球年</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">平均表面温度:</span>
+                            <span>约-178°C</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">卫星数量:</span>
+                            <span>已知146颗+</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">大气成分:</span>
+                            <span>氢96%, 氦3%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：行星详细信息 -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- 概述 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-info-circle mr-2 text-planet-saturn"></i>
+                        概述
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        土星是太阳系中第六颗行星，也是第二大的行星，体积约为地球的764倍。土星与木星相似，主要由氢和氦组成，属于气态巨行星。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        土星最著名的特征是其壮观的环系统，由无数的冰块、岩石碎片和尘埃组成，从太空望去非常美丽。此外，土星还有一个庞大的卫星系统，目前已知有146颗以上的卫星，其中土卫六（泰坦）是太阳系中第二大卫星，拥有浓密的大气层。
+                    </p>
+                </section>
+
+                <!-- 探索历史 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-rocket mr-2 text-planet-saturn"></i>
+                        探索历史
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">约公元前700年</h4>
+                            <p class="text-gray-200">亚述人留下最早的土星文字记录，将其描述为夜空中的"闪光点"，命名为"尼尼微之星"（Star of Nini），这是人类对土星的早期观测记载</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">约公元前400年</h4>
+                            <p class="text-gray-200">古希腊天文学家将土星视为"漫游的星"，以农业神克洛诺斯（Kronos）命名；后罗马人改名为"萨图恩"（Saturn），即罗马神话中的农业神</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">1610年7月</h4>
+                            <p class="text-gray-200">伽利略・伽利莱通过望远镜观测土星，因分辨率限制，误将土星环视为"三重行星"，未能识别出环结构</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">1655年</h4>
+                            <p class="text-gray-200">荷兰天文学家克里斯蒂安・惠更斯首次确认土星存在环系统，并发现土星最大卫星泰坦（土卫六），纠正了伽利略的观测误差</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">1675年</h4>
+                            <p class="text-gray-200">意大利裔法国天文学家乔瓦尼・多梅尼科・卡西尼发现土星环中的"卡西尼缝"（Cassini Division），即A环与B环之间的明显间隙，为后续环结构研究奠定基础</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">1979年9月1日</h4>
+                            <p class="text-gray-200">美国"先驱者11号"探测器完成人类首次土星近距离飞掠，距离土星表面约2.1万公里，发现土星F环，并确认土星磁场的存在</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">1980年11月</h4>
+                            <p class="text-gray-200">美国"旅行者1号"飞掠土星，首次揭示土星环由数千条细环（环缝）组成，发现土卫一上的巨大撞击坑（赫歇尔坑），并对土卫六进行初步探测，确认其拥有浓厚大气层</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">1981年8月</h4>
+                            <p class="text-gray-200">美国"旅行者2号"飞掠土星，距离更近（约10万公里），传回更详细的环结构图像，测量出土星环的厚度仅数米至数十米，并发现土星大气中的风暴活动</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">2004年7月1日</h4>
+                            <p class="text-gray-200">美国"卡西尼号"土星探测器进入土星轨道，开启长达13年的轨道探测任务，这是人类首个土星长期驻留探测器，携带欧洲空间局（ESA）的"惠更斯号"着陆器</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">2005年1月14日</h4>
+                            <p class="text-gray-200">"惠更斯号"着陆器从"卡西尼号"分离，成功在土卫六表面软着陆，成为首个在太阳系外行星卫星表面着陆的探测器，传回土卫六表面的"河流""湖泊"（由液态甲烷、乙烷构成）图像，确认其大气以氮为主，含有复杂有机分子</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">2017年9月15日</h4>
+                            <p class="text-gray-200">为避免"卡西尼号"污染土卫二、土卫六等可能存在宜居环境的卫星，NASA操控其坠入土星大气，任务结束前传回最后一批土星极区、环系统的高清数据，揭示土星环的形成可能与卫星碰撞有关</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-saturn/30">
+                            <h4 class="font-bold text-planet-saturn mb-2">2028年（计划）</h4>
+                            <p class="text-gray-200">美国"蜻蜓号"（Dragonfly）旋翼探测器计划发射，目标土卫六，将通过多次着陆探测其表面有机物质分布、地质活动，探索是否存在生命起源的条件，预计2034年抵达土卫六</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 结构与成分 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cubes mr-2 text-planet-saturn"></i>
+                        结构与成分
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        土星的结构与木星类似，没有明确的固体表面。它的大气层主要由氢（96%）和氦（3%）组成，还有少量的甲烷、氨和水。随着深度增加，氢逐渐从气态转变为液态，再转变为金属氢。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        土星可能有一个由岩石和冰组成的核心，大小约为地球的10-20倍。土星的平均密度非常低，仅为0.687 g/cm³，比水的密度还小，这意味着如果有一个足够大的海洋，土星会漂浮在水面上。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">土星分层结构</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>气态外层 - 主要由氢和氦组成</li>
+                            <li>液态氢层 - 高压下的液态氢</li>
+                            <li>金属氢层 - 极端高压下的导电氢</li>
+                            <li>核心 - 可能由岩石和冰组成</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 环系统 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-circle-o mr-2 text-planet-saturn"></i>
+                        壮观的环系统
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        土星的环系统是其最显著的特征，从地球上通过小型望远镜就能观测到。环系统主要由无数的冰块、岩石碎片和尘埃组成，直径可达282,000公里，但厚度仅有约10-100米。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        环系统可以分为多个主要部分，由内而外依次是：D环、C环、B环（最亮最宽）、A环、F环、G环和E环。这些环之间有明显的缝隙，其中最著名的是卡西尼缝（Cassini Division），位于A环和B环之间，宽度约为4,800公里。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        土星环的形成原因尚未完全确定，但科学家们认为，这些环可能是由一颗被土星潮汐力撕裂的卫星，或是未能聚集成卫星的原始物质形成的。环中的物质不断受到土星引力和卫星引力的复杂作用，形成了复杂的环缝和波浪结构。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">主要环结构</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>B环 - 最亮最宽的环，宽度约25,500公里</li>
+                            <li>A环 - 位于卡西尼缝外侧，宽度约14,600公里</li>
+                            <li>C环 - 较暗的内环，宽度约17,500公里</li>
+                            <li>D环 - 最内侧的暗淡环</li>
+                            <li>F环 - 窄而复杂的环，由土卫十六和土卫十七守护</li>
+                            <li>E环 - 最外侧的弥漫环，与土卫二的冰火山活动有关</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 大气层与天气 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cloud mr-2 text-planet-saturn"></i>
+                        大气层与天气
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        土星的大气层与木星类似，呈现出条纹状的云带结构，但由于温度更低，这些条纹不如木星明显。土星的风速可以达到每小时1,800公里，比木星上的风速还要快，是太阳系中风力最强的行星之一。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        土星上也有大型风暴系统，但不如木星的大红斑那样持久和明显。2010年，天文学家观测到土星上出现了一个巨大的白色风暴，被称为"大白色斑点"，这种风暴大约每30年（接近土星的公转周期）会出现一次。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        土星的极区有一个独特的六边形风暴，这是一个位于北极地区的巨大六边形云团，每边长约15,000公里。这个六边形结构非常稳定，至少已经存在了几十年。科学家们认为，这种结构可能与土星大气层中的急流有关。
+                    </p>
+                </section>
+                
+                <!-- 卫星系统 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-moon-o mr-2 text-planet-saturn"></i>
+                        卫星系统
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        土星拥有太阳系中数量最多的卫星，目前已知有146颗以上的卫星，其中最著名的是土卫六（泰坦）、土卫二（恩克拉多斯）、土卫五（瑞亚）、土卫八（伊阿珀托斯）等。
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">土卫六（泰坦）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>太阳系中第二大卫星，直径约5,150公里</li>
+                                <li>拥有浓密的大气层，主要由氮组成</li>
+                                <li>表面温度约-179°C</li>
+                                <li>有液态甲烷湖泊和河流</li>
+                                <li>可能存在复杂的有机分子</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">土卫二（恩克拉多斯）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>直径约504公里的小卫星</li>
+                                <li>表面覆盖着冰层，非常光滑</li>
+                                <li>南极地区有活跃的冰火山</li>
+                                <li>冰火山喷发的水柱高达200公里</li>
+                                <li>可能存在地下海洋</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">土卫五（瑞亚）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>土星第二大卫星，直径约1,527公里</li>
+                                <li>表面布满陨石坑</li>
+                                <li>可能有稀薄的大气层</li>
+                                <li>可能有自己的环系统</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">土卫八（伊阿珀托斯）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>直径约1,469公里</li>
+                                <li>表面一半亮一半暗，称为"阴阳脸"</li>
+                                <li>赤道地区有一条巨大的山脉</li>
+                                <li>可能有薄冰构成的极冠</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed">
+                        土星的卫星系统非常多样化，从微小的岩石碎片到巨大的气态卫星都有。一些卫星与土星环的形成和结构密切相关，例如，牧羊卫星（如土卫十六和土卫十七）通过引力作用帮助维持环的结构和边界。
+                    </p>
+                </section>
+                
+                <!-- 有趣事实 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2 text-planet-saturn"></i>
+                        有趣事实
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">可以漂浮在水上</h4>
+                            <p class="text-gray-300 text-sm">土星的平均密度仅为0.687 g/cm³，比水的密度（1 g/cm³）还小。这意味着如果有一个足够大的海洋，土星会漂浮在水面上。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">北极六边形风暴</h4>
+                            <p class="text-gray-300 text-sm">土星北极有一个巨大的六边形风暴，每边长约15,000公里，宽度足以容纳两个地球。这个六边形结构至少已经存在了几十年，是太阳系中最奇特的气象现象之一。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">土卫六上的液态甲烷循环</h4>
+                            <p class="text-gray-300 text-sm">土卫六上的甲烷以液态形式存在，形成了湖泊、河流和可能的降雨，类似于地球上的水循环。但在土卫六上，温度极低，使得甲烷而不是水以液态形式存在。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">环的年龄争议</h4>
+                            <p class="text-gray-300 text-sm">科学家们对土星环的年龄存在争议。一些研究认为它们相对年轻，可能只有几千万年的历史，而另一些研究则认为它们可能与土星本身一样古老，已有45亿年的历史。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-space-light py-8 text-center text-gray-400">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>太阳系八大行星探索 &copy; 2024</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('土星详情页面已加载');
+        });
+        
+        // 添加行星旋转动画
+        const saturnOrbit = document.querySelector('.animate-spin-slow');
+        if (saturnOrbit) {
+            // 根据土星实际公转速度调整动画（29.46地球年 ≈ 10759天）
+            saturnOrbit.style.animationDuration = '10759s';
+        }
+        
+        // 为土星添加简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const saturnElement = document.querySelector('.saturn-rotate');
+            if (saturnElement) {
+                let isPaused = false;
+                saturnElement.addEventListener('mouseenter', () => {
+                    isPaused = true;
+                    saturnElement.style.animationPlayState = 'paused';
+                });
+                saturnElement.addEventListener('mouseleave', () => {
+                    isPaused = false;
+                    saturnElement.style.animationPlayState = 'running';
+                });
+            }
+        });
+        
+        console.log('土星CSS模型已加载');
+    </script>
+</body>
+</html>

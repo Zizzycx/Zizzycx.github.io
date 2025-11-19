@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>木星 - 太阳系八大行星</title>
+    <!-- 移除Three.js库，使用纯CSS实现 -->
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            dark: '#0a0a2a',
+                            light: '#1e1e3f',
+                            purple: '#2d1b69',
+                        },
+                        planet: {
+                            jupiter: '#e6a058',
+                            jupiter_dark: '#d38b3e',
+                            jupiter_light: '#f1b670',
+                            jupiter_red: '#a52a2a',
+                            sun: '#ffcc33',
+                        }
+                    },
+
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .back-button-hover {
+                transition: all 0.3s ease;
+            }
+            .back-button-hover:hover {
+                transform: translateX(-5px);
+            }
+            .planet-detail-glow {
+                box-shadow: 0 0 50px rgba(230, 160, 88, 0.4);
+                animation: glow 4s ease-in-out infinite;
+            }
+            .jupiter-rotation {
+                animation: rotate 9.9s linear infinite; /* 木星自转更快 */
+            }
+            .jupiter-stripe {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                opacity: 0.7;
+            }
+            .great-red-spot {
+                animation: pulse 8s ease-in-out infinite;
+            }
+            @keyframes glow {
+                0%, 100% { box-shadow: 0 0 50px rgba(230, 160, 88, 0.4); }
+                50% { box-shadow: 0 0 60px rgba(230, 160, 88, 0.6); }
+            }
+            @keyframes rotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 0.9; }
+                50% { transform: scale(1.03); opacity: 0.85; }
+            }
+        }
+    </style>
+</head>
+<body class="bg-space-dark min-h-screen text-white">
+    <!-- 返回按钮 -->
+    <div class="w-full max-w-7xl mx-auto px-4 py-6">
+        <a href="solor.html" class="back-button-hover flex items-center text-gray-300 hover:text-white">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回太阳系</span>
+        </a>
+    </div>
+    
+    <!-- 页面标题 -->
+    <header class="w-full max-w-7xl mx-auto px-4 mb-10 text-center">
+        <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-bold text-white mb-4">木星</h1>
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto">气态巨行星，太阳系中最大的行星</p>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main class="w-full max-w-7xl mx-auto px-4 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- 左侧：行星可视化 -->
+            <div class="lg:col-span-1 flex flex-col items-center justify-center">
+                <div class="relative mb-10">
+                    <!-- 木星 -->
+                    <div class="w-44 h-44 md:w-72 md:h-72 rounded-full planet-detail-glow jupiter-rotation overflow-hidden">
+                        <!-- 简化的木星表面 -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-planet-jupiter to-planet-jupiter-dark">
+                            <!-- 木星条纹 -->
+                            <div class="jupiter-stripe absolute top-[10%] left-0 right-0 h-[8%] bg-planet-jupiter-light/30 rounded-full"></div>
+                            <div class="jupiter-stripe absolute top-[25%] left-0 right-0 h-[10%] bg-planet-jupiter-dark/50 rounded-full"></div>
+                            <div class="jupiter-stripe absolute top-[45%] left-0 right-0 h-[12%] bg-planet-jupiter-light/40 rounded-full"></div>
+                            <div class="jupiter-stripe absolute top-[65%] left-0 right-0 h-[8%] bg-planet-jupiter-dark/40 rounded-full"></div>
+                            <div class="jupiter-stripe absolute top-[80%] left-0 right-0 h-[6%] bg-planet-jupiter-light/20 rounded-full"></div>
+                            
+                            <!-- 大红斑 -->
+                            <div class="great-red-spot absolute top-[35%] left-[20%] w-[25%] h-[15%] bg-planet-jupiter-red rounded-full"></div>
+                            
+                            <!-- 其他细节特征 -->
+                            <div class="absolute top-[50%] left-[60%] w-[10%] h-[8%] bg-planet-jupiter-light/50 rounded-full"></div>
+                            <div class="absolute top-[20%] right-[15%] w-[8%] h-[6%] bg-planet-jupiter-dark/60 rounded-full"></div>
+                            <div class="absolute bottom-[15%] left-[30%] w-[12%] h-[10%] bg-planet-jupiter-light/30 rounded-full"></div>
+                        </div>
+                    </div>
+                    <!-- 木星轨道 -->
+                    <div class="absolute inset-0 border-2 border-dashed border-white/20 rounded-full animate-spin-slow" style="animation: rotate 4333s linear infinite;"></div>
+                    
+
+                </div>
+                
+                <!-- 快速数据 -->
+                <div class="w-full bg-space-light/50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 text-center">快速数据</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">直径:</span>
+                            <span>139,820 km</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">质量:</span>
+                            <span>1.898 × 10²⁷ kg</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">与太阳距离:</span>
+                            <span>5.20 AU</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">自转周期:</span>
+                            <span>9小时56分钟</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">公转周期:</span>
+                            <span>11.86 地球年</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">平均表面温度:</span>
+                            <span>约-145°C</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">卫星数量:</span>
+                            <span>已知95颗+</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">大气成分:</span>
+                            <span>氢75%, 氦24%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：行星详细信息 -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- 概述 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-info-circle mr-2 text-planet-jupiter"></i>
+                        概述
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        木星是太阳系中第五颗行星，也是最大的行星，体积相当于地球的1,321倍，质量是地球的318倍。木星属于气态巨行星，主要由氢和氦组成，没有明确的固体表面。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        木星以其壮观的条纹、大红斑和众多卫星而闻名。它的快速自转产生了强大的磁场和明显的赤道隆起。木星对太阳系的演化有着重要影响，被称为"太阳系的吸尘器"，其强大的引力可以捕获或改变许多小天体的轨道。
+                    </p>
+                </section>
+                
+                <!-- 木星探索大事件 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-rocket mr-2 text-planet-jupiter"></i>
+                        木星探索大事件
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        木星作为太阳系最大行星，人类对其探索从早期望远镜观测延伸至现代探测器近距离探测，核心事件聚焦于轨道器、飞掠探测器的突破性发现：
+                    </p>
+                    <div class="space-y-4 text-gray-200">
+                        <p><strong>1610 年</strong>：伽利略・伽利莱用自制望远镜首次观测到木星的四颗最大卫星（木卫一、木卫二、木卫三、木卫四，后统称 "伽利略卫星"），这一发现推翻了 "地球中心说" 的传统认知，为日心说提供关键证据。</p>
+                        <p><strong>1973 年 12 月 4 日</strong>：美国 "先驱者 10 号" 探测器完成人类首次木星近距离飞掠，距离木星表面约 13 万公里，传回木星大气结构、磁场数据，确认木星存在辐射带，成为首个探测外太阳系的航天器。</p>
+                        <p><strong>1974 年 12 月</strong>：美国 "先驱者 11 号" 探测器飞掠木星，距离更近（约 4.3 万公里），首次拍摄到木星极区图像，并发现木星磁场比预期更强，为后续探测器轨道设计提供参考。</p>
+                        <p><strong>1979 年 3 月</strong>：美国 "旅行者 1 号" 飞掠木星，发现木星存在薄环系统、木卫一上的活火山（如佩莱火山），以及木卫二表面可能存在冰层覆盖的海洋，传回首批木星及其卫星的高清彩色图像。</p>
+                        <p><strong>1979 年 7 月</strong>：美国 "旅行者 2 号" 继续飞掠木星，重点观测木星大气环流（如 "大红斑" 动态），并对木卫二、木卫三进行详细探测，确认木卫三是太阳系最大卫星（直径超水星）。</p>
+                        <p><strong>1989 年 10 月 18 日</strong>：美国 "伽利略号" 木星探测器由 "亚特兰蒂斯号" 航天飞机发射，开启人类首个木星轨道探测任务。</p>
+                        <p><strong>1995 年 7 月</strong>："伽利略号" 释放大气探测器，成功坠入木星大气，测量木星大气成分（以氢、氦为主）、温度和压力，轨道器则持续观测木星及其卫星近 8 年，发现木卫二冰层下可能存在液态水海洋，木卫三存在磁场。</p>
+                        <p><strong>2003 年 9 月 21 日</strong>：为避免 "伽利略号" 携带的地球微生物污染木星卫星，NASA 操控其主动坠入木星大气，任务正式结束，为后续木星探测积累大量基础数据。</p>
+                        <p><strong>2016 年 7 月 4 日</strong>：美国 "朱诺号" 木星探测器进入木星极地轨道，成为首个专门研究木星磁场、重力场和大气结构的探测器，发现木星极区存在大量六边形风暴、磁场比预期更复杂，且木星内部可能不存在明确的 "固体核心"。</p>
+                        <p><strong>2024 年 10 月 14 日</strong>：美国 "欧罗巴快船号" 探测器发射，目标聚焦木星卫星木卫二，计划通过多次飞掠探测其冰层厚度、冰层下海洋的存在证据，以及是否具备生命宜居条件，预计 2031 年抵达木星系统。</p>
+                    </div>
+                </section>
+                
+                <!-- 结构与成分 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cubes mr-2 text-planet-jupiter"></i>
+                        结构与成分
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        木星没有固体表面，而是有一个密集的气态大气层，主要由氢（75%）和氦（24%）组成，还有少量的甲烷、水、氨和其他化合物。随着深度增加，大气压力增大，氢逐渐从气态转变为液态，甚至在核心附近可能转变为金属氢。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        木星可能有一个由岩石和冰组成的固体核心，大小约为地球的10-30倍。核心周围是金属氢层，然后是液态氢层，最外层是气态大气层。这种分层结构是由巨大的压力和温度梯度形成的。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">木星分层结构</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>气态外层 - 主要由氢和氦组成</li>
+                            <li>液态氢层 - 高压下的液态氢</li>
+                            <li>金属氢层 - 极端高压下电子脱离原子核形成的导电氢</li>
+                            <li>核心 - 可能由岩石和冰组成</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 大气层与天气 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cloud mr-2 text-planet-jupiter"></i>
+                        大气层与天气
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        木星的大气层呈现出明显的条纹结构，这是由于行星快速自转产生的强烈气流和大气环流形成的。明亮的区域称为"区"（zones），暗的区域称为"带"（belts）。这些条纹沿着纬度方向延伸，并有强烈的东西向风，风速可达每小时618公里。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        木星上最著名的特征是大红斑（Great Red Spot），这是一个巨大的反气旋风暴，至少已经存在了400年。大红斑的大小足以容纳2-3个地球。近年来，大红斑正在逐渐缩小，但仍然是木星表面最显著的特征之一。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        木星上还有许多其他类型的天气现象，包括白色椭圆体（可能是较小的风暴系统）和闪电等。木星的极光比地球上的更加强大，这是由于其强大的磁场和来自太阳风的高能粒子相互作用产生的。
+                    </p>
+                </section>
+                
+                <!-- 卫星系统 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-moon-o mr-2 text-planet-jupiter"></i>
+                        卫星系统
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        木星拥有太阳系中最庞大的卫星系统，目前已知有95颗以上的卫星，其中最大的四颗被称为伽利略卫星：木卫一（Io）、木卫二（Europa）、木卫三（Ganymede）和木卫四（Callisto）。这四颗卫星是由伽利略在1610年首次发现的。
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">木卫一（Io）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>太阳系中火山活动最活跃的天体</li>
+                                <li>直径约3,642公里</li>
+                                <li>表面覆盖着硫磺和火山物质</li>
+                                <li>由于潮汐加热，火山喷发高度可达500公里</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">木卫二（Europa）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>表面覆盖着冰层，可能存在地下海洋</li>
+                                <li>直径约3,121公里</li>
+                                <li>表面有明显的裂痕和条纹</li>
+                                <li>被认为是太阳系中最可能存在地外生命的地方之一</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">木卫三（Ganymede）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>太阳系中最大的卫星，直径约5,262公里</li>
+                                <li>比水星还大</li>
+                                <li>拥有自己的磁场</li>
+                                <li>可能有地下海洋</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">木卫四（Callisto）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>表面布满陨石坑</li>
+                                <li>直径约4,821公里</li>
+                                <li>地质活动较少</li>
+                                <li>可能有地下海洋</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed">
+                        除了伽利略卫星外，木星的其他卫星大多很小，很多是不规则形状的。这些小卫星可能是被木星引力捕获的小行星或彗星残骸。木星的卫星系统类似于一个微型太阳系，对于研究行星系统的形成和演化具有重要价值。
+                    </p>
+                </section>
+                
+                <!-- 环系统 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-circle-o mr-2 text-planet-jupiter"></i>
+                        环系统
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        木星拥有一个相对暗淡的环系统，由尘埃和碎石组成，于1979年由旅行者1号探测器首次发现。与土星的壮观光环相比，木星的环系统要暗淡得多，主要分为三个部分：
+                    </p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                        <li><strong>主环</strong> - 最亮的部分，宽约6,500公里</li>
+                        <li><strong>光环</strong> - 主环的内部弥散部分</li>
+                        <li><strong>薄纱环</strong> - 三个非常暗淡的外部环，分别与木卫五（Amalthea）、木卫一（Io）和木卫十四（Thebe）相关联</li>
+                    </ul>
+                    <p class="text-gray-200 leading-relaxed">
+                        木星环的形成可能与木星的卫星有关。当小陨石撞击木星的小卫星时，产生的尘埃和碎片可能形成了这些环。环中的物质不断受到木星引力和辐射压力的影响，因此环的寿命可能相对较短，需要不断补充新的物质。
+                    </p>
+                </section>
+                
+
+                
+                <!-- 有趣事实 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2 text-planet-jupiter"></i>
+                        有趣事实
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">太阳系中自转最快的行星</h4>
+                            <p class="text-gray-300 text-sm">木星的自转周期仅为9小时56分钟，是太阳系中自转最快的行星。这种快速自转使木星呈现出明显的赤道隆起，赤道直径比两极直径大约4,600公里。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">大红斑正在缩小</h4>
+                            <p class="text-gray-300 text-sm">历史记录显示，大红斑的大小在过去几百年间一直在缩小。在19世纪，大红斑的大小足以容纳约4个地球，而现在只能容纳约1.5个地球。科学家们不确定这种缩小趋势是否会持续。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">木星的磁场</h4>
+                            <p class="text-gray-300 text-sm">木星拥有太阳系中最强大的行星磁场，强度约为地球磁场的20,000倍。这个强大的磁场产生了巨大的磁层，延伸数百万公里进入太空。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">可以容纳所有其他行星</h4>
+                            <p class="text-gray-300 text-sm">木星的体积如此之大，它可以容纳太阳系中所有其他行星的总和，而且还有剩余空间。事实上，木星的质量虽然巨大，但仍然不足以成为一颗恒星。要成为恒星，它的质量需要增加约80倍。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-space-light py-8 text-center text-gray-400">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>太阳系八大行星探索 &copy; 2024</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('木星详情页面已加载');
+        });
+        
+        // 添加行星轨道动画
+        const jupiterOrbit = document.querySelector('.animate-spin-slow');
+        if (jupiterOrbit) {
+            // 根据木星实际公转速度调整动画
+            jupiterOrbit.style.animationDuration = '4333s'; // 木星公转周期约为11.86年 = 4333天
+        }
+    </script>
+</body>
+</html>

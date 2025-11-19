@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>火星 - 太阳系八大行星</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            dark: '#0a0a2a',
+                            light: '#1e1e3f',
+                            purple: '#2d1b69',
+                        },
+                        planet: {
+                            mars: '#e34234',
+                            mars_dark: '#c13528',
+                            mars_light: '#f0544c',
+                            sun: '#ffcc33',
+                        }
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .planet-detail-glow {
+                box-shadow: 0 0 50px rgba(227, 66, 52, 0.4);
+                animation: glow 4s ease-in-out infinite;
+            }
+            .back-button-hover {
+                transition: all 0.3s ease;
+            }
+            .back-button-hover:hover {
+                transform: translateX(-5px);
+            }
+            .mars-rotation {
+                animation: rotate 24.6s linear infinite;
+            }
+            @keyframes glow {
+                0%, 100% { box-shadow: 0 0 50px rgba(227, 66, 52, 0.4); }
+                50% { box-shadow: 0 0 60px rgba(227, 66, 52, 0.6); }
+            }
+            @keyframes rotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-space-dark min-h-screen text-white">
+    <!-- 返回按钮 -->
+    <div class="w-full max-w-7xl mx-auto px-4 py-6">
+        <a href="solor.html" class="back-button-hover flex items-center text-gray-300 hover:text-white">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回太阳系</span>
+        </a>
+    </div>
+    
+    <!-- 页面标题 -->
+    <header class="w-full max-w-7xl mx-auto px-4 mb-10 text-center">
+        <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-bold text-white mb-4">火星</h1>
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto">红色星球，太阳系中与地球最相似的行星之一</p>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main class="w-full max-w-7xl mx-auto px-4 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- 左侧：行星可视化 -->
+            <div class="lg:col-span-1 flex flex-col items-center justify-center">
+                <div class="relative mb-10">
+                    <!-- 火星 -->
+                    <div class="w-44 h-44 md:w-68 md:h-68 rounded-full planet-detail-glow mars-rotation overflow-hidden">
+                        <!-- 简化的火星表面 -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-planet-mars to-planet-mars-dark">
+                            <!-- 火星表面特征简化表示 -->
+                            <div class="absolute top-1/4 left-1/3 w-1/4 h-1/4 bg-planet-mars-light/40 rounded-full"></div>
+                            <div class="absolute bottom-1/4 right-1/4 w-1/3 h-1/3 bg-planet-mars-dark/80 rounded-full"></div>
+                            <div class="absolute top-1/2 left-1/2 w-1/5 h-1/5 bg-planet-mars-light/30 rounded-full"></div>
+                        </div>
+                    </div>
+                    <!-- 火星轨道 -->
+                    <div class="absolute inset-0 border-2 border-dashed border-white/20 rounded-full animate-spin-slow" style="animation: rotate 687s linear infinite;"></div>
+                </div>
+                
+                <!-- 快速数据 -->
+                <div class="w-full bg-space-light/50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 text-center">快速数据</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">直径:</span>
+                            <span>6,792 km</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">质量:</span>
+                            <span>6.417 × 10²³ kg</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">与太阳距离:</span>
+                            <span>1.52 AU</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">自转周期:</span>
+                            <span>24小时37分</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">公转周期:</span>
+                            <span>687 地球日</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">平均表面温度:</span>
+                            <span>约-63°C</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">卫星数量:</span>
+                            <span>2 (火卫一和火卫二)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">大气成分:</span>
+                            <span>二氧化碳95%, 氮3%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：行星详细信息 -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- 概述 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-info-circle mr-2 text-planet-mars"></i>
+                        概述
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        火星是太阳系中第四颗行星，也是离地球最近的外行星。由于其表面富含氧化铁（铁锈），火星呈现出明显的红色，因此常被称为"红色星球"。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        火星的环境与地球有一些相似之处，比如它有类似的昼夜节律、季节变化，以及极冰等。这些相似性使火星成为人类探索地外生命和未来可能的殖民目标重点关注对象。
+                    </p>
+                </section>
+                
+                <!-- 探索历史 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-rocket mr-2 text-planet-mars"></i>
+                        探索历史
+                    </h2>
+                    <div class="space-y-6 text-gray-200 leading-relaxed">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3 text-planet-mars">（一）早期探测与初步认知（1960 年代 - 1970 年代）</h3>
+                            <ol class="list-decimal list-inside space-y-4 pl-4">
+                                <li>1964 年 11 月 28 日：美国发射水手 4 号（Mariner 4）探测器，1965 年 7 月 14 日从距火星 9846 公里处飞掠，拍摄 21 幅火星表面照片，首次发现火星表面布满环形山（类似月球），大气密度仅为地球的 1%（主要成分为二氧化碳），推翻此前 "火星存在运河与生命" 的猜想。</li>
+                                <li>1969 年 2 月 24 日、3 月 27 日：美国发射水手 6 号、7 号，7 月 31 日、8 月 5 日分别飞掠火星赤道与南半球，拍摄 200 多幅照片，测得火星表面温度约 - 120℃至 - 10℃，大气中二氧化碳占比 95%，水蒸气含量极低（仅为地球大气的 1/10000），进一步证实火星干旱、寒冷的环境。</li>
+                                <li>1971 年 5 月 8 日：苏联发射火星 2 号，11 月 27 日释放着陆舱尝试软着陆，但因火星沙尘暴影响，着陆舱硬着陆于火星表面（北纬 45°），成为首个 "接触" 火星的人造天体；轨道器则进入火星轨道，传回火星表面图像。</li>
+                                <li>1971 年 5 月 19 日：苏联发射火星 3 号，12 月 2 日着陆舱成功在火星表面软着陆（东经 150°、南纬 45°），但受沙尘暴影响，仅工作 22 秒便与地面失去联系，未传回有效数据；轨道器持续工作至 1972 年，拍摄火星表面图像。</li>
+                                <li>1971 年 5 月 30 日：美国发射水手 9 号（Mariner 9），11 月 14 日进入火星轨道（近火点 1390 公里、远火点 17900 公里），成为人类首个火星轨道探测器；当时火星正发生全球性沙尘暴，探测器待沙尘平息后，于 1972 年 1 月开始测绘，累计传回 7329 张照片，发现火星表面存在巨型火山（如奥林匹斯山，高度 21 公里，为太阳系最高火山）、深邃峡谷（水手谷，长度 4000 公里）及干涸河道，首次暗示火星历史上可能存在液态水。</li>
+                                <li>1975 年 8 月 20 日、9 月 9 日：美国发射海盗 1 号、2 号（Viking 1/2）探测器，由轨道器与着陆器组成，目标为火星表面着陆与生命探测。</li>
+                                <li>1976 年 7 月 20 日：海盗 1 号着陆器在火星乌托邦平原软着陆，成为人类首个成功实现火星表面软着陆并持续工作的探测器，传回首张火星表面彩色照片（显示红色荒漠地貌）；轨道器则测绘火星表面，发现北极冰盖主要成分为水冰。</li>
+                                <li>1976 年 8 月 7 日：海盗 2 号着陆器在火星克里斯平原软着陆，与海盗 1 号共同开展 "生命探测实验"：通过检测土壤样本中的有机物与代谢活动，未发现明确生命迹象（后续研究认为可能存在火星土壤中的氧化剂破坏了有机分子）；两台着陆器分别工作至 1982 年、1980 年，轨道器工作至 1987 年，累计传回海量数据，奠定火星现代探测基础。</li>
+                            </ol>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3 text-planet-mars">（二）探测复苏与火星车时代（1990 年代 - 2010 年代）</h3>
+                            <ol class="list-decimal list-inside space-y-4 pl-4">
+                                <li>2001 年 4 月 7 日：美国发射奥德赛号（Mars Odyssey）探测器，2001 年 10 月 24 日进入火星轨道，搭载 γ 射线光谱仪等设备，2002 年 3 月宣布重大发现：火星表面与近地表层（北极区域）存在大量冰冻水（估计水量相当于地球五大湖总和的两倍）；同时探测到火星表面存在氢元素分布，为后续火星水研究提供关键证据；截至 2025 年，奥德赛号仍在工作，成为火星探测的 "中继卫星"（为火星车传输数据）。</li>
+                                <li>2003 年 6 月 2 日：欧洲航天局（ESA）发射火星快车号（Mars Express），搭载 "猎兔犬 2 号（Beagle 2）" 着陆器，2003 年 12 月 25 日，着陆器与轨道器分离后尝试软着陆，但未与地面建立通信，任务失败；轨道器则成功进入火星轨道，持续开展探测：2004 年发现火星南极冰盖下存在液态水湖（2018 年进一步证实，水深约 1.5 公里，盐度极高）；拍摄火星表面高分辨率图像，发现古河流与火山活动痕迹；截至 2025 年，火星快车号仍在工作，2024 年 1 月发布数据称火星赤道附近存在厚度约 3.7 公里的冰水沉积物（融化后可覆盖火星表面 2 米深）。</li>
+                                <li>
+                                    2003 年 6 月 10 日、7 月 7 日：美国先后发射勇气号（Spirit）、机遇号（Opportunity）火星车（均重 185 千克，互为备份），2004 年 1 月 3 日、25 日分别在火星古谢夫环形山、梅里迪亚尼平原软着陆，开启长期巡视探测：
+                                    <ul class="list-disc list-inside pl-6 mt-2 space-y-2">
+                                        <li>勇气号：发现火星表面存在赤铁矿（通常形成于液态水环境），证实古谢夫环形山曾为湖泊；2009 年陷入沙坑，2010 年 3 月与地面失去联系，累计工作 6 年，移动约 7.7 公里。</li>
+                                        <li>机遇号：在梅里迪亚尼平原发现大量硫酸盐沉积物（暗示曾存在咸水湖），2018 年因火星全球性沙尘暴失去电力，2019 年 2 月 NASA 宣布任务终止，累计工作 15 年，移动约 45 公里，创火星车工作时长纪录。</li>
+                                    </ul>
+                                </li>
+                                <li>2007 年 8 月 4 日：美国发射凤凰号（Phoenix）探测器，2008 年 5 月 25 日在火星北极平原软着陆，搭载机械臂与显微镜，成功挖掘火星表面土壤，发现土壤中存在冰水（加热后释放水蒸气），并检测到高氯酸盐（可能为微生物提供能量）；2008 年 11 月，因火星进入冬季，日照不足，探测器失去电力，任务结束。</li>
+                                <li>2011 年 11 月 26 日：美国发射好奇号（Curiosity）火星车（重 899 千克，为当时最大火星车），2012 年 8 月 6 日在火星盖尔环形山软着陆（采用 "天空起重机" 着陆技术），搭载 10 台科学仪器，重点搜索火星生命迹象与宜居环境：2013 年发现盖尔环形山曾存在淡水湖（水质接近地球湖泊），且具备生命所需的碳、氢、氧、氮等元素；2015 年发现火星大气中存在甲烷（含量随季节变化，可能与生物或地质活动相关）；2025 年 7 月，好奇号在盖尔环形山发现类似地球珊瑚的岩石（直径约 2.5 厘米，具有分支结构），引发 "火星曾存在复杂地质或生物活动" 的推测，截至 2025 年，好奇号仍在工作，累计移动超 36 公里。</li>
+                            </ol>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3 text-planet-mars">（三）多国探测与采样返回（2020 年代 - 至今）</h3>
+                            <ol class="list-decimal list-inside space-y-4 pl-4">
+                                <li>2020 年 7 月 23 日：中国发射天问一号火星探测器（含轨道器、着陆器与 "祝融号" 火星车），2021 年 2 月 10 日进入火星轨道，5 月 15 日着陆器在火星乌托邦平原软着陆，5 月 22 日 "祝融号" 火星车驶离着陆器，开启巡视探测，中国成为第二个成功实现火星软着陆与巡视探测的国家：祝融号搭载 6 台科学仪器，发现火星表面存在多层土壤结构（暗示复杂地质演化），并探测到火星表面磁场异常；截至 2023 年，祝融号累计移动超 2000 米，传回大量火星表面图像与科学数据。</li>
+                                <li>
+                                    2020 年 7 月 30 日：美国发射毅力号（Perseverance）火星车（重 1025 千克）与机智号（Ingenuity）火星直升机（重 1.8 千克），2021 年 2 月 18 日在火星杰泽罗陨石坑软着陆（该陨石坑曾为湖泊），开启 "火星采样返回" 前期任务与直升机探测：
+                                    <ul class="list-disc list-inside pl-6 mt-2 space-y-2">
+                                        <li>机智号：2021 年 4 月 19 日完成人类首次地外天体直升机飞行，累计完成超 70 次飞行，验证了火星低重力、稀薄大气环境下的飞行器可行性，为后续火星空中探测奠定基础。</li>
+                                        <li>毅力号：搭载机械臂与采样系统，截至 2025 年已采集 50 余管火星岩石与土壤样本（封装于金属管中，储存于火星表面）；2024 年在杰泽罗陨石坑发现古代湖泊沉积物，证实该区域曾为宜居环境；2025 年 9 月，NASA 宣布毅力号采集的样本中存在 "潜在生物特征"（如有机分子聚集），但需返回地球进一步分析。</li>
+                                    </ul>
+                                </li>
+                                <li>2022 年 9 月 27 日：美国发射火星样本返回任务（MSR）的 "地球返回轨道器（ERO）"，计划 2027 年抵达火星，与后续发射的 "样本回收着陆器" 配合，将毅力号采集的样本带回地球（预计 2033 年返回），这将是人类首次实现火星采样返回。</li>
+                                <li>2024 年 1 月：欧洲航天局（ESA）"火星快车号" 发布数据，确认火星赤道附近的冰水沉积物（位于地下 1-2 公里）主要由灰尘与冰层组成，储量相当于地球红海，为未来火星资源利用（如水资源）提供依据。</li>
+                                <li>2025 年 9 月 3 日：中国科学家联合美国团队在《自然》发表研究，基于美国 "洞察号（InSight）" 火星着陆器（2018 年发射，2022 年退役）的地震数据，首次确证火星存在固态内核（半径约 600 公里，由铁镍合金组成），并推测内核外存在液态外核（厚度约 150 公里），为研究火星磁场消失（约 40 亿年前）的原因提供关键线索。</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 表面特征 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-globe mr-2 text-planet-mars"></i>
+                        表面特征
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        火星表面有许多令人惊叹的地貌特征。它拥有太阳系中最大的火山——奥林匹斯山（Olympus Mons），高达22公里，是地球最高峰珠穆朗玛峰的约2.5倍。火星还有太阳系中最大的峡谷系统——水手峡谷（Valles Marineris），全长约4,000公里，最宽处达600公里，最深处达7公里。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        火星的北半球主要是相对平坦的低地，而南半球则主要是高地和密集的陨石坑。火星的南北极都有极冰盖，主要由水冰和二氧化碳冰（干冰）组成，随着季节变化而消长。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">主要表面特征</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>奥林匹斯山 - 太阳系中最大的火山，高22公里</li>
+                            <li>水手峡谷 - 太阳系中最大的峡谷系统</li>
+                            <li>塔尔西斯高原 - 包含多座大型火山的隆起区域</li>
+                            <li>赫拉斯盆地 - 直径约2,300公里的巨大撞击盆地</li>
+                            <li>北极冰盖和南极冰盖 - 季节性变化的冰盖</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 大气层与气候 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cloud mr-2 text-planet-mars"></i>
+                        大气层与气候
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        火星的大气层非常稀薄，大气压仅为地球的约1%。大气层主要由二氧化碳（95%）组成，还有少量的氮气（3%）、氩气（1.6%）和微量的氧气、水蒸气等。由于大气层稀薄，火星表面无法保留热量，导致极端的温度变化。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        火星上经常发生巨大的尘暴，有时会覆盖整个星球，持续数月之久。这些尘暴是由于火星表面温差大、低层大气不稳定导致的。火星的季节变化比地球更为极端，这是因为火星的自转轴倾角与地球相似，但火星的轨道离心率更大。
+                    </p>
+                </section>
+                
+                <!-- 卫星 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-moon-o mr-2 text-planet-mars"></i>
+                        卫星
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        火星有两颗小卫星：火卫一（Phobos）和火卫二（Deimos）。这两颗卫星都是形状不规则的小天体，可能是被火星引力捕获的小行星。
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">火卫一（Phobos）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>直径约22公里</li>
+                                <li>距离火星表面约6,000公里</li>
+                                <li>每7.65小时绕火星一周</li>
+                                <li>正在逐渐靠近火星，预计5,000万年后将撞向火星或破碎形成环</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">火卫二（Deimos）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>直径约12公里</li>
+                                <li>距离火星表面约23,000公里</li>
+                                <li>每30.3小时绕火星一周</li>
+                                <li>表面较为平滑，可能覆盖着厚层的尘埃</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 生命探索 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-search mr-2 text-planet-mars"></i>
+                        生命探索
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        火星一直是人类寻找地外生命的重点目标。虽然目前尚未发现确凿的生命存在证据，但有越来越多的迹象表明，火星可能曾经是一个更适合生命存在的环境。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        探测结果显示，火星上曾经有液态水存在的强烈证据，包括干涸的河床、湖泊遗迹和冲积扇等。此外，火星极地冰盖中存在大量的水冰，一些研究甚至表明，在特定条件下，火星地下可能存在液态水。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        目前的火星探测任务正在寻找生命存在的关键指标，包括有机分子、生物标志物和适宜的环境条件等。未来的样本返回任务将把火星土壤和岩石样本带回地球进行更详细的分析，这可能会为火星是否曾经存在生命提供决定性的证据。
+                    </p>
+                </section>
+                
+                <!-- 有趣事实 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2 text-planet-mars"></i>
+                        有趣事实
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">水手峡谷比大峡谷长10倍</h4>
+                            <p class="text-gray-300 text-sm">火星上的水手峡谷全长约4,000公里，是地球上美国大峡谷长度的约10倍，深度约为2-7公里。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">一年有687天</h4>
+                            <p class="text-gray-300 text-sm">由于火星离太阳更远，其公转周期更长，一年相当于地球的687天。不过，火星的一天只比地球长约37分钟。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">红色天空</h4>
+                            <p class="text-gray-300 text-sm">在火星上，日出和日落时天空呈现蓝色，而平时天空则呈现红色或粉色，这与地球完全相反。这是由于火星大气中的尘埃散射阳光的方式不同。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">奥林匹斯山</h4>
+                            <p class="text-gray-300 text-sm">火星上的奥林匹斯山不仅是太阳系中最高的火山，也是太阳系中已知的最高山峰。它的底座直径约600公里，山体高度达22公里。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-space-light py-8 text-center text-gray-400">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>太阳系八大行星探索 &copy; 2024</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('火星详情页面已加载');
+        });
+        
+        // 添加行星旋转动画
+        const marsOrbit = document.querySelector('.animate-spin-slow');
+        if (marsOrbit) {
+            // 根据火星实际公转速度调整动画
+            marsOrbit.style.animationDuration = '687s';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水星 - 太阳系八大行星</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            dark: '#0a0a2a',
+                            light: '#1e1e3f',
+                            purple: '#2d1b69',
+                        },
+                        planet: {
+                            mercury: '#a1a1a1',
+                            sun: '#ffcc33',
+                        }
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .planet-detail-glow {
+                box-shadow: 0 0 50px rgba(161, 161, 161, 0.4);
+                animation: glow 4s ease-in-out infinite;
+            }
+            .back-button-hover {
+                transition: all 0.3s ease;
+            }
+            .back-button-hover:hover {
+                transform: translateX(-5px);
+            }
+            @keyframes glow {
+                0%, 100% { box-shadow: 0 0 50px rgba(161, 161, 161, 0.4); }
+                50% { box-shadow: 0 0 60px rgba(161, 161, 161, 0.6); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-space-dark min-h-screen text-white">
+    <!-- 返回按钮 -->
+    <div class="w-full max-w-7xl mx-auto px-4 py-6">
+        <a href="solor.html" class="back-button-hover flex items-center text-gray-300 hover:text-white">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回太阳系</span>
+        </a>
+    </div>
+    
+    <!-- 页面标题 -->
+    <header class="w-full max-w-7xl mx-auto px-4 mb-10 text-center">
+        <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-bold text-white mb-4">水星</h1>
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto">太阳系中最小的行星，也是离太阳最近的行星</p>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main class="w-full max-w-7xl mx-auto px-4 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- 左侧：行星可视化 -->
+            <div class="lg:col-span-1 flex flex-col items-center justify-center">
+                <div class="relative mb-10">
+                    <!-- 水星 -->
+                    <div class="w-40 h-40 md:w-64 md:h-64 bg-planet-mercury rounded-full planet-detail-glow"></div>
+                    <!-- 水星轨道 -->
+                    <div class="absolute inset-0 border-2 border-dashed border-white/20 rounded-full animate-spin-slow" style="animation: rotate 20s linear infinite;"></div>
+                </div>
+                
+                <!-- 快速数据 -->
+                <div class="w-full bg-space-light/50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 text-center">快速数据</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">直径:</span>
+                            <span>4,879 km</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">质量:</span>
+                            <span>3.301 × 10²³ kg</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">与太阳距离:</span>
+                            <span>0.39 AU</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">自转周期:</span>
+                            <span>58.6 地球日</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">公转周期:</span>
+                            <span>88 地球日</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">表面温度:</span>
+                            <span>-173°C 至 427°C</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">卫星数量:</span>
+                            <span>0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：行星详细信息 -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- 概述 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-info-circle mr-2 text-planet-mercury"></i>
+                        概述
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        水星是太阳系中最小的行星，也是离太阳最近的行星。由于其体积小且靠近太阳，水星在地球上观测较为困难，通常只能在黎明或黄昏时分短暂可见。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        水星没有真正的大气层，只有一层极稀薄的外逸层，主要由太阳风带来的气体组成。这导致水星表面温差极大，白天可达427°C，夜间可降至-173°C。
+                    </p>
+                </section>
+                
+
+                
+                <!-- 表面特征 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-globe mr-2 text-planet-mercury"></i>
+                        表面特征
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        水星表面与月球相似，布满了陨石坑。其中最著名的是卡路里盆地（Caloris Basin），这是一个直径约1,550公里的巨大撞击盆地。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        水星还有许多悬崖，称为"水星脊"，这些可能是由于水星早期冷却收缩时形成的。最大的水星脊长约500公里，高可达3公里。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">主要表面特征</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>卡路里盆地 - 直径1,550公里的巨大撞击盆地</li>
+                            <li>水星脊 - 由冷却收缩形成的悬崖</li>
+                            <li>众多陨石坑 - 记录了太阳系早期的撞击历史</li>
+                            <li>平原区域 - 可能由古代火山活动形成</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 探索历史 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-rocket mr-2 text-planet-mercury"></i>
+                        探索历史
+                    </h2>
+                    
+                    <!-- 早期观测与理论突破 -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4 text-planet-mercury">（一）早期观测与理论突破（17 世纪 - 20 世纪中期）</h3>
+                        <div class="space-y-4 pl-4">
+                            <div class="border-l-2 border-planet-mercury/50 pl-4">
+                                <p class="text-white font-medium">1610 年：意大利天文学家伽利略・伽利莱通过望远镜首次观测水星</p>
+                                <p class="text-gray-300">虽未识别表面细节，但确认其为太阳系内行星，开启人类对水星的科学观测。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-mercury/50 pl-4">
+                                <p class="text-white font-medium">1962 年 6 月：苏联科学院无线电工程与电子研究所团队首次接收水星反射的雷达信号</p>
+                                <p class="text-gray-300">开启水星雷达观测时代，为后续自转周期测量提供技术支撑。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-mercury/50 pl-4">
+                                <p class="text-white font-medium">1965 年：美国科学家戈登・H・佩滕吉尔与罗尔夫・B・戴斯利用波多黎各阿雷西博射电望远镜进行观测</p>
+                                <p class="text-gray-300">测得水星自转周期约为59 天（约为公转周期的 2/3），证实水星存在 "3:2 轨道 - 自转共振"（每绕太阳公转 3 圈，自转 2 圈），纠正了此前 "1:1 锁定" 的错误认知；同年，意大利天文学家朱塞佩・科伦坡进一步提出该共振机制，为后续探测器轨道设计提供理论依据。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 探测器探测阶段 -->
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-planet-mercury">（二）探测器探测阶段（1970 年代 - 至今）</h3>
+                        <div class="space-y-4 pl-4">
+                            <div class="border-l-2 border-planet-mercury/50 pl-4">
+                                <p class="text-white font-medium">1973 年 11 月 3 日：美国发射水手 10 号（Mariner 10）探测器</p>
+                                <p class="text-gray-300">任务目标为飞掠水星与金星，这是人类首个以水星为主要探测目标的航天器，搭载紫外线光谱仪、磁强计等设备。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-mercury/50 pl-4">
+                                <p class="text-white font-medium">1974 年 3 月 29 日：水手 10 号完成首次水星飞掠</p>
+                                <p class="text-gray-300">距离水星表面约 703 公里，传回首批水星表面照片，发现水星存在磁场（此前认为小型类地行星无磁场），且表面布满类似月球的环形山；随后探测器借助金星引力弹弓，于 1974 年 9 月 21 日、1975 年 3 月 16 日完成第二、三次水星飞掠，累计覆盖水星 45% 表面积，最高分辨率达 1000 米。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-mercury/50 pl-4">
+                                <p class="text-white font-medium">2004 年 8 月 3 日：美国发射信使号（MESSENGER）探测器</p>
+                                <p class="text-gray-300">搭载 7 台科学仪器（含 γ 射线光谱仪、激光高度计、双重成像系统等），目标为进入水星轨道，研究其化学成分、地质历史及磁场起源。探测器采用 "多引力弹弓" 轨道：2005 年 8 月飞越地球、2006 年 10 月与 2007 年 6 月两次飞越金星、2008 年 1 月与 10 月及 2009 年 9 月三次飞越水星，逐步调整轨道高度。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-mercury/50 pl-4">
+                                <p class="text-white font-medium">2011 年 3 月 17 日：信使号成功进入水星轨道</p>
+                                <p class="text-gray-300">近水点 200 公里、远水点 15193 公里，周期 12 小时，成为人类首个水星轨道探测器，开启长期驻留探测。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-mercury/50 pl-4">
+                                <p class="text-white font-medium">2011-2015 年：信使号持续开展探测</p>
+                                <p class="text-gray-300">取得多项突破：发现水星表面存在高浓度硫、钾等挥发性元素，暗示其形成过程可能存在 "高温挥发" 事件；确认水星北极区域存在冰水沉积物（受永久阴影区保护）；测得水星内核半径约 1800 公里（占行星直径的 60%，远高于地球内核占比），推测内核为部分熔融状态；2015 年 4 月 30 日，为避免撞击水星敏感区域（如永久阴影区），NASA 操控信使号主动撞击水星表面，任务正式结束，累计传回超过 70 万张照片及海量科学数据。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-mercury/50 pl-4">
+                                <p class="text-white font-medium">2018 年 10 月 20 日：欧洲航天局与日本宇宙航空研究开发机构联合发射贝皮・科伦布号（BepiColombo）探测器</p>
+                                <p class="text-gray-300">由 "水星行星轨道器"（MPO，负责表面与内部探测）和 "水星磁层轨道器"（MMO，负责磁层与太阳风相互作用研究）组成，搭载 11 台科学仪器。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-mercury/50 pl-4">
+                                <p class="text-white font-medium">2024 年底（计划）：贝皮・科伦布号计划进入水星轨道</p>
+                                <p class="text-gray-300">经多次引力弹弓（包括 2 次地球、2 次金星、6 次水星飞越）后，预计开展为期至少 1 个水星年（88 天）的探测，重点研究水星磁场起源、内核结构及太阳风对水星表面的侵蚀作用，截至 2025 年，探测器已完成多次水星飞越，传回高分辨率表面图像（如水星表面的 "蜘蛛状" 地质构造）。</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 有趣事实 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2 text-planet-mercury"></i>
+                        有趣事实
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">一天比一年长</h4>
+                            <p class="text-gray-300 text-sm">水星的自转周期（一天）为58.6地球日，而其公转周期（一年）仅为88地球日。这意味着水星上的一天比一年还要长！</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">没有卫星</h4>
+                            <p class="text-gray-300 text-sm">水星是太阳系中仅有的两个没有天然卫星的行星之一（另一个是金星）。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">铁质核心</h4>
+                            <p class="text-gray-300 text-sm">水星拥有太阳系中最大的核心相对于其体积的比例。其核心占水星体积的约42%，主要由铁构成。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">名称由来</h4>
+                            <p class="text-gray-300 text-sm">水星的英文名称"Mercury"来自罗马神话中的信使之神墨丘利，对应希腊神话中的赫尔墨斯。这是因为水星在天空中移动速度很快。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-space-light py-8 text-center text-gray-400">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>太阳系八大行星探索 &copy; 2024</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可以在这里添加页面加载动画或其他交互效果
+            console.log('水星详情页面已加载');
+        });
+        
+        // 添加行星旋转动画
+        const mercuryOrbit = document.querySelector('.animate-spin-slow');
+        if (mercuryOrbit) {
+            // 根据水星实际公转速度调整动画
+            mercuryOrbit.style.animationDuration = '20s';
+        }
+    </script>
+</body>
+</html>

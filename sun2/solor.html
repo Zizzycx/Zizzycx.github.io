@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人类航天编年史</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            dark: '#0a0a2a',
+                            light: '#1e1e3f',
+                            purple: '#2d1b69',
+                        },
+                        planet: {
+                            mercury: '#a1a1a1',
+                            venus: '#e3c4a8',
+                            earth: '#4287f5',
+                            mars: '#e34234',
+                            jupiter: '#e6b777',
+                            saturn: '#f0d080',
+                            uranus: '#87ceeb',
+                            neptune: '#4169e1',
+                            sun: '#ffcc33',
+                        }
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .planet-orbit {
+                position: absolute;
+                border: 1px dashed rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                animation: rotate 30s linear infinite;
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            }
+            /* 为轨道添加z-index，确保内侧行星可点击 */
+            .planet-orbit:nth-of-type(1) { z-index: 8; } /* 水星轨道 */
+            .planet-orbit:nth-of-type(2) { z-index: 7; } /* 金星轨道 */
+            .planet-orbit:nth-of-type(3) { z-index: 6; } /* 地球轨道 */
+            .planet-orbit:nth-of-type(4) { z-index: 5; } /* 火星轨道 */
+            .planet-orbit:nth-of-type(5) { z-index: 4; } /* 木星轨道 */
+            .planet-orbit:nth-of-type(6) { z-index: 3; } /* 土星轨道 */
+            .planet-orbit:nth-of-type(7) { z-index: 2; } /* 天王星轨道 */
+            .planet-orbit:nth-of-type(8) { z-index: 1; } /* 海王星轨道 */
+            
+            /* 地球-月球系统容器 */
+            .earth-moon-system {
+                position: absolute;
+                z-index: 10;
+                /* 确保月球系统与地球位置完全对齐 */
+                width: 0;
+                height: 0;
+            }
+            
+            /* 月球轨道容器 - 实现围绕地球旋转 */
+            .moon-orbit-container {
+                position: absolute;
+                transform-origin: center;
+                z-index: 1;
+            }
+            
+            /* 月球轨道样式 */
+            .moon-orbit {
+                position: absolute;
+                z-index: 1;
+            }
+            
+            /* 月球旋转动画 - 专用动画 */
+            @keyframes rotate-moon {
+                from {
+                    transform: translate(-50%, -50%) rotate(0deg);
+                }
+                to {
+                    transform: translate(-50%, -50%) rotate(360deg);
+                }
+            }
+            
+            /* 应用月球旋转动画 */
+            .animate-rotate-moon {
+                animation: rotate-moon 8s linear infinite;
+            }
+            
+            /* 确保月球正确定位 */
+            .moon {
+                /* 确保月球定位在轨道的顶部 */
+                transform-origin: 50% 50%;
+                z-index: 10;
+            }
+            
+            /* 确保月球文字显示样式 */
+            .moon-name {
+                background-color: rgba(0, 0, 0, 0.5);
+                padding: 1px 4px;
+                border-radius: 4px;
+                font-size: 0.6rem;
+            }
+            .planet {
+                transition: all 0.3s ease;
+            }
+            .planet:hover {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            .planet.mercury:hover {
+                filter: drop-shadow(0 0 8px rgba(163, 163, 163, 0.8));
+            }
+            .planet.venus:hover {
+                filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.8));
+            }
+            .planet.earth:hover {
+                filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.8));
+            }
+            .planet.mars:hover {
+                filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
+            }
+            .planet.jupiter:hover {
+                filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));
+            }
+            .planet.saturn:hover {
+                filter: drop-shadow(0 0 10px rgba(252, 211, 77, 0.8));
+            }
+            .planet.uranus:hover {
+                filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.8));
+            }
+            .planet.neptune:hover {
+                filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.8));
+            }
+            .sun-glow {
+                box-shadow: 0 0 100px 20px rgba(255, 165, 0, 0.5);
+                animation: pulse 3s infinite;
+            }
+            .star {
+                position: absolute;
+                border-radius: 50%;
+                background-color: white;
+                animation: twinkle 3s infinite ease-in-out;
+            }
+            .planet-name {
+                font-size: 0.75rem;
+                font-weight: 500;
+                opacity: 0.9;
+                transition: all 0.3s ease;
+                padding: 2px 8px;
+                border-radius: 10px;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+            .planet:hover .planet-name {
+                transform: translate(-50%, 0);
+                opacity: 1;
+                background-color: rgba(0, 0, 0, 0.8);
+            }
+            .particle {
+                position: absolute;
+                background-color: white;
+                border-radius: 50%;
+                pointer-events: none;
+                opacity: 0;
+                animation: fadeOut 1s ease-out forwards;
+            }
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.2;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+        
+        /* 响应式设计优化 */
+        @media (max-width: 768px) {
+            .planet-orbit {
+                border-width: 0.5px;
+            }
+            
+            .planet-name {
+                font-size: 0.65rem;
+            }
+            
+            /* 减小移动设备上的轨道大小 */
+            .planet-orbit:nth-child(1) { /* 水星 */
+                width: 100px !important;
+                height: 100px !important;
+            }
+            .planet-orbit:nth-child(2) { /* 金星 */
+                width: 150px !important;
+                height: 150px !important;
+            }
+            .planet-orbit:nth-child(3) { /* 地球 */
+                width: 200px !important;
+                height: 200px !important;
+            }
+            .planet-orbit:nth-child(4) { /* 火星 */
+                width: 250px !important;
+                height: 250px !important;
+            }
+            .planet-orbit:nth-child(5) { /* 木星 */
+                width: 320px !important;
+                height: 320px !important;
+            }
+            .planet-orbit:nth-child(6) { /* 土星 */
+                width: 380px !important;
+                height: 380px !important;
+            }
+            .planet-orbit:nth-child(7) { /* 天王星 */
+                width: 430px !important;
+                height: 430px !important;
+            }
+            .planet-orbit:nth-child(8) { /* 海王星 */
+                width: 480px !important;
+                height: 480px !important;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            main {
+                min-height: 450px !important;
+            }
+            
+            /* 调整移动设备上的行星大小 */
+            .planet .w-4.h-4 {
+                width: 3px !important;
+                height: 3px !important;
+            }
+            .planet .w-5.h-5 {
+                width: 4px !important;
+                height: 4px !important;
+            }
+            .planet .w-6.h-6 {
+                width: 5px !important;
+                height: 5px !important;
+            }
+            .planet .w-10.h-10 {
+                width: 8px !important;
+                height: 8px !important;
+            }
+            .planet .w-14.h-14 {
+                width: 12px !important;
+                height: 12px !important;
+            }
+            .planet .w-16.h-16 {
+                width: 14px !important;
+                height: 14px !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-space-dark min-h-screen overflow-x-hidden relative">
+    <!-- 星空背景 - 响应式设计优化 -->
+    <div id="stars" class="fixed inset-0 pointer-events-none z-0"></div>
+    <script>
+        // 生成响应式星空背景
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            starsContainer.innerHTML = ''; // 清除现有星星
+            
+            // 根据屏幕宽度调整星星数量
+            const screenWidth = window.innerWidth;
+            let starCount;
+            
+            if (screenWidth < 640) {
+                starCount = 80; // 手机端较少星星
+            } else if (screenWidth < 1024) {
+                starCount = 120; // 平板端中等数量
+            } else {
+                starCount = 200; // 桌面端更多星星
+            }
+            
+            // 根据屏幕尺寸调整星星密度和大小
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                const sizeFactor = screenWidth < 768 ? 0.6 : 1;
+                const size = Math.random() * 2 * sizeFactor + 0.5;
+                
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.opacity = Math.random() * 0.8 + 0.2;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // 初始化星星并监听窗口大小变化
+        createStars();
+        window.addEventListener('resize', createStars);
+    </script>
+    <!-- 页面标题 -->
+    <header class="py-8 text-center">
+        <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white mb-2">人类航天编年史</h1>
+        <p class="text-gray-300 text-lg max-w-2xl mx-auto">探索人类历史上的重要航天事件，点击任意行星查看详细信息</p>
+    </header>
+    
+    <!-- 太阳系可视化区域 -->
+    <main class="relative w-full min-h-[600px] max-w-6xl mx-auto mb-20">
+        <!-- 太阳中心 -->
+    <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 bg-planet-sun rounded-full flex items-center justify-center shadow-lg shadow-yellow-600/50 overflow-hidden">
+            <!-- 太阳表面细节 -->
+            <div class="absolute inset-0 bg-gradient-to-br from-yellow-500 to-orange-600 animate-pulse opacity-80 rounded-full"></div>
+            <div class="absolute inset-0">
+                <div class="absolute left-1/4 top-1/4 w-1/2 h-1/2 rounded-full bg-orange-500/30"></div>
+                <div class="absolute left-1/3 top-1/3 w-1/4 h-1/4 rounded-full bg-red-500/20"></div>
+                <div class="absolute right-1/4 bottom-1/4 w-1/3 h-1/3 rounded-full bg-yellow-400/40"></div>
+            </div>
+            <div class="absolute w-full h-full rounded-full bg-planet-sun/50 blur-sm animate-pulse"></div>
+            <span class="relative z-10 text-white font-bold text-sm sm:text-lg md:text-2xl">太阳</span>
+        </div>
+    </div>
+        
+        <!-- 水星轨道 -->
+        <div class="planet-orbit w-[150px] h-[150px] md:w-[200px] md:h-[200px] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <a href="mercury.html" class="planet mercury absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" data-planet="mercury">
+                <div class="w-4 h-4 md:w-5 md:h-5 bg-planet-mercury rounded-full shadow-inner shadow-gray-700"></div>
+                <span class="planet-name absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-white whitespace-nowrap">水星</span>
+            </a>
+        </div>
+        
+        <!-- 金星轨道 -->
+        <div class="planet-orbit w-[220px] h-[220px] md:w-[300px] md:h-[300px] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <a href="venus.html" class="planet venus absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" data-planet="venus">
+                <div class="w-6 h-6 md:w-8 md:h-8 bg-planet-venus rounded-full shadow-inner shadow-amber-900"></div>
+                <span class="planet-name absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-white whitespace-nowrap">金星</span>
+            </a>
+        </div>
+        
+        <!-- 地球轨道 -->
+          <div class="planet-orbit w-[300px] h-[300px] md:w-[400px] md:h-[400px] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <!-- 地球 -->
+              <a href="earth.html" class="planet earth absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" data-planet="earth">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-planet-earth rounded-full shadow-inner shadow-blue-900 overflow-hidden">
+                      <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-400 opacity-50 rounded-full"></div>
+                  </div>
+                  <span class="planet-name absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-white whitespace-nowrap">地球</span>
+              </a>
+              
+              <!-- 月球系统 - 围绕地球旋转 -->
+              <div class="moon-orbit-container absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 w-[30px] h-[30px] md:w-[40px] md:h-[40px] animate-rotate-moon">
+                  <!-- 月球轨道 -->
+                  <div class="moon-orbit absolute inset-0 border border-white/20 rounded-full"></div>
+                  
+                  <!-- 月球 -->
+                  <a href="moon.html" class="moon absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 md:w-3 md:h-3 bg-gray-300 rounded-full shadow-md hover:scale-125 transition-transform duration-200 z-10">
+                      <span class="moon-name absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-white whitespace-nowrap text-xs opacity-0 hover:opacity-100 transition-opacity duration-200">月球</span>
+                  </a>
+              </div>
+          </div>
+        
+        <!-- 火星轨道 -->
+        <div class="planet-orbit w-[380px] h-[380px] md:w-[500px] md:h-[500px] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <a href="mars.html" class="planet mars absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" data-planet="mars">
+                <div class="w-5 h-5 md:w-7 md:h-7 bg-planet-mars rounded-full shadow-inner shadow-red-900">
+                    <div class="absolute inset-0 bg-red-800/30"></div>
+                </div>
+                <span class="planet-name absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-white whitespace-nowrap">火星</span>
+            </a>
+        </div>
+        
+        <!-- 木星轨道 -->
+        <div class="planet-orbit w-[480px] h-[480px] md:w-[650px] md:h-[650px] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <a href="jupiter.html" class="planet jupiter absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" data-planet="jupiter">
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-planet-jupiter rounded-full shadow-inner shadow-yellow-800 overflow-hidden">
+                    <!-- 木星条纹 -->
+                    <div class="absolute inset-x-0 top-1/4 h-1/6 bg-yellow-700/40"></div>
+                    <div class="absolute inset-x-0 top-1/2 h-1/8 bg-yellow-600/30"></div>
+                    <div class="absolute inset-x-0 bottom-1/5 h-1/10 bg-yellow-700/50"></div>
+                    <!-- 大红斑 -->
+                    <div class="absolute right-1/4 bottom-1/4 w-1/3 h-1/3 rounded-full bg-red-800/40"></div>
+                </div>
+                <span class="planet-name absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-white whitespace-nowrap">木星</span>
+            </a>
+        </div>
+        
+        <!-- 土星轨道 -->
+        <div class="planet-orbit w-[580px] h-[580px] md:w-[800px] md:h-[800px] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <a href="saturn.html" class="planet saturn absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" data-planet="saturn">
+                <div class="relative">
+                    <div class="w-14 h-14 md:w-18 md:h-18 bg-planet-saturn rounded-full shadow-inner shadow-yellow-800 overflow-hidden">
+                        <!-- 土星条纹 -->
+                        <div class="absolute inset-x-0 top-1/3 h-1/4 bg-yellow-700/30"></div>
+                        <div class="absolute inset-x-0 bottom-1/4 h-1/5 bg-yellow-600/40"></div>
+                    </div>
+                    <!-- 土星环 -->
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[160%] h-3 bg-planet-saturn/70 rounded-full rotate-12 shadow-lg"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[130%] h-1 bg-white/10 rounded-full rotate-12"></div>
+                </div>
+                <span class="planet-name absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-white whitespace-nowrap">土星</span>
+            </a>
+        </div>
+        
+        <!-- 天王星轨道 -->
+        <div class="planet-orbit w-[680px] h-[680px] md:w-[950px] md:h-[950px] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <a href="uranus.html" class="planet uranus absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" data-planet="uranus">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-planet-uranus rounded-full shadow-inner shadow-blue-800 overflow-hidden">
+                    <!-- 天王星条纹 -->
+                    <div class="absolute inset-x-0 top-1/4 h-1/5 bg-cyan-400/30"></div>
+                    <div class="absolute inset-x-0 bottom-1/3 h-1/6 bg-cyan-300/20"></div>
+                </div>
+                <span class="planet-name absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-white whitespace-nowrap">天王星</span>
+            </a>
+        </div>
+        
+        <!-- 海王星轨道 -->
+        <div class="planet-orbit w-[780px] h-[780px] md:w-[1100px] md:h-[1100px] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <a href="neptune.html" class="planet neptune absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" data-planet="neptune">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-planet-neptune rounded-full shadow-inner shadow-blue-900 overflow-hidden">
+                    <!-- 海王星条纹 -->
+                    <div class="absolute inset-x-0 top-1/3 h-1/4 bg-blue-400/30"></div>
+                    <div class="absolute inset-x-0 bottom-1/4 h-1/5 bg-blue-300/20"></div>
+                    <!-- 大暗斑 -->
+                    <div class="absolute left-1/3 bottom-1/3 w-1/3 h-1/3 rounded-full bg-blue-900/40"></div>
+                </div>
+                <span class="planet-name absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-white whitespace-nowrap">海王星</span>
+            </a>
+        </div>
+    </main>
+    
+    <!-- JavaScript -->
+    <script>
+        // 为行星添加点击动画效果并确保跳转功能
+        document.querySelectorAll('.planet').forEach(planet => {
+            planet.addEventListener('click', function(e) {
+                // 添加点击效果但保持位置变换
+                const originalTransform = this.style.transform;
+                
+                // 缩放效果但保持原有的位置变换
+                this.style.transform = originalTransform + ' scale(0.9)';
+                
+                setTimeout(() => {
+                    // 恢复原始变换
+                    this.style.transform = originalTransform;
+                }, 200);
+                
+                // 检查是否有href属性，如果有则正常跳转
+                // 不需要额外的跳转代码，因为<a>标签会自动处理跳转
+            });
+        });
+        
+        // 轨道动画速度调整
+        const orbits = document.querySelectorAll('.planet-orbit');
+        orbits.forEach((orbit, index) => {
+            // 根据轨道半径调整动画速度
+            const radius = parseInt(orbit.style.width) || parseInt(getComputedStyle(orbit).width);
+            const duration = radius / 10; // 速度与半径成比例
+            orbit.style.animationDuration = `${duration}s`;
+        });
+    </script>
+</body>
+</html>

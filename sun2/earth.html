@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地球 - 太阳系八大行星</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            dark: '#0a0a2a',
+                            light: '#1e1e3f',
+                            purple: '#2d1b69',
+                        },
+                        planet: {
+                            earth: '#4287f5',
+                            earth_ocean: '#1a73e8',
+                            earth_land: '#34a853',
+                            sun: '#ffcc33',
+                        }
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .planet-detail-glow {
+                box-shadow: 0 0 50px rgba(66, 135, 245, 0.4);
+                animation: glow 4s ease-in-out infinite;
+            }
+            .back-button-hover {
+                transition: all 0.3s ease;
+            }
+            .back-button-hover:hover {
+                transform: translateX(-5px);
+            }
+            .earth-rotation {
+                animation: rotate 10s linear infinite;
+            }
+            @keyframes glow {
+                0%, 100% { box-shadow: 0 0 50px rgba(66, 135, 245, 0.4); }
+                50% { box-shadow: 0 0 60px rgba(66, 135, 245, 0.6); }
+            }
+            @keyframes rotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-space-dark min-h-screen text-white">
+    <!-- 返回按钮 -->
+    <div class="w-full max-w-7xl mx-auto px-4 py-6">
+        <a href="solor.html" class="back-button-hover flex items-center text-gray-300 hover:text-white">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回太阳系</span>
+        </a>
+    </div>
+    
+    <!-- 页面标题 -->
+    <header class="w-full max-w-7xl mx-auto px-4 mb-10 text-center">
+        <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-bold text-white mb-4">地球</h1>
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto">目前已知唯一存在生命的行星，蓝色星球</p>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main class="w-full max-w-7xl mx-auto px-4 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- 左侧：行星可视化 -->
+            <div class="lg:col-span-1 flex flex-col items-center justify-center">
+                <div class="relative mb-10">
+                    <!-- 地球 -->
+                    <div class="w-48 h-48 md:w-72 md:h-72 rounded-full planet-detail-glow earth-rotation overflow-hidden">
+                        <!-- 简化的地球表面 -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-planet-earth to-planet-earth-ocean">
+                            <!-- 陆地简化表示 -->
+                            <div class="absolute top-1/4 left-1/4 w-1/3 h-1/3 bg-planet-earth-land/60 rounded-full"></div>
+                            <div class="absolute top-1/2 left-1/2 w-1/4 h-1/4 bg-planet-earth-land/70 rounded-full"></div>
+                            <div class="absolute bottom-1/4 right-1/3 w-1/5 h-1/5 bg-planet-earth-land/60 rounded-full"></div>
+                        </div>
+                    </div>
+                    <!-- 地球轨道 -->
+                    <div class="absolute inset-0 border-2 border-dashed border-white/20 rounded-full animate-spin-slow" style="animation: rotate 365s linear infinite;"></div>
+                </div>
+                
+                <!-- 快速数据 -->
+                <div class="w-full bg-space-light/50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 text-center">快速数据</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">直径:</span>
+                            <span>12,756 km</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">质量:</span>
+                            <span>5.972 × 10²⁴ kg</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">与太阳距离:</span>
+                            <span>1 AU</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">自转周期:</span>
+                            <span>23小时56分4秒</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">公转周期:</span>
+                            <span>365.25天</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">平均表面温度:</span>
+                            <span>约15°C</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">卫星数量:</span>
+                            <span>1 (月球)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">大气成分:</span>
+                            <span>氮78%, 氧21%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：行星详细信息 -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- 概述 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-info-circle mr-2 text-planet-earth"></i>
+                        概述
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        地球是太阳系中第三颗行星，也是目前已知唯一存在生命的天体。它位于太阳系的"宜居带"内，这里的温度允许液态水存在，这是生命出现和演化的关键条件之一。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        地球的表面约71%被液态水覆盖，因此从太空看呈现出蓝色，常被称为"蓝色星球"。地球拥有适宜生命的大气层、磁场和稳定的气候系统，这些因素共同创造了一个能够支持复杂生命形式的环境。
+                    </p>
+                </section>
+                
+                <!-- 航天历程 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-rocket mr-2 text-planet-earth"></i>
+                        航天历程
+                    </h2>
+                    <div class="space-y-6 text-gray-200 leading-relaxed">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1933</h4>
+                                <p>莫斯科反作用运动实验小组发射了第一批液体火箭</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">第二次世界大战后</h4>
+                                <p>苏联借助德国v-2火箭，及其技术全力发展导弹</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1957年10月4日</h4>
+                                <p>苏联发射人造卫星斯普特尼克一号</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1958年1月31日</h4>
+                                <p>美国首颗卫星 探索者一号发射成功</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1958年7月29日</h4>
+                                <p>美国宇航局NASA正式成立</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1958-1984</h4>
+                                <p>苏联发射人造卫星1891颗</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1958年12月</h4>
+                                <p>美国发射世界上第一颗通信试验卫星</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1958年</h4>
+                                <p>美国的人造卫星开始携带气象仪</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1959年9月9日</h4>
+                                <p>美国首次发射水星飞船模型，进行亚轨道飞行</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1960年4月1日</h4>
+                                <p>美国发射了世界上第一颗试验性气象卫星"泰罗斯"1号</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1960年8月19日</h4>
+                                <p>苏联完成首次动植物进入地球轨道并安全返回</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1961年4月12日</h4>
+                                <p>尤里加加林 人类首次进入太空<br>
+                                东方一号用108分钟绕地球一圈后安全返回<br>
+                                完成了人类首次载人飞行任务</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1961年5月5日</h4>
+                                <p>艾伦谢泼德 美国人首次进入太空<br>
+                                艾伦谢泼德驾驶美国"水星MR 3飞船"进行首次载人亚轨道飞行<br>
+                                美国因此成为第二个具有载人航天能力的国家</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1962年2月20日</h4>
+                                <p>欧约翰格伦 美国首个进入地球轨道的人<br>
+                                他成功地驾驶"水星6号" 绕地球轨道飞行3圈</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1963年</h4>
+                                <p>美国和日本通过中继一号进行了一次横跨太平洋的电视传输</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1965年3月18日</h4>
+                                <p>苏联 列昂诺夫成为首位太空行走的人类</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1965年6月5日</h4>
+                                <p>爱德华 怀特 美国首次太空行走</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1966年2月3日</h4>
+                                <p>美国研制并发射第一颗实用气象卫星"艾萨"1号</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1967年4月23日</h4>
+                                <p>苏联发射第三代载人飞船"联盟1号"<br>
+                                科马罗夫因乘联盟一号返回时降落伞故障不幸遇难</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1970 年 4 月 24 日</h4>
+                                <p>中国成功发射第一颗人造地球卫星 "东方红一号"，成为世界上第五个独立发射人造卫星的国家，卫星传回《东方红》乐曲，开启中国航天事业新纪元。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1971 年 4 月 19 日</h4>
+                                <p>苏联发射 "礼炮一号"，这是人类历史上第一个空间站，其成功入轨标志着太空探索进入长期驻留的新阶段。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1973 年 5 月 14 日</h4>
+                                <p>美国发射 "天空实验室" 空间站，这是美国首个空间站，先后有三批航天员入驻，进行了大量太空科学实验和天文观测。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1975 年 7 月 15 日 - 21 日</h4>
+                                <p>苏联 "联盟 19 号" 与美国 "阿波罗 18 号" 飞船实现首次美苏载人航天对接，两国航天员在太空中会面，成为冷战时期太空合作的标志性事件。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1977 年 8 月 20 日、9 月 5 日</h4>
+                                <p>美国先后发射 "旅行者 1 号""旅行者 2 号" 探测器，二者搭载 "地球名片"，旨在探索外太阳系及星际空间，至今仍在向地球传回数据。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1981 年 4 月 12 日</h4>
+                                <p>美国 "哥伦比亚号" 航天飞机发射升空，这是世界上第一架可重复使用的载人航天器，标志着航天运输进入新阶段，其首飞成功实现了航天器的天地往返复用。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1986 年 1 月 28 日</h4>
+                                <p>美国 "挑战者号" 航天飞机在发射升空 73 秒后爆炸，7 名航天员全部遇难，成为航天史上的重大悲剧，促使各国重新审视航天安全标准。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1988 年 11 月 15 日</h4>
+                                <p>苏联 "暴风雪号" 航天飞机完成首次也是唯一一次无人驾驶试飞，成功实现天地往返，其技术设计为后续航天飞机发展提供参考。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1990 年 4 月 24 日</h4>
+                                <p>美国 "哈勃空间望远镜" 由 "发现号" 航天飞机送入太空，它摆脱大气干扰，拍摄到大量高清宇宙影像，极大推动了天文学研究。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1995 年 6 月 29 日</h4>
+                                <p>美国 "亚特兰蒂斯号" 航天飞机与俄罗斯 "和平号" 空间站实现首次对接，开启美俄长期太空合作的序幕。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">1998 年 11 月 20 日</h4>
+                                <p>国际空间站首个舱段 "曙光号" 功能货舱发射升空，后续由美、俄、欧、日等 16 国联合参与建造，成为人类规模最大、持续时间最长的太空合作项目。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">2003 年 10 月 15 日</h4>
+                                <p>中国航天员杨利伟乘坐 "神舟五号" 载人飞船进入太空，绕地球飞行 14 圈后安全返回，中国成为世界上第三个独立掌握载人航天技术的国家。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">2008 年 9 月 25 日</h4>
+                                <p>中国 "神舟七号" 载人飞船发射，航天员翟志刚完成中国首次太空行走，标志着中国掌握了出舱活动关键技术。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">2011 年 5 月 16 日</h4>
+                                <p>美国 "奋进号" 航天飞机完成最后一次飞行任务，同年 7 月 21 日 "亚特兰蒂斯号" 航天飞机退役，美国航天飞机时代正式落幕。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">2012 年 6 月 16 日</h4>
+                                <p>中国 "神舟九号" 载人飞船发射，航天员刘洋成为中国首位女航天员，飞船与 "天宫一号" 目标飞行器实现自动和手动交会对接。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">2016 年 9 月 15 日</h4>
+                                <p>中国 "天宫二号" 空间实验室发射升空，随后与 "神舟十一号" 载人飞船、"天舟一号" 货运飞船完成对接，开展了多项空间科学实验。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">2021 年 10 月 16 日</h4>
+                                <p>中国 "神舟十三号" 载人飞船发射，航天员翟志刚、王亚平、叶光富在太空驻留 6 个月，完成多项科学实验和出舱活动，王亚平成为中国首位进行出舱活动的女航天员。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">2022 年 11 月 29 日</h4>
+                                <p>中国 "神舟十五号" 载人飞船发射，与 "神舟十四号" 乘组在太空实现 "太空会师"，标志着中国空间站建造阶段任务圆满完成。</p>
+                            </div>
+                            
+                            <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                                <h4 class="font-semibold text-planet-earth mb-2">2023 年 5 月 30 日</h4>
+                                <p>中国 "神舟十六号" 载人飞船发射，航天员景海鹏、朱杨柱、桂海潮入驻中国空间站，开展了大量空间科学实验和技术试验。</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 结构与组成 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cubes mr-2 text-planet-earth"></i>
+                        结构与组成
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        地球由多层结构组成，从外到内依次为地壳、地幔和地核。地壳是最薄的外层，平均厚度约为30公里，分为大陆地壳和海洋地壳。地幔是地球体积最大的部分，厚度约2,900公里，由半固态岩石组成。地核分为外核和内核，外核是液态的，内核是固态的，主要由铁和镍组成。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10 mb-4">
+                        <h4 class="font-semibold mb-2">地球层结构</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>地壳: 平均厚度30公里，最薄的外层</li>
+                            <li>上地幔: 约400公里厚，固态岩石</li>
+                            <li>过渡带: 约300公里厚，矿物组成变化</li>
+                            <li>下地幔: 约2,200公里厚，高温高压环境</li>
+                            <li>外核: 约2,300公里厚，液态铁镍</li>
+                            <li>内核: 半径约1,220公里，固态铁镍</li>
+                        </ul>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed">
+                        地球的磁场是由外核中的液态金属流动产生的，这一磁场保护地球免受太阳风的直接冲击，对维持地球上的生命至关重要。
+                    </p>
+                </section>
+                
+                <!-- 大气层与气候 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cloud mr-2 text-planet-earth"></i>
+                        大气层与气候
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        地球的大气层是一个复杂的气体混合物，主要由氮气（78%）和氧气（21%）组成，还有少量的氩气（0.93%）、二氧化碳（0.04%）和其他微量气体。大气层分为多个层次，包括对流层、平流层、中间层、热层和散逸层。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        地球的气候系统受到多种因素的影响，包括太阳辐射、大气成分、海洋环流、地形和生物活动等。当前，人类活动导致的温室气体排放正在改变地球的气候，引起全球变暖和气候变化。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">大气分层</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>对流层: 最接近地面的层，天气现象发生在这里</li>
+                            <li>平流层: 包含臭氧层，吸收大部分紫外线</li>
+                            <li>中间层: 温度随高度降低</li>
+                            <li>热层: 温度随高度升高，包含电离层</li>
+                            <li>散逸层: 最外层，逐渐过渡到太空</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 生命与生物圈 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-leaf mr-2 text-planet-earth"></i>
+                        生命与生物圈
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        地球是目前已知唯一存在生命的行星。生命在地球上至少已经存在了35亿年，从简单的单细胞生物逐渐演化出复杂的多细胞生物，包括植物、动物和真菌等。地球的生物圈是一个复杂的生态系统网络，各种生物之间以及生物与环境之间相互作用、相互依存。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        人类活动对地球的生物圈产生了深远影响。一方面，人类创造了先进的文明和技术；另一方面，人类活动导致了栖息地破坏、生物多样性减少、气候变化等环境问题。保护地球的生态系统和生物多样性已成为全人类面临的重要挑战。
+                    </p>
+                </section>
+                
+                <!-- 月球 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-moon-o mr-2 text-planet-earth"></i>
+                        月球
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        月球是地球唯一的天然卫星，直径约3,474公里，是太阳系中第五大卫星。月球与地球的平均距离约为384,400公里，它的引力对地球产生了潮汐现象，并稳定了地球的自转轴倾角。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        月球的表面布满了陨石坑、山脉和平原。由于没有大气层的保护，月球表面温差极大，白天可达127°C，夜间可降至-173°C。月球没有液态水，但在极地的永久阴影区域可能存在水冰。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        1969年，美国的阿波罗11号任务实现了人类首次登月，尼尔·阿姆斯特朗成为第一个踏上月球表面的人。此后，共有12名宇航员登上过月球。近年来，多国计划重启月球探索，包括建立月球基地和准备载人火星任务。
+                    </p>
+                </section>
+                
+                <!-- 有趣事实 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2 text-planet-earth"></i>
+                        有趣事实
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">蓝色大理石</h4>
+                            <p class="text-gray-300 text-sm">1972年，阿波罗17号宇航员拍摄的"蓝色大理石"照片，展示了地球作为一个整体的美丽景象，成为环保运动的标志性图像。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">地球自转正在减慢</h4>
+                            <p class="text-gray-300 text-sm">由于月球引力的潮汐作用，地球的自转速度正在逐渐减慢，大约每100年，一天的长度增加约2毫秒。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">水的来源</h4>
+                            <p class="text-gray-300 text-sm">地球上的大部分水可能来自于数十亿年前撞击地球的彗星和小行星，这些天体携带着大量的水冰。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">地球并非正球体</h4>
+                            <p class="text-gray-300 text-sm">由于自转的离心力，地球在赤道处略微隆起，是一个扁球体。赤道直径比极直径长约43公里。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-space-light py-8 text-center text-gray-400">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>太阳系八大行星探索 &copy; 2024</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('地球详情页面已加载');
+        });
+        
+        // 添加行星旋转动画
+        const earthOrbit = document.querySelector('.animate-spin-slow');
+        if (earthOrbit) {
+            // 根据地球实际公转速度调整动画
+            earthOrbit.style.animationDuration = '365s';
+        }
+    </script>
+</body>
+</html>

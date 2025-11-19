@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金星 - 太阳系八大行星</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            dark: '#0a0a2a',
+                            light: '#1e1e3f',
+                            purple: '#2d1b69',
+                        },
+                        planet: {
+                            venus: '#e3c4a8',
+                            sun: '#ffcc33',
+                        }
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .planet-detail-glow {
+                box-shadow: 0 0 50px rgba(227, 196, 168, 0.4);
+                animation: glow 4s ease-in-out infinite;
+            }
+            .back-button-hover {
+                transition: all 0.3s ease;
+            }
+            .back-button-hover:hover {
+                transform: translateX(-5px);
+            }
+            @keyframes glow {
+                0%, 100% { box-shadow: 0 0 50px rgba(227, 196, 168, 0.4); }
+                50% { box-shadow: 0 0 60px rgba(227, 196, 168, 0.6); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-space-dark min-h-screen text-white">
+    <!-- 返回按钮 -->
+    <div class="w-full max-w-7xl mx-auto px-4 py-6">
+        <a href="solor.html" class="back-button-hover flex items-center text-gray-300 hover:text-white">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回太阳系</span>
+        </a>
+    </div>
+    
+    <!-- 页面标题 -->
+    <header class="w-full max-w-7xl mx-auto px-4 mb-10 text-center">
+        <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-bold text-white mb-4">金星</h1>
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto">地球的姊妹星，拥有浓厚的大气层和极端的表面温度</p>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main class="w-full max-w-7xl mx-auto px-4 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- 左侧：行星可视化 -->
+            <div class="lg:col-span-1 flex flex-col items-center justify-center">
+                <div class="relative mb-10">
+                    <!-- 金星 -->
+                    <div class="w-48 h-48 md:w-72 md:h-72 bg-planet-venus rounded-full planet-detail-glow"></div>
+                    <!-- 金星云层效果 -->
+                    <div class="absolute inset-0 bg-planet-venus/40 rounded-full blur-md animate-pulse-slow"></div>
+                    <!-- 金星轨道 -->
+                    <div class="absolute inset-0 border-2 border-dashed border-white/20 rounded-full animate-spin-slow" style="animation: rotate 224s linear infinite;"></div>
+                </div>
+                
+                <!-- 快速数据 -->
+                <div class="w-full bg-space-light/50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 text-center">快速数据</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">直径:</span>
+                            <span>12,104 km</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">质量:</span>
+                            <span>4.867 × 10²⁴ kg</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">与太阳距离:</span>
+                            <span>0.72 AU</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">自转周期:</span>
+                            <span>243 地球日（逆行）</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">公转周期:</span>
+                            <span>225 地球日</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">表面温度:</span>
+                            <span>约462°C</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">卫星数量:</span>
+                            <span>0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">大气压:</span>
+                            <span>地球的92倍</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：行星详细信息 -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- 概述 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-info-circle mr-2 text-planet-venus"></i>
+                        概述
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        金星是太阳系中第二颗行星，也是离地球最近的行星邻居。由于其大小、质量和密度与地球相似，金星常被称为地球的"姊妹星"。然而，在其他方面，金星与地球有显著差异。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        金星拥有太阳系中最浓密的大气层，主要由二氧化碳（约96.5%）组成，还有少量的氮气和其他气体。这种厚重大气层产生了极端的温室效应，使金星表面温度高达462°C，比水星表面的最高温度还要高，是太阳系中表面温度最高的行星。
+                    </p>
+                </section>
+                
+                <!-- 探索历史 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-rocket mr-2 text-planet-venus"></i>
+                        探索历史
+                    </h2>
+                    
+                    <!-- 早期探测与初步突破 -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4 text-planet-venus">（一）早期探测与初步突破（1960 年代 - 1970 年代）</h3>
+                        <div class="space-y-4 pl-4">
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1962 年 8 月 27 日：美国发射水手 2 号（Mariner 2）探测器</p>
+                                <p class="text-gray-300">搭载红外辐射计、磁强计等设备；12 月 14 日，探测器从距金星 3500 公里处飞掠，首次成功测量金星大气温度（表面温度约 425℃），证实金星存在强烈温室效应，并发现金星无明显磁场，成为人类首个成功探测金星的航天器。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1967 年 1 月 12 日：苏联发射金星 4 号</p>
+                                <p class="text-gray-300">10 月 18 日成功进入金星大气层，释放着陆舱，首次向地面传回金星大气数据：大气主要成分为二氧化碳（占比 95% 以上）、氮气（约 3%），表面压强约为地球的 90 倍，温度约 470℃，证实金星极端环境；但着陆舱在距表面约 24 公里处因压强过高失效，未实现表面探测。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1967 年 6 月 14 日：美国发射水手 5 号（Mariner 5）</p>
+                                <p class="text-gray-300">10 月 19 日从距金星 4000 公里处飞掠，进一步测量金星大气成分与磁场，确认金星大气中二氧化碳占比超 90%，磁场强度极弱。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1970 年 8 月 17 日：苏联发射金星 7 号</p>
+                                <p class="text-gray-300">12 月 15 日成功在金星表面软着陆（着陆点位于金星夜半球），着陆舱在极端环境下工作 23 分钟，传回首个金星表面实测数据：表面温度 470℃、压强 90 标准大气压，证实金星表面为 "高温高压" 环境，成为人类首个金星表面软着陆探测器。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1975 年 6 月 8 日、14 日：苏联先后发射金星 9 号、10 号</p>
+                                <p class="text-gray-300">10 月 22 日、25 日分别进入金星轨道（近金点 1500 公里、远金点 6600 公里），成为人类首批金星轨道探测器；同时释放着陆舱，成功软着陆后，首次传回金星表面电视图像，清晰显示着陆点周围布满直径 10 米左右的岩石，分辨率达 1 米，证实金星表面为崎岖的岩石地貌，而非此前推测的 "平坦平原"。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 深入探测与全球测绘 -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4 text-planet-venus">（二）深入探测与全球测绘（1970 年代末 - 2000 年代）</h3>
+                        <div class="space-y-4 pl-4">
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1978 年 5 月 20 日、8 月 8 日：美国先后发射先驱者 - 金星 1 号与先驱者 - 金星 2 号</p>
+                                <p class="text-gray-300 mt-2">先驱者 - 金星 1 号于 12 月 4 日进入金星轨道，开展为期 244 天的探测，通过雷达高度计测绘 93% 的金星表面地形，发现金星表面存在巨大火山（如玛亚特山，高度约 8 公里）与峡谷；同时观测到金星高层大气存在电离层扰动，证实太阳风与金星大气存在相互作用。</p>
+                                <p class="text-gray-300 mt-2">先驱者 - 金星 2 号于 12 月 9 日飞掠金星，释放 4 个小型着陆舱，分别探测不同纬度的大气结构，发现金星云层由硫酸雾组成（浓度随高度变化），且大气中存在 "闪电" 现象。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1981 年 10 月 30 日、11 月 4 日：苏联金星 13 号、14 号探测器发射</p>
+                                <p class="text-gray-300">1982 年 3 月 1 日、5 日分别在金星表面软着陆，着陆舱携带自动钻探装置，首次成功采集金星地表岩石标本（钻探深度约 20 厘米），分析显示岩石为玄武岩类型，暗示金星历史上存在火山活动；同时传回金星表面彩色照片，显示表面呈橙黄色（受大气散射影响），工作时间分别达 127 分钟、57 分钟，创当时金星表面探测时长纪录。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1983 年 6 月 2 日、7 日：苏联金星 15 号、16 号发射</p>
+                                <p class="text-gray-300">10 月 10 日、14 日进入金星轨道，搭载雷达高度计与合成孔径雷达，对金星北纬 30° 以北约 25% 的表面进行高精度测绘（分辨率约 1-2 公里），发现金星表面存在大量熔岩流、火山锥及断层结构，绘制首张金星北极区域地形图。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1989 年 5 月 4 日：美国 "亚特兰蒂斯号" 航天飞机发射麦哲伦号（Magellan）金星探测器</p>
+                                <p class="text-gray-300">重 3365 千克，搭载先进合成孔径雷达（分辨率达 100 米，为此前设备的 10 倍），5 月 5 日探测器脱离航天飞机，开启为期 15 个月的星际飞行。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1990 年 8 月 10 日：麦哲伦号成功进入金星轨道</p>
+                                <p class="text-gray-300">近金点 294 公里、远金点 8500 公里，周期 3.3 小时，8 月 16 日完成首次试验性雷达测绘，传回首张金星表面图像（显示 40 公里 ×80 公里的熔岩平原）。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">1990-1994 年：麦哲伦号开展多轮全球测绘</p>
+                                <p class="text-gray-300">累计覆盖金星表面 98% 区域，取得重大突破：发现金星表面存在直径超 1000 公里的巨型火山（如奥索拉火山）、长度达 6400 公里的峡谷（巴尔提斯峡谷）及数千个火山口；证实金星近期（约几百万年内）可能存在火山活动（如熔岩流新鲜痕迹）；测得金星表面温度范围 280℃-540℃，无液态水，大气成分 96% 为二氧化碳；1994 年 10 月 12 日，为获取金星大气阻力数据，NASA 操控麦哲伦号降低轨道，最终坠入金星大气，任务结束，其雷达数据成为后续金星地质研究的基础资料。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">2005 年 11 月 9 日：欧洲航天局发射金星快车号（Venus Express）探测器</p>
+                                <p class="text-gray-300">2006 年 4 月 11 日进入金星轨道，搭载光谱仪、磁强计等设备，重点研究金星大气环流与气候变化：发现金星南极存在巨型 "双涡旋" 大气结构（直径约 2000 公里）；观测到金星大气中存在微量磷化氢（2020 年后续研究进一步证实）；证实金星大气存在 "超级旋转" 现象（高层大气风速是表面自转速度的 60 倍）；2014 年 11 月，因燃料耗尽，探测器坠入金星大气，任务持续 8 年，为金星大气动力学研究提供关键数据。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 现代探测与生命探索 -->
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-planet-venus">（三）现代探测与生命探索（2020 年代 - 至今）</h3>
+                        <div class="space-y-4 pl-4">
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">2020 年 9 月 14 日：国际团队在《自然・天文学》发表研究</p>
+                                <p class="text-gray-300">通过夏威夷凯克望远镜与智利阿塔卡马大型毫米波 / 亚毫米波阵列（ALMA），在金星大气 50-60 公里高度（温度约 30℃-70℃，压强接近地球）检测到磷化氢（浓度约 20ppb），磷化氢在地球环境中主要由生物活动产生，这一发现引发 "金星大气可能存在微生物" 的推测，但尚未排除非生物成因（如地质活动），成为金星探测的新热点。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">2021 年 6 月 2 日：美国 NASA 宣布批准两项金星探测任务</p>
+                                <p class="text-gray-300 mt-2">DAVINCI+（深层大气金星调查、noble 气体与化学成像任务）与 VERITAS（金星发射率、无线电科学、InSAR、地形与光谱任务），计划于 2028-2030 年发射，每项预算约 5 亿美元。</p>
+                                <p class="text-gray-300 mt-2">DAVINCI+：将释放探测器进入金星大气层，从 100 公里高度降至表面，全程测量大气成分（重点检测磷化氢、氧气等），拍摄大气分层图像，研究金星大气演化。</p>
+                                <p class="text-gray-300 mt-2">VERITAS：搭载合成孔径雷达与光谱仪，绘制金星表面高精度地形图（分辨率达 30 米），分析表面矿物成分，探索金星是否曾存在液态水及地质活动历史。</p>
+                            </div>
+                            <div class="border-l-2 border-planet-venus/50 pl-4">
+                                <p class="text-white font-medium">2025 年（现状）</p>
+                                <p class="text-gray-300">DAVINCI+与 VERITAS 任务处于研制阶段，同时俄罗斯、中国等也在规划金星探测项目，聚焦大气探测与表面地质研究，旨在解开金星 "从宜居到极端环境" 的演化之谜。</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 大气层与气候 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cloud mr-2 text-planet-venus"></i>
+                        大气层与气候
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        金星的大气层非常厚重，大气压约为地球的92倍，相当于地球海洋900米深处的压力。大气层主要由二氧化碳组成，还有浓硫酸云层，这些云层反射了大部分阳光，使金星成为太阳系中最亮的行星之一。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        金星上的风速极高，在云层顶部可达每小时360公里，远快于金星的自转速度。这种现象被称为"超旋转"，科学家认为这可能是由于大气与金星表面的摩擦力极小造成的。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">大气成分</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>二氧化碳: 96.5%</li>
+                            <li>氮气: 3.5%</li>
+                            <li>二氧化硫: 约0.015%</li>
+                            <li>水蒸气: 约0.002%</li>
+                            <li>其他微量气体: 氩、氦、一氧化碳等</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 表面特征 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-globe mr-2 text-planet-venus"></i>
+                        表面特征
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        由于浓厚云层的遮挡，科学家无法通过光学望远镜直接观测金星表面。直到20世纪60年代，通过雷达技术才开始绘制金星表面地图。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        金星表面主要由火山平原组成，点缀着高山和低洼区域。金星拥有大量火山，是太阳系中火山最活跃的行星之一。最大的高原区域被称为"伊什塔尔高地"（Ishtar Terra），面积相当于澳大利亚，其中包含太阳系中最高的山峰之一——麦克斯韦山脉（Maxwell Montes），高达11公里。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        与地球不同，金星没有板块构造的证据。科学家认为，金星可能经历周期性的全球火山活动，重塑其表面。
+                    </p>
+                </section>
+                
+                <!-- 有趣事实 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2 text-planet-venus"></i>
+                        有趣事实
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">逆向自转</h4>
+                            <p class="text-gray-300 text-sm">金星是少数几个逆向自转的行星之一，也就是说，它的自转方向与大多数行星相反，与公转方向也相反。在金星上，太阳会从西边升起，东边落下。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">一年比一天短</h4>
+                            <p class="text-gray-300 text-sm">金星的自转周期（一天）为243地球日，而公转周期（一年）为225地球日。这意味着在金星上，一年比一天还要短！</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">启明星与长庚星</h4>
+                            <p class="text-gray-300 text-sm">由于金星亮度极高，在地球上，它有时出现在黎明前的东方，称为"启明星"；有时出现在黄昏后的西方，称为"长庚星"。实际上，这是同一颗行星在不同时间的表现。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">无磁场</h4>
+                            <p class="text-gray-300 text-sm">尽管金星有金属核心，但它没有明显的全球性磁场。科学家认为这可能是因为金星的自转速度太慢，无法产生发电机效应。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-space-light py-8 text-center text-gray-400">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>太阳系八大行星探索 &copy; 2024</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('金星详情页面已加载');
+        });
+        
+        // 添加行星旋转动画
+        const venusOrbit = document.querySelector('.animate-spin-slow');
+        if (venusOrbit) {
+            // 根据金星实际公转速度调整动画
+            venusOrbit.style.animationDuration = '224s';
+        }
+    </script>
+</body>
+</html>

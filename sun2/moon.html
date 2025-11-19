@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>月球 - 地球的天然卫星</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            dark: '#0a0a2a',
+                            light: '#1e1e3f',
+                            purple: '#2d1b69',
+                        },
+                        planet: {
+                            moon: '#d4d4d4',
+                            earth: '#4287f5',
+                            sun: '#ffcc33',
+                        }
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .planet-detail-glow {
+                box-shadow: 0 0 50px rgba(212, 212, 212, 0.4);
+                animation: glow 4s ease-in-out infinite;
+            }
+            .back-button-hover {
+                transition: all 0.3s ease;
+            }
+            .back-button-hover:hover {
+                transform: translateX(-5px);
+            }
+            @keyframes glow {
+                0%, 100% { box-shadow: 0 0 50px rgba(212, 212, 212, 0.4); }
+                50% { box-shadow: 0 0 60px rgba(212, 212, 212, 0.6); }
+            }
+            .moon-surface {
+                background: radial-gradient(circle, #d4d4d4 0%, #a0a0a0 100%);
+                position: relative;
+                overflow: hidden;
+            }
+            .moon-crater {
+                position: absolute;
+                border-radius: 50%;
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-space-dark min-h-screen text-white">
+    <!-- 返回按钮 -->
+    <div class="w-full max-w-7xl mx-auto px-4 py-6">
+        <a href="solor.html" class="back-button-hover flex items-center text-gray-300 hover:text-white">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回太阳系</span>
+        </a>
+    </div>
+    
+    <!-- 页面标题 -->
+    <header class="w-full max-w-7xl mx-auto px-4 mb-10 text-center">
+        <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-bold text-white mb-4">月球</h1>
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto">地球唯一的天然卫星，人类探索太空的第一个目标</p>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main class="w-full max-w-7xl mx-auto px-4 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- 左侧：月球可视化 -->
+            <div class="lg:col-span-1 flex flex-col items-center justify-center">
+                <div class="relative mb-10">
+                    <!-- 月球 -->
+                    <div class="w-40 h-40 md:w-64 md:h-64 moon-surface rounded-full planet-detail-glow">
+                        <!-- 月球表面陨石坑 -->
+                        <div class="moon-crater w-10 h-10 md:w-16 md:h-16 top-1/4 left-1/4"></div>
+                        <div class="moon-crater w-6 h-6 md:w-10 md:h-10 top-1/2 left-1/3"></div>
+                        <div class="moon-crater w-8 h-8 md:w-12 md:h-12 bottom-1/4 right-1/4"></div>
+                        <div class="moon-crater w-4 h-4 md:w-8 md:h-8 top-1/3 right-1/3"></div>
+                        <div class="moon-crater w-6 h-6 md:w-10 md:h-10 bottom-1/3 left-1/4"></div>
+                    </div>
+                    <!-- 月球轨道 -->
+                    <div class="absolute inset-0 border-2 border-dashed border-white/20 rounded-full animate-spin-slow" style="animation: rotate 20s linear infinite;"></div>
+                </div>
+                
+                <!-- 快速数据 -->
+                <div class="w-full bg-space-light/50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 text-center">快速数据</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">直径:</span>
+                            <span>3,474 km</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">质量:</span>
+                            <span>7.342 × 10²² kg</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">与地球距离:</span>
+                            <span>384,400 km</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">自转周期:</span>
+                            <span>27.3 地球日</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">公转周期:</span>
+                            <span>27.3 地球日</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">表面温度:</span>
+                            <span>-173°C 至 127°C</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">重力:</span>
+                            <span>地球的 1/6</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：月球详细信息 -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- 概述 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-info-circle mr-2 text-planet-moon"></i>
+                        概述
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        月球是地球唯一的天然卫星，也是太阳系中第五大的卫星。它的直径约为地球的四分之一，质量约为地球的八十一分之一。月球与地球之间的引力相互作用导致了地球上的潮汐现象。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        月球没有大气层，因此表面温差极大，白天阳光直射处温度可达127°C，而夜晚温度可降至-173°C。月球的自转周期与公转周期相同，均为27.3天，这导致它始终以同一面朝向地球。
+                    </p>
+                </section>
+                
+                <!-- 探索历史 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-rocket mr-2 text-planet-moon"></i>
+                        探索历史
+                    </h2>
+                    <div class="space-y-6">
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">1959年1月2日</h4>
+                            <p class="text-gray-200">苏联的月球一号成为首个摆脱地球引力场的航天器</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">1959年1月4日</h4>
+                            <p class="text-gray-200">月球一号从5995千米外掠过月球</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">1959年9月14日</h4>
+                            <p class="text-gray-200">苏联的月球二号成为首次在月球硬着陆的探测器</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">1959年10月7日</h4>
+                            <p class="text-gray-200">月球三号使人类首次看到月背</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">1966年2月3日</h4>
+                            <p class="text-gray-200">苏联月球9号在月球软着陆，成为首个在月球软着陆的飞行器</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">1966年</h4>
+                            <p class="text-gray-200">月球10号在近月点为350km，远月点为1000km的椭圆形轨道上绕月球飞行了460圈，5月30日着陆后发回首批144张照片</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">1967年1月27日</h4>
+                            <p class="text-gray-200">美国"阿波罗"4A飞船在发射台上进行登月飞船的地面试验，飞船内载的航天员的座舱突然爆炸，三名航天员当即烧死</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">1969年7月16日 - 24日</h4>
+                            <p class="text-gray-200">美国"阿波罗11号"载人飞船发射升空，尼尔・阿姆斯特朗、巴兹・奥尔德林成为首批踏上月球的人类，阿姆斯特朗留下"这是个人的一小步，却是人类的一大步"的经典名言，完成人类首次载人登月任务</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">2013年12月2日</h4>
+                            <p class="text-gray-200">中国"嫦娥三号"探测器发射，12月14日成功在月球虹湾软着陆，"玉兔号"月球车踏上月球表面，实现中国首次地外天体软着陆和巡视探测</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">2019年1月3日</h4>
+                            <p class="text-gray-200">中国"嫦娥四号"探测器搭载"玉兔二号"月球车，在月球南极-艾特肯盆地冯・卡门撞击坑成功软着陆，完成人类史上首次月球背面软着陆与巡视探测。此次任务突破三大核心难题：一是通过2018年5月发射的"鹊桥"中继星搭建通信链路，其运行于地月L2点Halo晕轨道，可同时"看见"地球与月背，实现7.9万公里远距离中继通信，将美国科学家上世纪60年代的设想变为现实；二是着陆器采用7500N变推力发动机，在距月面100米处悬停避障，精准着陆于古老撞击坑底部；三是"玉兔二号"月球车搭载测月雷达、中性原子探测仪等8台载荷（含2台国际合作设备），截至2025年仍持续工作，累计行走超1500米。任务首日便通过"鹊桥"传回世界首张月背近距离影像图，并于2020年揭示月背地下40米内三层地质结构：表层为撞击溅射风化的细粒月壤，中层含大量碎石堆，深层为古老溅射物沉积，推测40米以下存在完整月海玄武岩，深化了人类对月球撞击与火山活动的认知</p>
+                        </div>
+                        
+                        <div class="bg-space-dark/40 p-4 rounded-lg border border-planet-moon/30">
+                            <h4 class="font-bold text-planet-moon mb-2">2020年11月24日</h4>
+                            <p class="text-gray-200">中国长征五号遥五运载火箭发射"嫦娥五号"探测器，12月17日返回器携带1731克月壤样品在内蒙古着陆，完成中国首次地外天体采样返回任务，标志着探月工程"绕、落、回"三步走战略圆满收官</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 表面特征 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-globe mr-2 text-planet-moon"></i>
+                        表面特征
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        月球表面主要分为两大类地形：月海和高地。月海是相对平坦的暗色区域，主要由玄武岩构成；高地则是明亮的崎岖区域，主要由斜长岩构成。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        月球表面布满了陨石坑，这是由于数十亿年来小天体撞击形成的。最大的陨石坑是南极-艾特肯盆地，直径约2,500公里，深约13公里。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">主要表面特征</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>月海 - 相对平坦的暗色玄武岩平原</li>
+                            <li>高地 - 明亮的崎岖区域</li>
+                            <li>陨石坑 - 由小天体撞击形成</li>
+                            <li>月溪 - 长而窄的山谷</li>
+                            <li>月丘 - 圆形的小山丘</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 月球形成 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cogs mr-2 text-planet-moon"></i>
+                        月球形成
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        目前最被广泛接受的月球形成理论是"大碰撞假说"。该理论认为，大约45亿年前，一个火星大小的天体（被称为忒伊亚）与早期的地球发生了巨大碰撞。碰撞产生的碎片最终聚集形成了月球。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        这一理论解释了月球的许多特征，包括它相对于地球的大小、密度较低（缺少重金属核心）、与地球相似的同位素组成，以及月球的轨道特性等。
+                    </p>
+                </section>
+                
+                <!-- 有趣事实 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2 text-planet-moon"></i>
+                        有趣事实
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">潮汐锁定</h4>
+                            <p class="text-gray-300 text-sm">由于潮汐锁定，月球始终以同一面朝向地球。我们在地球上永远只能看到月球的正面。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">月球正在远离</h4>
+                            <p class="text-gray-300 text-sm">由于潮汐相互作用，月球每年以约3.8厘米的速度远离地球。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">月震</h4>
+                            <p class="text-gray-300 text-sm">阿波罗任务在月球上放置了地震仪，发现月球会发生月震，可能是由于地球引力或陨石撞击引起的。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">永久阴影区</h4>
+                            <p class="text-gray-300 text-sm">月球两极的一些陨石坑底部永久处于阴影中，这些区域可能存在水冰。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- JavaScript -->
+    <script>
+        // 为月球添加一些简单的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const moon = document.querySelector('.moon-surface');
+            
+            // 随机生成更多陨石坑
+            for (let i = 0; i < 15; i++) {
+                const crater = document.createElement('div');
+                crater.className = 'moon-crater';
+                const size = Math.random() * 6 + 2;
+                crater.style.width = `${size}px`;
+                crater.style.height = `${size}px`;
+                crater.style.top = `${Math.random() * 100}%`;
+                crater.style.left = `${Math.random() * 100}%`;
+                moon.appendChild(crater);
+            }
+        });
+    </script>
+</body>
+</html>

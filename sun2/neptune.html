@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海王星 - 太阳系八大行星</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            dark: '#0a0a2a',
+                            light: '#1e1e3f',
+                            purple: '#2d1b69',
+                        },
+                        planet: {
+                            neptune: '#0077be',
+                            neptune_dark: '#005a8c',
+                            neptune_light: '#0099e6',
+                            neptune_spot: '#202040',
+                            sun: '#ffcc33',
+                        }
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .planet-detail-glow {
+                box-shadow: 0 0 50px rgba(106, 170, 255, 0.3);
+            }
+            .neptune-rotation {
+                animation: neptune-rotate 30s linear infinite;
+            }
+            .neptune-stripe {
+                animation: stripe-move 20s ease-in-out infinite;
+            }
+            .neptune-glow {
+                animation: glow-pulse 5s ease-in-out infinite;
+            }
+            .neptune-ring {
+                animation: ring-rotate 45s linear infinite;
+            }
+            .neptune-moon {
+                animation: moon-orbit 35s linear infinite;
+            }
+            
+            /* 海王星CSS模型样式 */
+            .neptune-model {
+                position: relative;
+                width: 300px;
+                height: 300px;
+                margin: 0 auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .neptune-body {
+                position: relative;
+                width: 160px;
+                height: 160px;
+                border-radius: 50%;
+                background: radial-gradient(circle, #0069ff 0%, #0038b8 100%);
+                box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.2);
+                overflow: hidden;
+            }
+            
+            .neptune-body::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg, 
+                    transparent 0%, 
+                    rgba(255, 255, 255, 0.1) 10%, 
+                    rgba(255, 255, 255, 0.15) 50%, 
+                    rgba(255, 255, 255, 0.1) 90%, 
+                    transparent 100%);
+                opacity: 0.3;
+                animation: cloud-drift 35s linear infinite;
+            }
+            
+            .neptune-stripe {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: repeating-linear-gradient(
+                    90deg, 
+                    transparent 0%, 
+                    rgba(100, 150, 255, 0.2) 10%, 
+                    transparent 20%
+                );
+                opacity: 0.4;
+                transform: translateY(0);
+            }
+            
+            .neptune-dark-spot {
+                position: absolute;
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                background: radial-gradient(circle, #0038b8 0%, #002266 100%);
+                top: 30%;
+                left: 20%;
+                filter: blur(2px);
+            }
+            
+            .neptune-rings {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .neptune-ring {
+                position: absolute;
+                width: 200px;
+                height: 40px;
+                border-radius: 50%;
+                background: linear-gradient(90deg, 
+                    transparent 0%, 
+                    rgba(100, 150, 255, 0.2) 20%, 
+                    rgba(100, 150, 255, 0.3) 50%, 
+                    rgba(100, 150, 255, 0.2) 80%, 
+                    transparent 100%);
+                box-shadow: 0 0 20px rgba(100, 150, 255, 0.3);
+                transform: rotate(-20deg);
+            }
+            
+            .neptune-ring-inner {
+                width: 180px;
+                height: 30px;
+                opacity: 0.5;
+            }
+            
+            .neptune-moon {
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+                left: 50%;
+                top: 50%;
+                transform-origin: 120px 0;
+            }
+            
+            @keyframes neptune-rotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            
+            @keyframes stripe-move {
+                0%, 100% { transform: translateY(-10%); }
+                50% { transform: translateY(10%); }
+            }
+            
+            @keyframes cloud-drift {
+                from { transform: translateX(-100%); }
+                to { transform: translateX(100%); }
+            }
+            
+            @keyframes glow-pulse {
+                0%, 100% { opacity: 0.3; }
+                50% { opacity: 0.5; }
+            }
+            
+            @keyframes ring-rotate {
+                from { transform: rotate(-20deg); }
+                to { transform: rotate(340deg); }
+            }
+            
+            @keyframes moon-orbit {
+                from { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+                to { transform: rotate(-360deg) translateX(120px) rotate(360deg); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-space-dark min-h-screen text-white">
+    <!-- 返回按钮 -->
+    <div class="w-full max-w-7xl mx-auto px-4 py-6">
+        <a href="solor.html" class="back-button-hover flex items-center text-gray-300 hover:text-white">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回太阳系</span>
+        </a>
+    </div>
+    
+    <!-- 页面标题 -->
+    <header class="w-full max-w-7xl mx-auto px-4 mb-10 text-center">
+        <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-bold text-white mb-4">海王星</h1>
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto">太阳系中风速最快的冰巨行星</p>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main class="w-full max-w-7xl mx-auto px-4 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- 左侧：行星可视化 -->
+            <div class="lg:col-span-1 flex flex-col items-center justify-center">
+                <!-- 海王星CSS模型 -->
+                <div class="neptune-model neptune-rotation mb-10">
+                    <!-- 海王星本体 -->
+                    <div class="neptune-body">
+                        <!-- 云带效果 -->
+                        <div class="neptune-stripe"></div>
+                        <!-- 大暗斑 -->
+                        <div class="neptune-dark-spot"></div>
+                    </div>
+                    
+                    <!-- 环系统 -->
+                    <div class="neptune-rings">
+                        <div class="neptune-ring"></div>
+                        <div class="neptune-ring neptune-ring-inner"></div>
+                    </div>
+                    
+                    <!-- 卫星 -->
+                    <div class="neptune-moon"></div>
+                </div>
+                
+                <!-- 快速数据 -->
+                <div class="w-full bg-space-light/50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 text-center">快速数据</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">直径:</span>
+                            <span>49,244 km</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">质量:</span>
+                            <span>1.024 × 10²⁶ kg</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">与太阳距离:</span>
+                            <span>30.1 AU</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">自转周期:</span>
+                            <span>16小时6分钟</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">公转周期:</span>
+                            <span>164.79 地球年</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">平均表面温度:</span>
+                            <span>约-218°C</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">卫星数量:</span>
+                            <span>已知14颗</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">最大风速:</span>
+                            <span>可达2100 km/h</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">大气成分:</span>
+                            <span>氢80%, 氦19%, 甲烷1.5%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：行星详细信息 -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- 概述 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-info-circle mr-2 text-planet-neptune"></i>
+                        概述
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海王星是太阳系中第八颗行星，也是距离太阳最远的行星。它是一颗冰巨行星，体积约为地球的57倍，质量约为地球的17倍。海王星以其独特的深蓝色外观和剧烈的大气活动而闻名，特别是其著名的"大暗斑"和太阳系中最快的风速。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        有趣的是，海王星的存在最初是通过数学预测而非直接观测发现的。1846年，法国天文学家勒维耶通过分析天王星轨道的异常，预测了一颗未知行星的存在，随后德国天文学家伽勒根据这一预测成功观测到了海王星。这一发现被认为是19世纪天文学的重要成就。
+                    </p>
+                </section>
+
+                <!-- 探索历史 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-rocket mr-2 text-planet-neptune"></i>
+                        探索历史
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>1846年9月23日</strong>：法国天文学家奥本·勒维耶通过数学计算（基于天王星轨道偏差）预测海王星的位置，德国天文学家约翰·伽勒根据其计算结果，在柏林天文台首次观测到海王星，成为人类历史上"通过数学预测发现的行星"，将太阳系已知行星数量增至8颗。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>1846年10月10日</strong>：英国天文学家威廉·拉塞尔发现海王星最大卫星海卫一（Triton），后续观测确认海卫一逆向公转（与海王星自转方向相反），推测其可能是被海王星捕获的柯伊伯带天体。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>1983年</strong>：美国"先驱者10号"探测器穿越海王星轨道，成为首个飞出太阳系行星轨道范围的人造天体，但其未对海王星进行针对性探测，继续向金牛座方向飞行（预计约200万年后抵达金牛座的毕宿五恒星附近）。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>1984年</strong>：天文学家通过地面望远镜观测，首次发现海王星存在环系统的证据（基于恒星掩星现象，即海王星遮挡恒星时，星光出现周期性减弱，暗示环的存在）。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>1989年8月25日</strong>：美国"旅行者2号"探测器完成人类唯一一次海王星近距离飞掠，距离海王星北极约4800公里，首次确认海王星环系统（由5条主环组成，其中"亚当斯环"存在明显的弧状结构），发现海王星大气中的"大黑斑"（类似木星大红斑的巨型风暴，直径约1.3万公里），测量出海王星的风速达2100公里/小时（太阳系最强风），并发现6颗新卫星（使已知卫星数量增至8颗）。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>2002年</strong>：天文学家通过改进的地面观测技术（如凯克望远镜自适应光学系统），发现海王星的4颗新卫星（拉奥、内索、萨奥、哈利米德），截至2025年，海王星已知卫星数量达14颗。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>2003年</strong>：通过地面望远镜观测，发现海王星的第11颗卫星普萨玛忒（Psamathe）。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>2005年</strong>：科学家利用凯克天文台观测海王星外环，发现部分环弧结构已逐渐消散，为研究环的稳定性提供数据。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>2011年7月12日</strong>：海王星完成自1846年被发现后的首个完整公转周期（约165年），天文学家通过长期观测，确认其公转轨道与理论计算完全吻合。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>2013年</strong>：科学家通过分析哈勃空间望远镜的存档图像，发现海王星的第14颗卫星（暂命名S/2004 N 1），这是目前已知最小的海王星卫星（直径约16公里）。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>2016年</strong>：哈勃空间望远镜发现海王星大气中出现新的"暗斑"，这是21世纪首次观测到海王星大气的新涡旋结构，暗示其大气活动比预期更活跃。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        <strong>2022年9月</strong>：美国詹姆斯·韦伯空间望远镜（JWST）拍摄首张海王星图像，捕捉到海王星环系统的最清晰视图（比"旅行者2号"1989年的观测更详细），并观测到海王星大气中的甲烷云分布。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        <strong>2025年（现状）</strong>：目前尚无确认的未来海王星探测任务，但NASA、ESA及中国航天（CNSA）均提出过探测方案（如"海王星轨道器与探测器"任务），计划研究海王星的内部结构、磁场起源及海卫一的地质活动（如海卫一的冰火山），尚未进入实施阶段。
+                    </p>
+                </section>
+
+                <!-- 结构与成分 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cubes mr-2 text-planet-neptune"></i>
+                        结构与成分
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海王星是太阳系中第四大行星，但质量却是第三大。与天王星类似，海王星也被归类为冰巨行星，其内部结构与气态巨行星（木星和土星）有所不同。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海王星的内部结构可以分为三个主要部分：最外层是大气层，主要由氢（80%）、氦（19%）和少量甲烷（1.5%）组成；中间是液态冰幔，主要由水、氨和甲烷组成，这些物质在高压下呈现为超临界流体状态；最内层是一个由岩石和金属组成的核心，大小约为地球的1.2倍，质量约为地球的1.5倍。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        与天王星相比，海王星拥有更活跃的内部热量输出，这可能解释了为什么海王星的大气活动比天王星更加剧烈。海王星的内部热源导致其表面温度实际上比预期的更高，尽管它距离太阳非常遥远。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10 mt-4">
+                        <h4 class="font-semibold mb-2">海王星分层结构</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>大气层 - 氢、氦和甲烷</li>
+                            <li>液态冰幔 - 高压下的水、氨和甲烷</li>
+                            <li>核心 - 岩石和金属</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 大气层与天气 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cloud mr-2 text-planet-neptune"></i>
+                        大气层与天气
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海王星拥有太阳系中最活跃和最极端的天气系统之一。尽管距离太阳非常遥远，海王星的大气却异常活跃，这可能是由于其内部热量输出提供了能量。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海王星最显著的特征之一是其惊人的风速。在其赤道区域，风速可达每小时2100公里（约1300英里），是地球上最强飓风风速的5倍以上，也是太阳系中风速最快的地区。这些极端风速可能与海王星内部热量驱动的大气对流以及其快速的自转有关。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海王星的大气主要由氢（80%）、氦（19%）和少量甲烷（1.5%）组成。与天王星类似，海王星的蓝色外观是由于其大气中的甲烷吸收了红光而散射蓝光导致的。不过，海王星的蓝色比天王星更深，可能是因为其大气中含有更多的未知成分。
+                    </p>
+                    <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">极端天气现象</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>大暗斑 - 类似木星大红斑的巨大风暴系统</li>
+                            <li>小黑斑 - 较小的风暴系统</li>
+                            <li>明亮的白云 - 可能由甲烷冰晶组成</li>
+                            <li>极区云层 - 与季节变化相关的大气现象</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 大暗斑 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-tint mr-2 text-planet-neptune"></i>
+                        大暗斑
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        大暗斑（Great Dark Spot）是海王星上最著名的特征之一，是一个巨大的反气旋风暴系统。这个特征最初是在1989年由旅行者2号飞掠海王星时发现的。大暗斑的大小约为地球的两倍，风速可达每小时2100公里，是太阳系中已知最快的风速。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        有趣的是，当哈勃太空望远镜在1994年再次观测海王星时，发现原来的大暗斑已经消失，同时在海王星的另一侧出现了一个新的暗斑。这表明海王星的大气活动非常活跃，风暴系统的形成和消失周期相对较短。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        与木星的大红斑不同，海王星的大暗斑似乎没有那么稳定，其存在周期可能只有几年或几十年。科学家们认为，这可能与海王星较冷的大气环境以及缺乏木星那样稳定的内部热量源有关。
+                    </p>
+                </section>
+                
+                <!-- 环系统 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-circle-o mr-2 text-planet-neptune"></i>
+                        环系统
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海王星拥有5个已知的环，分别被命名为加勒环（Galle）、勒维耶环（Le Verrier）、拉塞尔环（Lassell）、阿拉戈环（Arago）和亚当斯环（Adams）。这些环相对暗淡，主要由尘埃和较大的岩石碎片组成。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海王星的环系统是在1984年通过掩星观测发现的，后来在1989年旅行者2号飞掠时得到了确认。与土星环不同，海王星的环非常窄，且分布不均，其中亚当斯环具有"弧"结构，即由多个明亮的弧段组成，而不是连续的环。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        科学家们认为，海王星的环可能是由被潮汐力撕裂的卫星或未能聚集成卫星的碎片形成的。环中的弧结构可能是由附近的卫星（如伽勒卫星）的引力共振维持的。与天王星类似，海王星的环系统也相对年轻，可能只有几亿年的历史。
+                    </p>
+                </section>
+                
+                <!-- 卫星系统 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-moon-o mr-2 text-planet-neptune"></i>
+                        卫星系统
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海王星拥有14颗已知的卫星，这些卫星的命名都来自希腊神话中海神波塞冬（罗马神话中的尼普顿）相关的人物。其中最大的卫星是海卫一（Triton），它是太阳系中第七大卫星，直径约2,700公里。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海卫一具有许多独特的特征。首先，它是太阳系中唯一一颗逆行轨道的大卫星，即其公转方向与海王星的自转方向相反。这一特征表明海卫一可能不是在海王星形成时与其一起形成的，而是后来被海王星捕获的柯伊伯带天体。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        海卫一表面温度极低，约为-235°C，是太阳系中表面温度最低的天体之一。尽管如此，旅行者2号观测到海卫一上存在活跃的间歇泉，这些间歇泉喷出的物质主要是氮冰和尘埃，高度可达8公里。这表明海卫一内部可能仍然有热量活动。
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">海卫一（Triton）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>直径约2,700公里</li>
+                                <li>太阳系中唯一逆行轨道的大卫星</li>
+                                <li>表面温度约-235°C</li>
+                                <li>存在活跃的氮间歇泉</li>
+                                <li>表面覆盖着氮冰和甲烷冰</li>
+                                <li>地质年龄相对年轻，有很少的陨石坑</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">其他主要卫星</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>海卫二（Nereid）- 高度椭圆轨道</li>
+                                <li>海卫三（Naiad）- 最小的内部卫星</li>
+                                <li>海卫四（Thalassa）- 靠近海王星的卫星</li>
+                                <li>海卫五（Despina）- 轨道位于勒维耶环内</li>
+                                <li>海卫六（Galatea）- 与亚当斯环的弧共振</li>
+                                <li>海卫七（Larissa）- 不规则形状的卫星</li>
+                                <li>海卫八（Proteus）- 形状接近球形的卫星</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 有趣事实 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2 text-planet-neptune"></i>
+                        有趣事实
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">数学预测的行星</h4>
+                            <p class="text-gray-300 text-sm">海王星是唯一一颗通过数学预测而非直接观测发现的行星。这一发现验证了牛顿万有引力定律的正确性，也展示了理论天文学的威力。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">太阳系中风速最快</h4>
+                            <p class="text-gray-300 text-sm">海王星的风速可达每小时2100公里，是地球上最强飓风风速的5倍以上，也是太阳系中风速最快的地区。这些极端风速可能与海王星内部热量驱动的大气对流有关。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">海卫一的逆行轨道</h4>
+                            <p class="text-gray-300 text-sm">海卫一是太阳系中唯一一颗有逆行轨道的大卫星。这一特征表明海卫一可能原本是一颗柯伊伯带天体，后来被海王星捕获。随着时间推移，海卫一的轨道将逐渐缩小，最终可能被海王星的潮汐力撕裂。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">甲烷导致的蓝色</h4>
+                            <p class="text-gray-300 text-sm">海王星的蓝色外观是由于其大气中的甲烷吸收了红光而散射蓝光导致的。海王星的蓝色比天王星更深，可能是因为其大气中含有更多的未知成分，这些成分可能吸收了更多的红光。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">极短的季节变化</h4>
+                            <p class="text-gray-300 text-sm">由于海王星的公转周期长达164.79地球年，其每个季节持续约41地球年。自1846年发现以来，海王星还没有完成一个完整的公转周期。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">活跃的内部热量</h4>
+                            <p class="text-gray-300 text-sm">尽管距离太阳非常遥远，海王星却散发着比它从太阳接收的能量更多的热量。这表明海王星内部有某种内部热量源，可能是剩余的形成热量或放射性元素衰变产生的热量。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-space-light py-8 text-center text-gray-400">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>太阳系八大行星探索 &copy; 2024</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('海王星详情页面已加载');
+        });
+        
+        // 添加行星旋转动画
+        const neptuneOrbit = document.querySelector('.animate-spin-slow');
+        if (neptuneOrbit) {
+            // 根据海王星实际公转速度调整动画
+            neptuneOrbit.style.animationDuration = '60190s';
+        }
+    </script>
+</body>
+</html>

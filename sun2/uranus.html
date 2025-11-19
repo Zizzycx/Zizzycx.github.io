@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天王星 - 太阳系八大行星</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'space-dark': '#0a0a2a',
+                        'space-light': '#1e1e3f',
+                        'space-purple': '#2d1b69',
+                        'planet-uranus': '#4bacc6',
+                        'planet-uranus-dark': '#3a94ad',
+                        'planet-uranus-light': '#61c2db',
+                        'planet-uranus-ring': '#5a7b92',
+                        'planet-sun': '#ffcc33'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        /* 动画定义 */
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 50px rgba(75, 172, 198, 0.3); }
+            50% { box-shadow: 0 0 60px rgba(75, 172, 198, 0.5); }
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes rotate-ring {
+            from { transform: rotate(0deg) skewY(0deg); }
+            to { transform: rotate(360deg) skewY(0deg); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(5px); }
+        }
+        
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .planet-detail-glow {
+                box-shadow: 0 0 50px rgba(75, 172, 198, 0.3);
+                animation: glow 4s ease-in-out infinite;
+            }
+            .back-button-hover {
+                transition: all 0.3s ease;
+            }
+            .back-button-hover:hover {
+                transform: translateX(-5px);
+            }
+            .uranus-rotation {
+                animation: rotate 17.2s linear infinite;
+            }
+            .uranus-stripe {
+                animation: float 8s ease-in-out infinite;
+            }
+            .uranus-ring {
+                animation: rotate-ring 20s linear infinite;
+                transform-origin: center;
+            }
+            .ring-glow {
+                box-shadow: 0 0 30px rgba(90, 123, 146, 0.3);
+            }
+        }
+        
+        /* 天王星CSS模型样式 */
+        .uranus-model {
+                position: relative;
+                width: 300px;
+                height: 300px;
+                margin: 0 auto;
+                perspective: 1000px;
+            }
+            .uranus-body {
+                position: absolute;
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                background: radial-gradient(circle at 40% 40%, 
+                    #61c2db, 
+                    #4bacc6, 
+                    #3a94ad);
+                top: 50px;
+                left: 50px;
+                overflow: hidden;
+                box-shadow: 0 0 30px rgba(75, 172, 198, 0.6);
+                transform: rotate(90deg); /* 天王星侧向自转 */
+            }
+            /* 天王星条纹效果 */
+            .uranus-stripe {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    rgba(75, 172, 198, 0.1) 1px,
+                    transparent 2px
+                );
+                opacity: 0.7;
+            }
+            /* 天王星环系统 */
+            .uranus-rings {
+                position: absolute;
+                width: 300px;
+                height: 300px;
+                top: 0;
+                left: 0;
+                transform-style: preserve-3d;
+                transform: rotateX(90deg); /* 环平面垂直于视平面 */
+            }
+            .uranus-ring {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                border: 2px solid #5a7b92;
+                opacity: 0.7;
+                box-shadow: 0 0 20px #5a7b92;
+            }
+            .uranus-ring-inner {
+                width: 70%;
+                height: 70%;
+                top: 15%;
+                left: 15%;
+                border-width: 1px;
+                opacity: 0.5;
+            }
+            .uranus-ring-detail {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: repeating-linear-gradient(
+                    0deg,
+                    transparent 0px,
+                    #5a7b92 1px,
+                    transparent 2px
+                );
+                opacity: 0.3;
+                border-radius: 50%;
+            }
+    </style>
+</head>
+<body class="bg-[#0a0a2a] min-h-screen text-white">
+    <!-- 返回按钮 -->
+    <div class="w-full max-w-7xl mx-auto px-4 py-6">
+        <a href="solor.html" class="back-button-hover flex items-center text-gray-300 hover:text-white">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回太阳系</span>
+        </a>
+    </div>
+    
+    <!-- 页面标题 -->
+    <header class="w-full max-w-7xl mx-auto px-4 mb-10 text-center">
+        <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-bold text-white mb-4">天王星</h1>
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto">侧向自转的冰巨行星</p>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main class="w-full max-w-7xl mx-auto px-4 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- 左侧：行星可视化 -->
+            <div class="lg:col-span-1 flex flex-col items-center justify-center">
+                <!-- 天王星CSS模型 -->
+                <div class="uranus-model planet-detail-glow">
+                    <!-- 天王星本体 -->
+                    <div class="uranus-body uranus-rotation">
+                        <div class="uranus-stripe"></div>
+                    </div>
+                    <!-- 天王星环系统 -->
+                    <div class="uranus-rings">
+                        <div class="uranus-ring"></div>
+                        <div class="uranus-ring-inner"></div>
+                        <div class="uranus-ring-detail"></div>
+                    </div>
+                </div>
+                
+                <!-- 快速数据 -->
+                <div class="w-full bg-[#1e1e3f]/50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 text-center">快速数据</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">直径:</span>
+                            <span>50,724 km</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">质量:</span>
+                            <span>8.681 × 10²⁵ kg</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">与太阳距离:</span>
+                            <span>19.2 AU</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">自转周期:</span>
+                            <span>17小时14分钟</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">公转周期:</span>
+                            <span>84.01 地球年</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">平均表面温度:</span>
+                            <span>约-224°C</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">卫星数量:</span>
+                            <span>已知27颗</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">大气成分:</span>
+                            <span>氢83%, 氦15%, 甲烷2%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：行星详细信息 -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- 概述 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-info-circle mr-2 text-[#4bacc6]"></i>
+                        概述
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        天王星是太阳系中第七颗行星，也是第一颗通过望远镜发现的行星（由威廉·赫歇尔于1781年发现）。它属于冰巨行星，体积是地球的63倍，但质量仅为地球的14.5倍。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        天王星最显著的特征是其独特的侧向自转：它的自转轴倾斜nearly98度，几乎与其公转轨道平面垂直。这使得天王星的季节变化非常极端，每个季节长达约21年。此外，天王星的蓝色外观是由于其大气中的甲烷吸收了红光而散射蓝光导致的。
+                    </p>
+                </section>
+                
+                <!-- 探索历史 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-rocket mr-2 text-planet-uranus"></i>
+                        探索历史
+                    </h2>
+                    <div class="space-y-4 text-gray-200">
+                        <p><strong>1781 年 3 月</strong>：英国天文学家威廉・赫歇尔在编录恒星时，意外发现一颗移动迟缓的暗淡天体，最初误认为是彗星；后续通过轨道计算（由芬兰裔瑞典天文学家安德斯・约翰・莱塞尔完成），确认其为行星，命名为 "天王星"，这是人类历史上首次通过望远镜发现的新行星，将太阳系已知行星数量从 6 颗增至 7 颗。</p>
+                        
+                        <p><strong>1821 年</strong>：天文学家发现天王星的实际轨道与理论计算存在偏差，推测其外侧可能存在另一颗行星（后证实为海王星），为海王星的发现埋下伏笔。</p>
+                        
+                        <p><strong>1986 年 1 月 24 日</strong>：美国 "旅行者 2 号" 探测器完成人类唯一一次天王星近距离飞掠，距离天王星表面约 8.1 万公里，首次揭示天王星的大气结构（以氢、氦为主，含甲烷）、磁场（磁场轴与自转轴夹角约 59°，分布不规则），并发现天王星的 10 颗新卫星（使已知卫星数量增至 15 颗）及 11 条新环（确认天王星存在环系统）。</p>
+                        
+                        <p><strong>1990 年后</strong>：哈勃空间望远镜（HST）、凯克望远镜（地面红外望远镜）等持续对天王星进行远距离观测，发现天王星大气中的季节变化（因自转轴倾斜，季节周期长达 21 年）、新卫星（截至 2025 年，已知卫星数量达 27 颗），并观测到天王星极区的 "甲烷云" 活动。</p>
+                        
+                        <p><strong>2020 年后</strong>：NASA、ESA 均提出天王星探测计划（如 "天王星轨道器与探测器" 任务），计划通过轨道器 + 着陆器组合，探测天王星的内部结构、磁场起源及卫星宜居性，目前处于方案论证阶段，预计 2030 年后发射。</p>
+                    </div>
+                </section>
+                
+
+                
+                
+                <!-- 结构与成分 -->
+                <section class="bg-[#1e1e3f]/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cubes mr-2 text-[#4bacc6]"></i>
+                        结构与成分
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        天王星与木星和土星不同，它被归类为冰巨行星而非气态巨行星。虽然天王星的大气层也主要由氢（83%）和氦（15%）组成，但它还有较高比例的"冰"物质，如水、氨和甲烷。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        天王星的内部结构可以分为三个主要部分：最外层是大气层，中间是液态冰幔（主要由水、氨和甲烷组成），核心可能是一个由岩石和金属组成的固体核心，大小约为地球的1-2倍。与其他巨行星相比，天王星的核心相对较小，而冰幔则占了大部分体积。
+                    </p>
+                    <div class="bg-[#0a0a2a]/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">天王星分层结构</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>大气层 - 主要由氢和氦组成，含有甲烷</li>
+                            <li>液态冰幔 - 高压下的水、氨和甲烷</li>
+                            <li>核心 - 可能由岩石和金属组成</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 侧向自转 -->
+                <section class="bg-[#1e1e3f]/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-refresh mr-2 text-[#4bacc6]"></i>
+                        独特的侧向自转
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        天王星最显著的特征是其极度倾斜的自转轴，倾角约为97.77度，几乎与其公转轨道平面垂直。这意味着天王星基本上是"躺着"围绕太阳旋转的。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        科学家们认为，天王星的这种特殊自转状态可能是由于在太阳系形成初期，一个与地球大小相当的天体与天王星发生了巨大碰撞，导致其自转轴被严重倾斜。另一种理论认为，多个较小天体的累积碰撞或与周围原行星盘的相互作用也可能导致这种倾斜。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        这种侧向自转导致天王星的季节变化非常独特。在天王星的一个半球朝向太阳时，会经历长达约21年的连续白天，而另一个半球则经历同样长的连续夜晚。只有在赤道附近才能观察到明显的昼夜交替。
+                    </p>
+                    <div class="bg-[#0a0a2a]/50 p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold mb-2">季节特点</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>每个季节持续约21地球年</li>
+                            <li>极区在一个公转周期中有42年处于阳光直射下</li>
+                            <li>赤道地区昼夜交替约17小时一次</li>
+                            <li>季节变化导致大气活动显著不同</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- 大气层与天气 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-cloud mr-2 text-planet-uranus"></i>
+                        大气层与天气
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        天王星的大气层相对平静，至少与木星和土星相比是这样。在旅行者2号飞掠时，天王星的表面几乎没有明显的云带或风暴特征，这可能与它内部热量输出较低有关。天王星是太阳系中最冷的行星，表面最低温度可达-224°C。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        然而，近年来的观测显示，天王星的大气活动正在增加，特别是在季节变化期间。哈勃太空望远镜观测到天王星上出现了多个明亮的云层和风暴，这可能与季节变化导致的日照分布变化有关。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        天王星的大气层也有分层结构，包括对流层、平流层和热层。在平流层中有多个朦胧的云层，这些云层可能由甲烷、硫化氢和水冰组成。天王星的蓝色外观是由于其大气中的甲烷吸收了红光而散射蓝光导致的。
+                    </p>
+                </section>
+                
+                <!-- 环系统 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-circle-o mr-2 text-planet-uranus"></i>
+                        环系统
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        天王星拥有13个已知的环，这些环相对暗淡，主要由尘埃和较大的岩石碎片组成。与土星环不同，天王星的环非常狭窄，宽度从几公里到几十公里不等。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        天王星的环系统是在1977年通过掩星观测意外发现的。这些环按照距离天王星由近及远顺序命名为：1986U2R、6、5、4、α、β、η、γ、δ、λ、ε、ν和μ。其中ε环是最亮、最宽的环。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed">
+                        天王星环的形成原因可能与土星环类似，可能是由被潮汐力撕裂的卫星或未能聚集成卫星的碎片形成的。由于天王星的侧向自转，其环系统也是侧向的，与行星的赤道平面对齐，因此从地球上看，这些环有时呈现为垂直的"棒状"结构。
+                    </p>
+                </section>
+                
+                <!-- 卫星系统 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-moon-o mr-2 text-planet-uranus"></i>
+                        卫星系统
+                    </h2>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        天王星拥有27颗已知的卫星，这些卫星的命名都来自莎士比亚和亚历山大·蒲柏的作品中的人物。天王星的卫星系统可以分为三类：规则卫星、不规则卫星和内卫星。
+                    </p>
+                    <p class="text-gray-200 leading-relaxed mb-4">
+                        五颗最大的卫星分别是：米兰达（Miranda）、艾瑞尔（Ariel）、乌姆柏里厄尔（Umbriel）、泰坦妮娅（Titania）和欧贝隆（Oberon）。其中泰坦妮娅是最大的，直径约1,578公里，比土卫六小得多。
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">米兰达（Miranda）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>直径约472公里</li>
+                                <li>表面地形极其复杂，有巨大的峡谷和断层</li>
+                                <li>可能经历过剧烈的地质活动或碰撞重构</li>
+                                <li>地表特征被称为"拼凑地形"</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">艾瑞尔（Ariel）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>直径约1,157公里</li>
+                                <li>表面相对较年轻，有峡谷和断层</li>
+                                <li>有明显的火山活动迹象</li>
+                                <li>表面覆盖着水冰</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">泰坦妮娅（Titania）</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>天王星最大的卫星，直径约1,578公里</li>
+                                <li>表面有峡谷和陨石坑</li>
+                                <li>可能有过去地质活动的迹象</li>
+                                <li>表面主要由水冰组成</li>
+                            </ul>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">卫星系统特点</h4>
+                            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                                <li>所有主要卫星都与天王星的赤道平面对齐</li>
+                                <li>由于天王星的侧向自转，卫星轨道也几乎垂直于黄道面</li>
+                                <li>内卫星与环系统有密切关系</li>
+                                <li>部分卫星可能是被捕获的天体</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+
+                
+                <!-- 有趣事实 -->
+                <section class="bg-space-light/30 p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2 text-planet-uranus"></i>
+                        有趣事实
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">最冷的行星</h4>
+                            <p class="text-gray-300 text-sm">天王星是太阳系中最冷的行星，其大气最低温度可达-224°C，甚至比更远的海王星还要冷。这可能是因为天王星内部热量输出相对较低，与其他巨行星相比，其内部几乎没有明显的热量来源。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">命名源自希腊神话</h4>
+                            <p class="text-gray-300 text-sm">天王星是唯一一颗以希腊神话人物命名的行星，而不是罗马神话。其他行星的名称都来自罗马神话，而天王星的英文名称Uranus来自希腊神话中的天空之神乌拉诺斯，他是土星对应神克洛诺斯的父亲，木星对应神宙斯的祖父。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">米兰达的拼凑地形</h4>
+                            <p class="text-gray-300 text-sm">天王星的卫星米兰达拥有太阳系中最奇特的地形之一，被称为"拼凑地形"。它的表面似乎由不同的地质区域随意拼接而成，科学家认为这可能是由于米兰达曾经被巨大的撞击击碎，然后在引力作用下重新聚集形成的。</p>
+                        </div>
+                        <div class="bg-space-dark/50 p-4 rounded-lg border border-white/10">
+                            <h4 class="font-semibold mb-2">颠倒的磁场</h4>
+                            <p class="text-gray-300 text-sm">天王星的磁场与自转轴倾斜了约59度，而且磁心与行星中心偏移了约30%的行星半径。这种独特的磁场结构导致天王星的磁层非常不对称，在不同半球表现出不同的特性。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    
+    <!-- 页脚 -->
+    <footer class="bg-[#1e1e3f] py-8 text-center text-gray-400">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>太阳系八大行星探索 &copy; 2024</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Uranus page loaded');
+            // 页面加载完成
+        });
+
+    </script>
+</body>
+</html>
