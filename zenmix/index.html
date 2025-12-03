@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenMix - White Noise</title>
+    
+    <!-- 1. Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'media',
+        theme: {
+          extend: {
+            colors: {
+              slate: { 950: '#020617' }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- 2. React & ReactDOM (UMD Global Builds) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- 3. Babel Standalone -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+      body {
+        background-color: #0f172a;
+        color: #e2e8f0;
+        font-family: 'Inter', sans-serif;
+      }
+      /* Dark mode support */
+      @media (prefers-color-scheme: light) {
+        body { background-color: #f8fafc; color: #334155; }
+      }
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+      .slider-thumb::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none;
+        width: 16px; height: 16px;
+        background: white; border-radius: 50%;
+        cursor: pointer; transition: transform 0.1s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      .slider-thumb::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      // --- 1. ICONS (Inlined SVG) ---
+      const Icons = {
+        Play: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+        Pause: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>,
+        RefreshCw: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
+        Save: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>,
+        Volume2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>,
+        VolumeX: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>,
+        Headphones: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>,
+        Menu: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/></svg>,
+        X: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+        Plus: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+        Trash2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>,
+        Upload: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
+        Link: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>,
+        AlertCircle: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>,
+        Check: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+        Settings: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+        Download: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
+        CloudRain: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>,
+        Zap: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+        Wind: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>,
+        Flame: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.2-2.2.5-3.3.3-1.1 1.2-2.2 2-2.2z"/></svg>,
+        Bird: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 7h.01"/><path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"/><path d="m20 7 2 .5-2 .5"/><path d="M10 18v3"/><path d="M14 17.75V21"/><path d="M7 18a6 6 0 0 0 3.84-10.61"/></svg>,
+        Waves: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>,
+        Coffee: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>,
+        Fan: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 12c.33-2.67 3-4 6-4 0 0 1 2-1 4s-4 1-5 0Z"/><path d="M12 12c-2.67-.33-4-3-4-6 0 0 2-1 4 1s1 4 0 5Z"/><path d="M12 12c-.33 2.67-3 4-6 4 0 0-1-2 1-4s4-1 5 0Z"/><path d="M12 12c2.67.33 4 3 4 6 0 0-2 1-4-1s-1-4 0-5Z"/></svg>,
+        Music: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
+        Loader2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>,
+        Timer: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="10" y1="2" x2="14" y2="2"/><line x1="12" y1="14" x2="15" y2="11"/><circle cx="12" cy="14" r="8"/></svg>,
+        Clock: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      };
+
+      // --- 2. CONSTANTS ---
+      const AVAILABLE_SOUNDS = [
+        { id: 'rain', name: '倾盆大雨', category: 'nature', iconName: 'CloudRain', url: 'sounds/rain.mp3' },
+        { id: 'thunder', name: '雷雨交加', category: 'nature', iconName: 'Zap', url: 'sounds/thunder.mp3' },
+        { id: 'wind', name: '狂风呼啸', category: 'nature', iconName: 'Wind', url: 'sounds/wind.mp3' },
+        { id: 'fire', name: '温暖壁炉', category: 'nature', iconName: 'Flame', url: 'sounds/fire.mp3' },
+        { id: 'birds', name: '森林鸟鸣', category: 'nature', iconName: 'Bird', url: 'sounds/birds.mp3' },
+        { id: 'waves', name: '海浪拍岸', category: 'nature', iconName: 'Waves', url: 'sounds/waves.mp3' },
+        { id: 'cafe', name: '午后咖啡', category: 'urban', iconName: 'Coffee', url: 'sounds/cafe.mp3' },
+        { id: 'fan', name: '电风扇', category: 'noise', iconName: 'Fan', url: 'sounds/fan.mp3' },
+      ];
+
+      const DEFAULT_PRESETS = [
+        { id: 'rainy-cafe', name: '雨天咖啡馆办公', sounds: { rain: 0.2, cafe: 0.5, fire: 0.0, wind: 0.1 } },
+        { id: 'deep-sleep', name: '雷雨助眠', sounds: { rain: 0.8, thunder: 0.3, wind: 0.4, fan: 0.3 } },
+        { id: 'forest-camp', name: '森林露营', sounds: { fire: 0.7, birds: 0.4, wind: 0.2, rain: 0.0 } }
+      ];
+
+      // --- 4. HOOKS ---
+      const useAudioEngine = () => {
+        const [isInitialized, setIsInitialized] = React.useState(false);
+        const [masterVolume, setMasterVolume] = React.useState(0.8);
+        const [isPlaying, setIsPlaying] = React.useState(false);
+        const [loadingMap, setLoadingMap] = React.useState({});
+        const [errorMap, setErrorMap] = React.useState({});
+        
+        const audioContextRef = React.useRef(null);
+        const masterGainRef = React.useRef(null);
+        const analyserRef = React.useRef(null);
+        const soundNodesRef = React.useRef({});
+
+        const initAudio = React.useCallback(() => {
+          if (audioContextRef.current) return;
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          const ctx = new AudioContextClass();
+          const masterGain = ctx.createGain();
+          masterGain.gain.value = masterVolume;
+          const analyser = ctx.createAnalyser();
+          analyser.fftSize = 256;
+          masterGain.connect(analyser);
+          analyser.connect(ctx.destination);
+          audioContextRef.current = ctx;
+          masterGainRef.current = masterGain;
+          analyserRef.current = analyser;
+          setIsInitialized(true);
+        }, [masterVolume]);
+
+        const loadSound = React.useCallback(async (id, url) => {
+          if (!audioContextRef.current) return;
+          if (soundNodesRef.current[id]?.buffer) return;
+          setLoadingMap(prev => ({ ...prev, [id]: true }));
+          setErrorMap(prev => { const n = {...prev}; delete n[id]; return n; });
+          try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
+            if (!soundNodesRef.current[id]) {
+              soundNodesRef.current[id] = { source: null, gain: null, buffer: audioBuffer };
+            } else {
+              soundNodesRef.current[id].buffer = audioBuffer;
+            }
+          } catch (error) {
+            console.error(`Failed to load ${id}:`, error);
+            setErrorMap(prev => ({ ...prev, [id]: true }));
+          } finally {
+            setLoadingMap(prev => ({ ...prev, [id]: false }));
+          }
+        }, []);
+
+        const playSoundNode = React.useCallback((id, volume) => {
+          const ctx = audioContextRef.current;
+          const master = masterGainRef.current;
+          const nodeData = soundNodesRef.current[id];
+          if (!ctx || !master || !nodeData || !nodeData.buffer) return;
+          if (nodeData.source) {
+             if (nodeData.gain) nodeData.gain.gain.setTargetAtTime(volume, ctx.currentTime, 0.1);
+             return;
+          }
+          const source = ctx.createBufferSource();
+          source.buffer = nodeData.buffer;
+          source.loop = true;
+          const gainNode = ctx.createGain();
+          gainNode.gain.value = volume;
+          source.connect(gainNode);
+          gainNode.connect(master);
+          source.start(0);
+          soundNodesRef.current[id].source = source;
+          soundNodesRef.current[id].gain = gainNode;
+        }, []);
+
+        const stopSoundNode = React.useCallback((id) => {
+          const nodeData = soundNodesRef.current[id];
+          if (nodeData && nodeData.source) {
+            try {
+              nodeData.source.stop();
+              nodeData.source.disconnect();
+              nodeData.gain?.disconnect();
+            } catch (e) {}
+            soundNodesRef.current[id].source = null;
+            soundNodesRef.current[id].gain = null;
+          }
+        }, []);
+
+        const toggleGlobalPlay = React.useCallback(async (soundStates) => {
+          if (!audioContextRef.current) initAudio();
+          if (audioContextRef.current?.state === 'suspended') await audioContextRef.current.resume();
+          if (isPlaying) {
+            soundStates.forEach(s => stopSoundNode(s.id));
+            setIsPlaying(false);
+          } else {
+            setIsPlaying(true);
+          }
+        }, [isPlaying, initAudio, stopSoundNode]);
+
+        const updateMixer = React.useCallback((soundStates, soundDefs) => {
+          if (!audioContextRef.current) return;
+          if (isPlaying && audioContextRef.current.state === 'suspended') audioContextRef.current.resume();
+          soundStates.forEach(sound => {
+            const shouldPlay = isPlaying && sound.volume > 0 && !sound.isMuted;
+            const soundDef = soundDefs.find(s => s.id === sound.id);
+            if (shouldPlay && soundDef && !soundNodesRef.current[sound.id]?.buffer && !loadingMap[sound.id] && !errorMap[sound.id]) {
+               loadSound(sound.id, soundDef.url).then(() => {
+                 if (isPlaying && !errorMap[sound.id]) playSoundNode(sound.id, sound.volume);
+               });
+               return; 
+            }
+            if (shouldPlay && !errorMap[sound.id]) {
+              playSoundNode(sound.id, sound.volume);
+            } else {
+              stopSoundNode(sound.id);
+            }
+          });
+        }, [isPlaying, loadSound, playSoundNode, stopSoundNode, loadingMap, errorMap]);
+
+        React.useEffect(() => {
+          if (masterGainRef.current && audioContextRef.current) {
+            masterGainRef.current.gain.setTargetAtTime(masterVolume, audioContextRef.current.currentTime, 0.1);
+          }
+        }, [masterVolume]);
+
+        return { audioContext: audioContextRef.current, analyser: analyserRef.current, isPlaying, loadingMap, errorMap, toggleGlobalPlay, updateMixer, setMasterVolume, initAudio, setIsPlaying };
+      };
+
+      // --- 5. COMPONENTS ---
+
+      const Visualizer = ({ analyser, isPlaying }) => {
+        const canvasRef = React.useRef(null);
+        const requestRef = React.useRef(null);
+
+        const draw = () => {
+          if (!canvasRef.current || !analyser) return;
+          const canvas = canvasRef.current;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+          analyser.getByteFrequencyData(dataArray);
+          const width = canvas.width;
+          const height = canvas.height;
+          ctx.clearRect(0, 0, width, height);
+          const gradient = ctx.createLinearGradient(0, height, 0, 0);
+          gradient.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
+          gradient.addColorStop(0.5, 'rgba(168, 85, 247, 0.6)');
+          gradient.addColorStop(1, 'rgba(236, 72, 153, 0.8)');
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.moveTo(0, height);
+          const barWidth = width / bufferLength * 2.5;
+          let x = 0;
+          for (let i = 0; i < bufferLength; i++) {
+            const barHeight = (dataArray[i] / 255) * height;
+            const y = height - barHeight;
+            ctx.lineTo(x, y);
+            x += barWidth;
+          }
+          ctx.lineTo(width, height);
+          ctx.closePath();
+          ctx.fill();
+          if (isPlaying) requestRef.current = requestAnimationFrame(draw);
+          else ctx.clearRect(0, 0, width, height);
+        };
+
+        React.useEffect(() => {
+          if (isPlaying && analyser) requestRef.current = requestAnimationFrame(draw);
+          else {
+            if (requestRef.current) cancelAnimationFrame(requestRef.current);
+            const canvas = canvasRef.current;
+            const ctx = canvas?.getContext('2d');
+            if (canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+          }
+          return () => { if (requestRef.current) cancelAnimationFrame(requestRef.current); };
+        }, [analyser, isPlaying]);
+
+        return (
+          <div className="w-full h-32 md:h-48 bg-slate-900/50 dark:bg-slate-900/50 bg-slate-100 rounded-xl overflow-hidden border border-slate-700 dark:border-slate-700 border-slate-200 backdrop-blur-sm relative transition-colors duration-300">
+            <canvas ref={canvasRef} width={800} height={200} className="w-full h-full block" />
+            {!isPlaying && <div className="absolute inset-0 flex items-center justify-center text-slate-500 text-sm">可视化已暂停</div>}
+          </div>
+        );
+      };
+
+      const SoundCard = ({ config, state, onVolumeChange, onToggleMute, isLoading, hasError }) => {
+        const IconComponent = Icons[config.iconName] || Icons.Music;
+        const isActive = state.volume > 0 && !state.isMuted && !hasError;
+        
+        return (
+          <div className={`relative p-4 rounded-xl border transition-all duration-300 
+            ${isActive 
+              ? 'bg-indigo-50 dark:bg-slate-800/80 border-indigo-500/50 shadow-lg shadow-indigo-500/10' 
+              : 'bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'} 
+            ${hasError ? 'border-red-900/50 bg-red-900/10' : ''}`}>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg ${isActive ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-300' : hasError ? 'bg-red-500/20 text-red-400' : 'bg-slate-200 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400'}`}>
+                    <IconComponent size={20} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className={`font-medium ${isActive ? 'text-slate-800 dark:text-slate-200' : 'text-slate-600 dark:text-slate-400'}`}>{config.name}</span>
+                    {hasError && <span className="text-[10px] text-red-500 dark:text-red-400 flex items-center gap-1"><Icons.AlertCircle size={10} /> 文件缺失</span>}
+                  </div>
+                </div>
+                {isLoading && <Icons.Loader2 className="animate-spin text-indigo-400" size={16} />}
+              </div>
+              <div className="flex items-center gap-3">
+                 <button onClick={() => !hasError && onToggleMute(config.id)} disabled={hasError} className={`p-1.5 rounded-full transition-colors ${state.isMuted && state.volume > 0 && !hasError ? 'text-red-500 bg-red-100 dark:bg-red-400/10' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'} ${hasError ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                   {state.isMuted && state.volume > 0 ? <Icons.VolumeX size={18}/> : <Icons.Volume2 size={18} />}
+                 </button>
+                 <input type="range" min="0" max="1" step="0.01" value={state.volume} disabled={hasError} onChange={(e) => onVolumeChange(config.id, parseFloat(e.target.value))} className={`w-full h-1.5 bg-slate-300 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer slider-thumb ${hasError ? 'opacity-50 cursor-not-allowed' : ''}`} style={{backgroundImage: `linear-gradient(to right, ${isActive ? '#818cf8' : hasError ? '#7f1d1d' : '#94a3b8'} 0%, ${isActive ? '#818cf8' : hasError ? '#7f1d1d' : '#94a3b8'} ${state.volume * 100}%, ${document.documentElement.classList.contains('dark') ? '#475569' : '#e2e8f0'} ${state.volume * 100}%, ${document.documentElement.classList.contains('dark') ? '#475569' : '#e2e8f0'} 100%)`}} />
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      const AddSoundDialog = ({ isOpen, onClose, onAddSound }) => {
+        const [mode, setMode] = React.useState('file');
+        const [name, setName] = React.useState('');
+        const [url, setUrl] = React.useState('');
+        const [file, setFile] = React.useState(null);
+        const fileInputRef = React.useRef(null);
+
+        if (!isOpen) return null;
+
+        const handleFileChange = (e) => {
+          if (e.target.files && e.target.files[0]) {
+            const selectedFile = e.target.files[0];
+            setFile(selectedFile);
+            if (!name) setName(selectedFile.name.split('.')[0].substring(0, 20));
+          }
+        };
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          if (!name) return;
+          if (mode === 'file' && file) onAddSound(file, null, name);
+          else if (mode === 'url' && url) onAddSound(null, url, name);
+          resetAndClose();
+        };
+
+        const resetAndClose = () => {
+          setName(''); setUrl(''); setFile(null); setMode('file'); onClose();
+        };
+
+        return (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={resetAndClose}></div>
+            <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl transition-colors duration-300">
+              <button onClick={resetAndClose} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors"><Icons.X size={20} /></button>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-6">添加自定义音效</h2>
+              <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-6">
+                <button className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'file' ? 'bg-white dark:bg-indigo-600 text-indigo-600 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`} onClick={() => setMode('file')}><Icons.Upload size={16} /> 本地文件</button>
+                <button className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'url' ? 'bg-white dark:bg-indigo-600 text-indigo-600 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`} onClick={() => setMode('url')}><Icons.Link size={16} /> 网络链接</button>
+              </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div><label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">音效名称</label><input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="例如: 我最爱的雨声" maxLength={20} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors" required /></div>
+                {mode === 'file' ? (
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">音频文件</label>
+                    <div onClick={() => fileInputRef.current && fileInputRef.current.click()} className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all ${file ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10' : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}>
+                      <input type="file" ref={fileInputRef} className="hidden" accept="audio/*" onChange={handleFileChange} />
+                      {file ? <div className="text-center"><Icons.Check size={32} className="text-indigo-500 dark:text-indigo-400 mx-auto mb-2" /><p className="text-sm font-medium text-indigo-600 dark:text-indigo-300 truncate max-w-[200px]">{file.name}</p></div> : <div className="text-center text-slate-500"><Icons.Plus size={32} className="mx-auto mb-2 opacity-50" /><p className="text-sm">点击选择文件</p></div>}
+                    </div>
+                  </div>
+                ) : (
+                  <div><label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">音频链接 (URL)</label><input type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://example.com/sound.mp3" className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors" required /></div>
+                )}
+                <button type="submit" disabled={!name || (mode === 'file' && !file) || (mode === 'url' && !url)} className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:text-slate-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/20 mt-2">确认添加</button>
+              </form>
+            </div>
+          </div>
+        );
+      };
+
+      const SettingsControls = ({ onExport, onImport }) => {
+        const fileInputRef = React.useRef(null);
+        const handleFileChange = (e) => {
+          if (e.target.files && e.target.files[0]) onImport(e.target.files[0]);
+          if (e.target.value) e.target.value = '';
+        };
+        return (
+          <div className="mb-8">
+            <h3 className="font-semibold text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-2"><Icons.Settings size={16} /> 配置管理</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={onExport} className="flex flex-col items-center justify-center p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-xs text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white gap-2 group"><Icons.Download size={20} /><span>导出数据</span></button>
+              <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="flex flex-col items-center justify-center p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-xs text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white gap-2 group"><Icons.Upload size={20} /><span>导入数据</span><input type="file" ref={fileInputRef} className="hidden" accept=".json" onChange={handleFileChange} /></button>
+            </div>
+          </div>
+        );
+      };
+
+      const App = () => {
+        const { audioContext, analyser, isPlaying, loadingMap, errorMap, toggleGlobalPlay, updateMixer, setMasterVolume, initAudio, setIsPlaying } = useAudioEngine();
+        const [customSounds, setCustomSounds] = React.useState([]);
+        const [isAddSoundOpen, setIsAddSoundOpen] = React.useState(false);
+        const allSounds = React.useMemo(() => [...AVAILABLE_SOUNDS, ...customSounds], [customSounds]);
+        const [soundStates, setSoundStates] = React.useState(() => AVAILABLE_SOUNDS.map(s => ({ id: s.id, volume: 0, isPlaying: false, isMuted: false })));
+        const [masterVol, setMasterVol] = React.useState(0.8);
+        const [sidebarOpen, setSidebarOpen] = React.useState(false);
+        const [presets, setPresets] = React.useState(() => {
+          const saved = localStorage.getItem('zenmix_presets');
+          return saved ? JSON.parse(saved) : DEFAULT_PRESETS;
+        });
+        const [timerSeconds, setTimerSeconds] = React.useState(0);
+        
+        // Timer Logic
+        React.useEffect(() => {
+          let interval = null;
+          if (timerSeconds > 0) {
+            interval = setInterval(() => {
+              setTimerSeconds(prev => {
+                if (prev <= 1) {
+                  // Stop playing when timer hits 0
+                  if (isPlaying) {
+                     const newStates = soundStates.map(s => ({ ...s })); // clone to be safe
+                     // We need to trigger a stop. The cleanest way is to toggle play.
+                     // But we are in an interval.
+                     // Let's just update state to stop.
+                     setIsPlaying(false);
+                     // Stop sound nodes manually since isPlaying change in useEffect might be slightly delayed or complex
+                     soundStates.forEach(s => {
+                       // Logic handled in updateMixer when isPlaying becomes false
+                     });
+                  }
+                  return 0;
+                }
+                return prev - 1;
+              });
+            }, 1000);
+          }
+          return () => { if (interval) clearInterval(interval); };
+        }, [timerSeconds, isPlaying, soundStates]);
+
+        const formatTime = (seconds) => {
+           if (seconds <= 0) return "未设置";
+           const m = Math.floor(seconds / 60);
+           const s = seconds % 60;
+           return `${m}:${s < 10 ? '0' + s : s}`;
+        };
+
+        const setTimer = (minutes) => {
+          setTimerSeconds(minutes * 60);
+        };
+
+        React.useEffect(() => { updateMixer(soundStates, allSounds); }, [soundStates, allSounds, updateMixer]);
+        React.useEffect(() => { setMasterVolume(masterVol); }, [masterVol, setMasterVolume]);
+
+        const handleVolumeChange = React.useCallback((id, volume) => {
+          initAudio();
+          setSoundStates(prev => prev.map(s => s.id === id ? { ...s, volume, isMuted: false } : s));
+        }, [initAudio]);
+
+        const handleToggleMute = React.useCallback((id) => {
+          setSoundStates(prev => prev.map(s => s.id === id ? { ...s, isMuted: !s.isMuted } : s));
+        }, []);
+
+        const handleAddSound = (file, url, name) => {
+          const id = `custom-${Date.now()}`;
+          const finalUrl = file ? URL.createObjectURL(file) : url;
+          if (!finalUrl) return;
+          const newSoundConfig = { id, name, category: 'noise', iconName: 'Music', url: finalUrl };
+          setCustomSounds(prev => [...prev, newSoundConfig]);
+          setSoundStates(prev => [...prev, { id, volume: 0.5, isPlaying: true, isMuted: false }]);
+          initAudio();
+        };
+
+        const handleRemoveCustomSound = (id) => {
+          setSoundStates(prev => prev.filter(s => s.id !== id));
+          setCustomSounds(prev => prev.filter(s => s.id !== id));
+        };
+
+        const handleExportData = () => {
+          const data = { presets, customSounds: customSounds.filter(s => !s.url.startsWith('blob:')), version: 1 };
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href = url; a.download = 'zenmix-config.json';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+        };
+
+        const handleImportData = async (file) => {
+          try {
+            const text = await file.text();
+            const data = JSON.parse(text);
+            if (data.presets) { setPresets(data.presets); localStorage.setItem('zenmix_presets', JSON.stringify(data.presets)); }
+            if (data.customSounds) {
+              const existingIds = new Set(customSounds.map(s => s.id));
+              const newSounds = data.customSounds.filter(s => !existingIds.has(s.id));
+              setCustomSounds(prev => [...prev, ...newSounds]);
+              setSoundStates(prev => [...prev, ...newSounds.map(s => ({ id: s.id, volume: 0, isPlaying: false, isMuted: false }))]);
+            }
+            alert('导入成功!');
+          } catch (e) { alert('导入失败'); }
+        };
+
+        const applyPreset = (mix) => {
+          initAudio();
+          const newStates = soundStates.map(s => ({ ...s, volume: mix[s.id] !== undefined ? mix[s.id] : 0, isMuted: false }));
+          setSoundStates(newStates);
+          if (!isPlaying) toggleGlobalPlay(newStates);
+        };
+
+        const savePreset = () => {
+          const name = prompt("为当前混音命名:");
+          if (!name) return;
+          const currentMix = {};
+          soundStates.forEach(s => { if (s.volume > 0) currentMix[s.id] = s.volume; });
+          const newPresets = [...presets, { id: Date.now().toString(), name, sounds: currentMix }];
+          setPresets(newPresets);
+          localStorage.setItem('zenmix_presets', JSON.stringify(newPresets));
+        };
+
+        const activeCount = soundStates.filter(s => s.volume > 0 && !s.isMuted).length;
+
+        return (
+          <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 flex flex-col md:flex-row transition-colors duration-300">
+            <AddSoundDialog isOpen={isAddSoundOpen} onClose={() => setIsAddSoundOpen(false)} onAddSound={handleAddSound} />
+            <div className="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between sticky top-0 z-50">
+              <div className="flex items-center gap-2 font-bold text-xl text-indigo-600 dark:text-indigo-400"><Icons.Headphones className="w-6 h-6" /><span>ZenMix</span></div>
+              <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-slate-600 dark:text-slate-400">{sidebarOpen ? <Icons.X /> : <Icons.Menu />}</button>
+            </div>
+            <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+              <div className="p-6">
+                <div className="hidden md:flex items-center gap-2 font-bold text-2xl text-indigo-600 dark:text-indigo-400 mb-8"><Icons.Headphones className="w-8 h-8" /><span>ZenMix</span></div>
+                <div className="mb-8 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center justify-between mb-4"><span className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">主控台</span><button onClick={() => setSoundStates(prev => prev.map(s => ({ ...s, volume: 0, isMuted: false })))} className="text-xs text-slate-500 hover:text-indigo-600 dark:text-slate-500 dark:hover:text-white flex items-center gap-1 transition-colors"><Icons.RefreshCw size={12} /> 重置</button></div>
+                  <div className="flex justify-center mb-6"><button onClick={() => toggleGlobalPlay(soundStates)} className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl ${isPlaying ? 'bg-indigo-500 hover:bg-indigo-600 shadow-indigo-500/30' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'}`}>{isPlaying ? <Icons.Pause size={32} /> : <Icons.Play size={32} className="ml-1" />}</button></div>
+                  <div className="flex items-center gap-3 text-slate-400"><Icons.Volume2 size={18} /><input type="range" min="0" max="1" step="0.01" value={masterVol} onChange={(e) => setMasterVol(parseFloat(e.target.value))} className="flex-1 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb" /></div>
+                </div>
+                
+                 {/* Timer Section */}
+                 <div className="mb-8 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                   <div className="flex items-center justify-between mb-3">
+                     <span className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2"><Icons.Clock size={14}/> 定时关闭</span>
+                     <span className="text-xs font-mono text-indigo-600 dark:text-indigo-400">{formatTime(timerSeconds)}</span>
+                   </div>
+                   <div className="grid grid-cols-3 gap-2">
+                      <button onClick={() => setTimer(15)} className="px-2 py-1.5 bg-white dark:bg-slate-700 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">15分</button>
+                      <button onClick={() => setTimer(30)} className="px-2 py-1.5 bg-white dark:bg-slate-700 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">30分</button>
+                      <button onClick={() => setTimer(60)} className="px-2 py-1.5 bg-white dark:bg-slate-700 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">60分</button>
+                   </div>
+                   {timerSeconds > 0 && <button onClick={() => setTimerSeconds(0)} className="w-full mt-2 py-1 text-xs text-red-400 hover:text-red-500 dark:hover:text-red-300 flex items-center justify-center gap-1"><Icons.X size={12}/> 取消定时</button>}
+                 </div>
+
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-3"><h3 className="font-semibold text-slate-600 dark:text-slate-300">预设场景</h3><button onClick={savePreset} disabled={activeCount === 0} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 disabled:opacity-50"><Icons.Save size={18} /></button></div>
+                  <div className="space-y-2">{presets.map(preset => (<button key={preset.id} onClick={() => applyPreset(preset.sounds)} className="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-white transition-colors flex items-center justify-between group"><span>{preset.name}</span><Icons.Play size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></button>))}</div>
+                </div>
+                <div className="mb-8">
+                   <div className="flex items-center justify-between mb-3"><h3 className="font-semibold text-slate-600 dark:text-slate-300">自定义音效</h3><button onClick={() => setIsAddSoundOpen(true)} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300"><Icons.Plus size={18} /></button></div>
+                   {customSounds.length > 0 ? (
+                     <div className="space-y-1">{customSounds.map(sound => (<div key={sound.id} className="text-xs text-slate-600 dark:text-slate-400 px-3 py-2 bg-slate-100 dark:bg-slate-800/30 rounded flex justify-between items-center group"><span className="truncate max-w-[120px]">{sound.name}</span><div className="flex items-center gap-2"><span className="text-[9px] text-slate-500 uppercase border border-slate-300 dark:border-slate-700 px-1 rounded">{sound.url.startsWith('blob:') ? '本地' : 'URL'}</span><button onClick={(e) => { e.stopPropagation(); handleRemoveCustomSound(sound.id); }} className="text-slate-500 hover:text-red-500 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Trash2 size={12} /></button></div></div>))}</div>
+                   ) : <button onClick={() => setIsAddSoundOpen(true)} className="w-full py-3 border border-dashed border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-all flex items-center justify-center gap-1"><Icons.Plus size={12} /> 添加您的第一个音效</button>}
+                </div>
+                <SettingsControls onExport={handleExportData} onImport={handleImportData} />
+              </div>
+            </aside>
+            <main className="flex-1 p-4 md:p-8 overflow-y-auto max-h-screen">
+              <div className="max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                   <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     {allSounds.map(sound => {
+                       const st = soundStates.find(s => s.id === sound.id) || { id: sound.id, volume: 0, isPlaying: false, isMuted: false };
+                       return (<SoundCard key={sound.id} config={sound} state={st} onVolumeChange={handleVolumeChange} onToggleMute={handleToggleMute} isLoading={!!loadingMap[sound.id]} hasError={!!errorMap[sound.id]} />);
+                     })}
+                     <div onClick={() => setIsAddSoundOpen(true)} className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-800/30 rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 min-h-[120px] group"><div className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/20 text-slate-400 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"><Icons.Plus size={24} /></div><span className="text-sm font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200">添加音效</span></div>
+                   </div>
+                   <div className="lg:col-span-1 flex flex-col gap-6">
+                      <div className="sticky top-4">
+                        <h3 className="font-semibold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>实时频谱</h3>
+                        <Visualizer analyser={analyser} isPlaying={isPlaying} />
+                        <div className="mt-6 p-4 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-600 dark:text-slate-400 shadow-sm"><p className="mb-2 font-semibold text-slate-800 dark:text-slate-300">使用指南:</p><ul className="list-disc pl-4 space-y-1"><li>点击 <strong>+ 添加音效</strong> 导入音频。</li><li><strong>本地文件</strong> 仅在当前浏览器有效。</li><li><strong>网络链接 (URL)</strong> 支持导出分享。</li><li>点击侧边栏 <strong>导出数据</strong> 备份您的设置。</li></ul></div>
+                      </div>
+                   </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        );
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
