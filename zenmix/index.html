@@ -435,14 +435,7 @@
                   // Stop playing when timer hits 0
                   if (isPlaying) {
                      const newStates = soundStates.map(s => ({ ...s })); // clone to be safe
-                     // We need to trigger a stop. The cleanest way is to toggle play.
-                     // But we are in an interval.
-                     // Let's just update state to stop.
                      setIsPlaying(false);
-                     // Stop sound nodes manually since isPlaying change in useEffect might be slightly delayed or complex
-                     soundStates.forEach(s => {
-                       // Logic handled in updateMixer when isPlaying becomes false
-                     });
                   }
                   return 0;
                 }
@@ -540,16 +533,12 @@
               <div className="flex items-center gap-2 font-bold text-xl text-indigo-600 dark:text-indigo-400"><Icons.Headphones className="w-6 h-6" /><span>ZenMix</span></div>
               <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-slate-600 dark:text-slate-400">{sidebarOpen ? <Icons.X /> : <Icons.Menu />}</button>
             </div>
+            
             <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-              <div className="p-6">
+              <div className="p-6 pt-24 md:pt-6">
                 <div className="hidden md:flex items-center gap-2 font-bold text-2xl text-indigo-600 dark:text-indigo-400 mb-8"><Icons.Headphones className="w-8 h-8" /><span>ZenMix</span></div>
-                <div className="mb-8 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                  <div className="flex items-center justify-between mb-4"><span className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">主控台</span><button onClick={() => setSoundStates(prev => prev.map(s => ({ ...s, volume: 0, isMuted: false })))} className="text-xs text-slate-500 hover:text-indigo-600 dark:text-slate-500 dark:hover:text-white flex items-center gap-1 transition-colors"><Icons.RefreshCw size={12} /> 重置</button></div>
-                  <div className="flex justify-center mb-6"><button onClick={() => toggleGlobalPlay(soundStates)} className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl ${isPlaying ? 'bg-indigo-500 hover:bg-indigo-600 shadow-indigo-500/30' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'}`}>{isPlaying ? <Icons.Pause size={32} /> : <Icons.Play size={32} className="ml-1" />}</button></div>
-                  <div className="flex items-center gap-3 text-slate-400"><Icons.Volume2 size={18} /><input type="range" min="0" max="1" step="0.01" value={masterVol} onChange={(e) => setMasterVol(parseFloat(e.target.value))} className="flex-1 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb" /></div>
-                </div>
                 
-                 {/* Timer Section */}
+                 {/* Timer Section (Now Top) */}
                  <div className="mb-8 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
                    <div className="flex items-center justify-between mb-3">
                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2"><Icons.Clock size={14}/> 定时关闭</span>
@@ -579,13 +568,35 @@
             <main className="flex-1 p-4 md:p-8 overflow-y-auto max-h-screen">
               <div className="max-w-5xl mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                   <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     {allSounds.map(sound => {
-                       const st = soundStates.find(s => s.id === sound.id) || { id: sound.id, volume: 0, isPlaying: false, isMuted: false };
-                       return (<SoundCard key={sound.id} config={sound} state={st} onVolumeChange={handleVolumeChange} onToggleMute={handleToggleMute} isLoading={!!loadingMap[sound.id]} hasError={!!errorMap[sound.id]} />);
-                     })}
-                     <div onClick={() => setIsAddSoundOpen(true)} className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-800/30 rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 min-h-[120px] group"><div className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/20 text-slate-400 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"><Icons.Plus size={24} /></div><span className="text-sm font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200">添加音效</span></div>
+                   <div className="lg:col-span-2">
+                     <div className="sticky top-4 lg:static">
+                        <div className="mb-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+                           <div className="flex items-center gap-4 w-full sm:w-auto">
+                              <button onClick={() => toggleGlobalPlay(soundStates)} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${isPlaying ? 'bg-indigo-500 hover:bg-indigo-600 text-white shadow-indigo-500/30' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700'}`}>
+                                {isPlaying ? <Icons.Pause size={24} /> : <Icons.Play size={24} className="ml-1" />}
+                              </button>
+                              <div className="flex flex-col">
+                                 <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">主控台</span>
+                                 <span className="text-xs text-slate-500 dark:text-slate-400">{activeCount > 0 ? `${activeCount} 个音效播放中` : '暂无音效播放'}</span>
+                              </div>
+                           </div>
+                           <div className="flex items-center gap-3 w-full sm:w-1/2">
+                              <Icons.Volume2 className="text-slate-400" size={18} />
+                              <input type="range" min="0" max="1" step="0.01" value={masterVol} onChange={(e) => setMasterVol(parseFloat(e.target.value))} className="flex-1 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb" />
+                              <button onClick={() => setSoundStates(prev => prev.map(s => ({ ...s, volume: 0, isMuted: false })))} className="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-white transition-colors" title="重置所有"><Icons.RefreshCw size={18} /></button>
+                           </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                           {allSounds.map(sound => {
+                             const st = soundStates.find(s => s.id === sound.id) || { id: sound.id, volume: 0, isPlaying: false, isMuted: false };
+                             return (<SoundCard key={sound.id} config={sound} state={st} onVolumeChange={handleVolumeChange} onToggleMute={handleToggleMute} isLoading={!!loadingMap[sound.id]} hasError={!!errorMap[sound.id]} />);
+                           })}
+                           <div onClick={() => setIsAddSoundOpen(true)} className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-800/30 rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 min-h-[120px] group"><div className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/20 text-slate-400 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"><Icons.Plus size={24} /></div><span className="text-sm font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200">添加音效</span></div>
+                        </div>
+                     </div>
                    </div>
+                   
                    <div className="lg:col-span-1 flex flex-col gap-6">
                       <div className="sticky top-4">
                         <h3 className="font-semibold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>实时频谱</h3>
