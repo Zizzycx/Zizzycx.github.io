@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轻氧 - 年轻人的轻资讯平台</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#f97316', // Orange 500 (Adapted for Dark Mode)
+                        secondary: '#3b82f6', // Blue 500
+                        dark: '#0f172a', // Slate 900 (Main Background)
+                        surface: '#1e293b', // Slate 800 (Card Background)
+                        text: '#e2e8f0', // Slate 200 (Main Text)
+                        muted: '#94a3b8', // Slate 400 (Secondary Text)
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- 自定义样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 hover:border-primary/30;
+            }
+            .glass-panel {
+                @apply bg-surface/50 backdrop-blur-md border border-white/10;
+            }
+            .nav-link.active {
+                @apply text-primary font-medium;
+            }
+            .news-tab.active {
+                @apply bg-gradient-to-r from-primary to-orange-600 text-white shadow-lg shadow-primary/20 border-transparent;
+            }
+            .news-tab:not(.active) {
+                @apply bg-surface/50 text-muted hover:bg-surface hover:text-white border border-white/5 transition-all;
+            }
+            .like-btn.active {
+                @apply text-red-500;
+            }
+            
+            /* Unified Back Button */
+            .back-home-btn {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #e2e8f0;
+                padding: 10px 20px;
+                border-radius: 9999px;
+                font-weight: 500;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+            .back-home-btn:hover {
+                background: rgba(249, 115, 22, 0.2); /* Orange tint on hover */
+                border-color: rgba(249, 115, 22, 0.5);
+                color: #fff;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/"
+  }
+}
+</script>
+</head>
+<body class="bg-dark text-text font-sans antialiased min-h-screen selection:bg-primary/30 selection:text-white">
+    <!-- Back Button -->
+    <a href="main.html" class="back-home-btn">
+        <i class="fas fa-arrow-left"></i> 返回主页
+    </a>
+
+    <!-- 全局导航栏 -->
+    <header class="sticky top-0 z-50 bg-dark/80 backdrop-blur-md border-b border-white/5 shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between pl-36 md:pl-4"> <!-- Added pl-36 for mobile to avoid back button overlap -->
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-primary text-2xl"><i class="fas fa-wind"></i></span>
+                <span class="text-xl font-bold tracking-tight text-white">轻氧 <span class="text-xs font-normal text-muted ml-1 opacity-70">Lite Oxygen</span></span>
+            </a>
+
+            <!-- 桌面端导航 -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="nav-link active hover:text-primary transition-colors">轻资讯</a>
+                <a href="value.html" class="nav-link text-muted hover:text-white transition-colors">低压力价值</a>
+            </nav>
+
+            <!-- 桌面端搜索框 -->
+            <div class="hidden md:flex items-center relative">
+                <input id="desktopSearchInput" type="text" placeholder="搜索轻资讯..." class="pl-10 pr-10 py-2 rounded-full bg-surface/50 border border-white/10 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-48 lg:w-64 placeholder-slate-500 transition-all">
+                <i id="desktopSearchIcon" class="fas fa-search absolute left-4 text-slate-500"></i>
+                <button id="desktopSearchBtn" class="absolute right-3 text-primary hover:text-white transition-colors">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menuBtn" class="md:hidden text-xl text-white">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="md:hidden hidden bg-surface border-t border-white/10 px-4 py-4 absolute w-full left-0 shadow-xl">
+            <nav class="flex flex-col gap-4">
+                <a href="index.html" class="nav-link active py-2 border-b border-white/5">轻资讯</a>
+                <a href="value.html" class="nav-link text-muted py-2">低压力价值</a>
+                <div class="relative py-2 mt-2">
+                    <input id="mobileSearchInput" type="text" placeholder="搜索轻资讯..." class="pl-10 pr-10 py-2 rounded-full bg-dark border border-white/10 text-white w-full focus:outline-none focus:border-primary">
+                    <i id="mobileSearchIcon" class="fas fa-search absolute left-4 top-4 text-muted cursor-pointer"></i>
+                    <button id="mobileSearchBtn" class="absolute right-3 top-4 text-primary transition-colors">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 轻资讯板块 -->
+    <section id="news" class="py-12 md:py-20 container mx-auto px-4">
+        <!-- 板块标题与实时更新提示 -->
+        <div class="text-center mb-10 md:mb-16">
+            <h1 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 text-shadow text-white">
+                年轻人的<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">轻资讯</span>
+            </h1>
+            <p class="text-muted max-w-2xl mx-auto mb-8 text-lg font-light">每日实时更新，精选短平快、无压力的轻量化资讯</p>
+            
+            <!-- 实时更新时间 -->
+            <div class="inline-flex items-center gap-2 bg-surface/50 border border-white/10 px-4 py-2 rounded-full text-primary text-sm backdrop-blur-sm">
+                <i class="fas fa-sync-alt animate-spin" style="animation-duration: 3s;"></i>
+                <span id="updateTime">最后更新：2025-12-08 10:25</span>
+            </div>
+        </div>
+
+        <!-- 资讯分类标签 -->
+        <div class="flex flex-wrap gap-3 mb-10 justify-center">
+            <button class="news-tab active px-5 py-2.5 rounded-full font-medium" data-category="all">全部</button>
+            <button class="news-tab px-5 py-2.5 rounded-full font-medium" data-category="hot">热点</button>
+            <button class="news-tab px-5 py-2.5 rounded-full font-medium" data-category="life">生活</button>
+            <button class="news-tab px-5 py-2.5 rounded-full font-medium" data-category="career">职场</button>
+            <button class="news-tab px-5 py-2.5 rounded-full font-medium" data-category="fun">趣味</button>
+        </div>
+
+        <!-- 搜索结果提示（默认隐藏） -->
+        <div id="searchResultTip" class="mb-8 text-center hidden">
+            <p class="text-white font-medium bg-surface/30 inline-block px-4 py-2 rounded-lg border border-white/10"><i class="fas fa-search mr-2 text-primary"></i>搜索“<span id="searchKeyword" class="text-primary"></span>”共找到 <span id="searchResultCount" class="text-primary font-bold"></span> 条资讯</p>
+        </div>
+
+        <!-- 资讯列表 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="newsList">
+            <!-- 资讯卡片由JS动态生成 -->
+        </div>
+
+        <!-- 加载更多按钮 -->
+        <div class="text-center mt-12">
+            <button id="loadMore" class="px-8 py-3 border border-white/10 bg-surface/50 text-white hover:bg-primary hover:border-primary rounded-full font-medium transition-all flex items-center mx-auto gap-2 group backdrop-blur-sm">
+                <span>加载更多</span> <i class="fas fa-chevron-down group-hover:translate-y-1 transition-transform"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- 资讯详情模态框 -->
+    <div id="newsDetailModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 p-4">
+        <div class="glass-panel bg-slate-900 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-300" id="modalContent">
+            <!-- 模态框头部 -->
+            <div class="relative p-6 border-b border-white/10 flex-shrink-0 bg-slate-900/50">
+                <button id="closeModalBtn" class="absolute top-6 right-6 text-muted hover:text-white transition-colors bg-white/5 hover:bg-white/10 w-8 h-8 rounded-full flex items-center justify-center">
+                    <i class="fas fa-times"></i>
+                </button>
+                <span id="detailCategory" class="inline-block bg-gradient-to-r from-primary to-orange-600 text-white text-xs px-3 py-1 rounded-full mb-3 shadow-md"></span>
+                <h2 id="detailTitle" class="text-2xl font-bold mb-2 text-white leading-tight"></h2>
+                <div class="flex items-center text-sm text-muted gap-4">
+                    <span id="detailTime"><i class="far fa-clock mr-1"></i></span>
+                    <span id="detailRead"><i class="far fa-eye mr-1"></i></span>
+                </div>
+            </div>
+            <!-- 模态框内容 (Scrollable) -->
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <img id="detailImg" src="" alt="" class="w-full h-64 object-cover rounded-xl mb-6 border border-white/5 shadow-lg">
+                <div id="detailContent" class="prose prose-invert max-w-none text-slate-300 leading-relaxed">
+                    <!-- 详情内容动态填充 -->
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="p-6 border-t border-white/10 flex-shrink-0 bg-slate-900/50">
+                <button id="detailLikeBtn" class="like-btn flex items-center gap-2 text-muted hover:text-red-500 transition-colors bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:border-red-500/30 hover:bg-red-500/10 w-fit">
+                    <i class="far fa-heart text-xl"></i>
+                    <span id="detailLikeCount" class="font-medium">点赞</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部信息 -->
+    <footer class="bg-surface/30 border-t border-white/5 py-10 mt-12 backdrop-blur-md">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-4">
+                <span class="text-primary text-2xl"><i class="fas fa-wind"></i></span>
+            </div>
+            <p class="text-muted text-sm mb-2">轻氧 © 2025 年轻人轻生活平台</p>
+            <p class="text-slate-600 text-xs">轻资讯 · 低压力 · 高价值</p>
+        </div>
+    </footer>
+
+    <!-- 核心功能JS (Logic Preserved) -->
+    <script>
+        // 1. 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        // 2. 模拟资讯数据（带点赞数）
+        const newsData = [
+            {
+                id: 1,
+                title: "年轻人通勤新趋势：反向通勤成新选择",
+                desc: "一线城市超30%年轻人选择反向通勤，用时间换空间提升生活质量",
+                category: "hot",
+                time: "10分钟前",
+                read: 1258,
+                likeCount: 236,
+                liked: false,
+                img: "https://picsum.photos/seed/news1/600/400",
+                content: `
+                    <p>近年来，反向通勤正在成为一线城市年轻人的新选择。数据显示，北京、上海、广州等城市超30%的90后、00后职场人选择从市中心搬到郊区居住，每天反向通勤到市中心上班。</p>
+                    <p>反向通勤的核心优势在于：</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2 mb-4">
+                        <li>房租成本降低50%-70%，大幅减轻经济压力</li>
+                        <li>通勤时间虽然稍长，但地铁/公交座位充足，可利用碎片时间学习或休息</li>
+                        <li>郊区居住环境更好，生活节奏更慢，提升生活幸福感</li>
+                    </ul>
+                    <p>不少年轻人表示，反向通勤虽然每天多花30分钟，但房租省下来的钱可以提升生活品质，这种取舍非常值得。</p>
+                `
+            },
+            {
+                id: 2,
+                title: "人社部：新增18个新职业，年轻人就业选择更多",
+                desc: "包含人工智能训练师、全媒体运营师等，适配年轻人职业发展需求",
+                category: "hot",
+                time: "30分钟前",
+                read: 896,
+                likeCount: 158,
+                liked: false,
+                img: "https://picsum.photos/seed/news2/600/400",
+                content: `
+                    <p>人力资源和社会保障部近日发布公告，正式新增18个新职业，涵盖人工智能、数字经济、绿色低碳等多个领域。</p>
+                    <p>其中最受年轻人关注的新职业包括：</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2 mb-4">
+                        <li>人工智能训练师：负责AI模型的数据标注、训练和优化</li>
+                        <li>全媒体运营师：整合多种媒体形式进行内容创作和运营</li>
+                        <li>碳排放管理员：助力企业实现碳中和目标</li>
+                        <li>在线学习服务师：为线上教育提供专业支持</li>
+                    </ul>
+                    <p>业内专家表示，新职业的涌现为年轻人提供了更多元的就业选择，尤其是数字经济相关职业，薪资水平和发展空间都较为可观。</p>
+                `
+            },
+            {
+                id: 3,
+                title: "低成本提升幸福感：5个百元内生活小物",
+                desc: "不花大钱也能让生活更舒适，年轻人亲测好用",
+                category: "life",
+                time: "1小时前",
+                read: 2145,
+                likeCount: 427,
+                liked: false,
+                img: "https://picsum.photos/seed/news3/600/400",
+                content: `
+                    <p>提升生活幸福感不一定需要花大钱，以下5个百元内的小物件，深受年轻人喜爱：</p>
+                    <ol class="list-decimal pl-5 space-y-2 mt-2 mb-4">
+                        <li><strong>硅胶隔热杯垫</strong>（20元）：防滑隔热，保护桌面，颜值高</li>
+                        <li><strong>桌面收纳盒</strong>（50元）：整理桌面杂物，让办公/学习环境更整洁</li>
+                        <li><strong>便携香薰片</strong>（30元）：放在衣柜或房间，营造舒适氛围</li>
+                        <li><strong>折叠泡脚桶</strong>（80元）：睡前泡脚，缓解疲劳，收纳不占空间</li>
+                        <li><strong>手机支架</strong>（15元）：解放双手，追剧/视频更舒适</li>
+                    </ol>
+                    <p>这些小物件虽然价格便宜，但能切实提升生活的舒适度和幸福感，是年轻人低成本改善生活的首选。</p>
+                `
+            },
+            {
+                id: 4,
+                title: "年轻人极简生活指南：断舍离不是扔东西",
+                desc: "理性精简，只留下真正需要的，减轻生活压力",
+                category: "life",
+                time: "2小时前",
+                read: 1782,
+                likeCount: 315,
+                liked: false,
+                img: "https://picsum.photos/seed/news4/600/400",
+                content: `
+                    <p>极简生活正在成为年轻人的生活新潮流，但很多人对极简存在误解，认为就是"扔东西"。</p>
+                    <p>真正的极简生活核心原则：</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2 mb-4">
+                        <li>只保留真正需要和能带来快乐的物品</li>
+                        <li>拒绝冲动消费，购买前思考"是否真的需要"</li>
+                        <li>定期整理，但不盲目丢弃有价值的物品</li>
+                        <li>注重体验而非物质拥有</li>
+                    </ul>
+                    <p>实践建议：从整理一个抽屉开始，逐步清理不需要的物品，让生活空间更简洁，心理压力也会随之减轻。</p>
+                `
+            },
+            {
+                id: 5,
+                title: "职场新人必看：3个沟通技巧避免无效加班",
+                desc: "学会高效沟通，让工作更轻松，拒绝无意义加班",
+                category: "career",
+                time: "3小时前",
+                read: 954,
+                likeCount: 189,
+                liked: false,
+                img: "https://picsum.photos/seed/news5/600/400",
+                content: `
+                    <p>很多职场新人的加班并非因为工作量大，而是沟通效率低导致的无效加班。掌握以下3个沟通技巧，能有效减少加班：</p>
+                    <ol class="list-decimal pl-5 space-y-2 mt-2 mb-4">
+                        <li><strong>明确需求再行动</strong>：接到任务时，先确认清楚目标、要求和时间节点，避免反复修改</li>
+                        <li><strong>及时同步进度</strong>：定期向领导/同事同步工作进度，遇到问题及时反馈，避免最后返工</li>
+                        <li><strong>学会拒绝不合理要求</strong>：用"我现在正在处理XX任务，预计XX时间完成，这个新任务可以延后吗？"的方式委婉拒绝</li>
+                    </ol>
+                    <p>高效的沟通能节省大量时间，让工作更有条理，从根源上避免无效加班。</p>
+                `
+            },
+            {
+                id: 6,
+                title: "95后职场态度：拒绝内卷，追求工作生活平衡",
+                desc: "超70%的95后认为工作是为了更好的生活，而非全部",
+                category: "career",
+                time: "4小时前",
+                read: 1327,
+                likeCount: 278,
+                liked: false,
+                img: "https://picsum.photos/seed/news6/600/400",
+                content: `
+                    <p>一项针对95后职场人的调查显示，超70%的受访者认为"工作是为了更好的生活，而非生活的全部"。</p>
+                    <p>95后的职场新态度：</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2 mb-4">
+                        <li>拒绝无意义内卷，到点下班成为常态</li>
+                        <li>重视工作效率，而非工作时长</li>
+                        <li>愿意为兴趣和成长买单，而非单纯追求薪资</li>
+                        <li>敢于拒绝不合理的工作要求</li>
+                    </ul>
+                    <p>不少企业也开始适应这种变化，推出弹性工作制、结果导向考核等制度，更好地平衡员工的工作和生活。</p>
+                `
+            },
+            {
+                id: 7,
+                title: "打工人解压新方式：办公室微露营火了",
+                desc: "利用午休时间搭建迷你露营场景，缓解工作压力",
+                category: "fun",
+                time: "5小时前",
+                read: 3210,
+                likeCount: 589,
+                liked: false,
+                img: "https://picsum.photos/seed/news7/600/400",
+                content: `
+                    <p>最近，一种名为"办公室微露营"的解压方式在年轻打工人中流行起来。</p>
+                    <p>具体做法：</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2 mb-4">
+                        <li>午休时在工位旁搭建迷你露营装备（小帐篷、露营灯、野餐垫）</li>
+                        <li>带上便携咖啡壶、小零食，享受15-30分钟的"露营时光"</li>
+                        <li>远离电脑和工作，短暂切换到休闲模式</li>
+                    </ul>
+                    <p>参与者表示，这种方式能有效缓解工作压力，让午休时间更放松，下午工作效率也会提升。不少公司甚至专门设置了微露营区，支持员工解压。</p>
+                `
+            },
+            {
+                id: 8,
+                title: "年轻人的反向旅游：不去网红城市，偏爱小众小城",
+                desc: "避开人潮，体验慢生活，反向旅游成年轻人新宠",
+                category: "fun",
+                time: "6小时前",
+                read: 2890,
+                likeCount: 456,
+                liked: false,
+                img: "https://picsum.photos/seed/news8/600/400",
+                content: `
+                    <p>反向旅游正在成为年轻人的旅行新选择，与传统的网红城市打卡不同，反向旅游更注重体验感。</p>
+                    <p>反向旅游的特点：</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2 mb-4">
+                        <li>目的地选择非网红小众小城，游客少，体验更纯粹</li>
+                        <li>不赶行程，慢节奏体验当地生活</li>
+                        <li>消费更低，性价比更高</li>
+                        <li>更注重美食和人文体验，而非景点打卡</li>
+                    </ul>
+                    <p>热门的反向旅游目的地包括：浙江丽水、福建泉州、云南大理周边县城、广西阳朔等，这些地方既能避开人潮，又能体验到地道的当地文化。</p>
+                `
+            },
+            {
+                id: 9,
+                title: "趣味测试：你的职场压力指数有多高？",
+                desc: "10道题快速自测，附专业解压建议",
+                category: "fun",
+                time: "7小时前",
+                read: 4567,
+                likeCount: 782,
+                liked: false,
+                img: "https://picsum.photos/seed/news9/600/400",
+                content: `
+                    <p>职场压力是年轻人普遍面临的问题，通过以下10道题可以快速自测压力指数：</p>
+                    <div class="bg-surface p-4 rounded-lg mb-4 border border-white/5">
+                        <p class="font-medium mb-2 text-white">测试题（每题1-5分，1分=几乎没有，5分=非常严重）：</p>
+                        <ol class="list-decimal pl-5 space-y-2 text-sm">
+                            <li>经常感到焦虑，担心工作做不好</li>
+                            <li>晚上因为工作问题难以入睡</li>
+                            <li>对喜欢的事情失去兴趣</li>
+                            <li>容易因为小事发脾气</li>
+                            <li>注意力难以集中</li>
+                            <li>经常感到疲惫，即使休息后也无法缓解</li>
+                            <li>回避和同事/领导沟通</li>
+                            <li>害怕接到工作相关的电话/消息</li>
+                            <li>对未来的职业发展感到迷茫</li>
+                            <li>觉得自己的付出没有得到认可</li>
+                        </ol>
+                    </div>
+                    <p><strong>评分标准：</strong></p>
+                    <ul class="list-disc pl-5 space-y-1 mb-2">
+                        <li>10-20分：压力较低，注意保持</li>
+                        <li>21-30分：压力中等，需要适当调节</li>
+                        <li>31-40分：压力较高，建议采取解压措施</li>
+                        <li>41-50分：压力严重，建议寻求专业帮助</li>
+                    </ul>
+                    <p><strong>解压建议：</strong>每天留15分钟做自己喜欢的事情，适当运动，和朋友倾诉，必要时可以寻求心理咨询。</p>
+                `
+            }
+        ];
+
+        // 更多加载的资讯数据
+        const moreNewsData = [
+            {
+                id: 10,
+                title: "年轻人理财新趋势：小额分散投资成主流",
+                desc: "不再追求高风险高收益，稳扎稳打更受青睐",
+                category: "hot",
+                time: "8小时前",
+                read: 876,
+                likeCount: 145,
+                liked: false,
+                img: "https://picsum.photos/seed/news10/600/400",
+                content: `
+                    <p>年轻人的理财观念正在发生变化，从过去追求高风险高收益，转向小额分散投资。</p>
+                    <p>主流的理财方式：</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2 mb-4">
+                        <li>每月定投500-1000元指数基金</li>
+                        <li>将资金分散到不同理财产品中，降低风险</li>
+                        <li>优先偿还高利率负债（如信用卡分期）</li>
+                        <li>建立3-6个月生活费的应急储备金</li>
+                    </ul>
+                    <p>理财专家建议，年轻人理财应以稳健为主，重点是养成储蓄和投资的习惯，而非追求短期高收益。</p>
+                `
+            },
+            {
+                id: 11,
+                title: "5分钟快手早餐：适合懒人的营养搭配",
+                desc: "不用早起，简单搭配也能吃好早餐",
+                category: "life",
+                time: "9小时前",
+                read: 1567,
+                likeCount: 328,
+                liked: false,
+                img: "https://picsum.photos/seed/news11/600/400",
+                content: `
+                    <p>很多年轻人因为赖床不吃早餐，既不健康也影响上午的状态。以下5种5分钟快手早餐，营养又方便：</p>
+                    <ol class="list-decimal pl-5 space-y-2 mt-2 mb-4">
+                        <li><strong>酸奶水果碗</strong>：酸奶+水果+坚果，5分钟搞定，营养均衡</li>
+                        <li><strong>全麦三明治</strong>：提前准备好食材，早上组装只需3分钟</li>
+                        <li><strong>燕麦杯</strong>：睡前用牛奶泡燕麦，早上加水果即可</li>
+                        <li><strong>水煮蛋+全麦面包</strong>：鸡蛋煮好备用，早上加热面包即可</li>
+                        <li><strong>豆浆+包子</strong>：提前买好速冻包子，蒸的同时打豆浆</li>
+                    </ol>
+                    <p>即使再忙，也要记得吃早餐，这是开启一天好心情的基础。</p>
+                `
+            },
+            {
+                id: 12,
+                title: "职场小技巧：如何优雅拒绝不合理加班",
+                desc: "既不得罪人，又能保护自己的休息时间",
+                category: "career",
+                time: "10小时前",
+                read: 1123,
+                likeCount: 219,
+                liked: false,
+                img: "https://picsum.photos/seed/news12/600/400",
+                content: `
+                    <p>面对不合理的加班要求，直接拒绝容易得罪人，不拒绝又委屈自己。以下3种拒绝方式既优雅又有效：</p>
+                    <ol class="list-decimal pl-5 space-y-2 mt-2 mb-4">
+                        <li><strong>给出替代方案</strong>："我今天已经安排了重要的私事，不过我可以明天一早优先处理这个任务，保证不耽误进度。"</li>
+                        <li><strong>强调效率</strong>："我更倾向于在工作时间内高效完成任务，加班会影响我的工作效率，反而不利于任务质量。"</li>
+                        <li><strong>明确边界</strong>："我一般不在非工作时间处理工作，这是我的工作原则，希望能理解。"</li>
+                    </ol>
+                    <p>拒绝不合理加班的核心是：态度友好但立场坚定，同时给出解决方案，让对方感受到你的专业性而非抵触。</p>
+                `
+            }
+        ];
+
+        // 3. 渲染资讯列表
+        const newsList = document.getElementById('newsList');
+        let currentCategory = 'all';
+        let displayedNews = [];
+        let loadMoreCount = 1;
+        let allNewsData = [...newsData];
+        let currentNewsId = null;
+
+        // 获取分类名称
+        function getCategoryName(category) {
+            const categoryMap = {
+                'all': '全部',
+                'hot': '热点',
+                'life': '生活',
+                'career': '职场',
+                'fun': '趣味'
+            };
+            return categoryMap[category] || '全部';
+        }
+
+        // 渲染函数
+        function renderNews(news) {
+            newsList.innerHTML = '';
+            if (news.length === 0) {
+                newsList.innerHTML = `
+                    <div class="col-span-full py-16 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-surface mb-4">
+                             <i class="fas fa-newspaper text-4xl text-muted"></i>
+                        </div>
+                        <p class="text-muted text-lg">暂无相关资讯，换个关键词试试吧～</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            news.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel rounded-2xl overflow-hidden card-hover group';
+                card.innerHTML = `
+                    <a href="javascript:void(0);" class="news-card-link block h-full flex flex-col" data-id="${item.id}">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent"></div>
+                            <span class="absolute top-3 left-3 bg-white/20 backdrop-blur-md border border-white/10 text-white text-xs px-2.5 py-1 rounded-full shadow-sm">${getCategoryName(item.category)}</span>
+                        </div>
+                        <div class="p-5 flex-grow flex flex-col">
+                            <h3 class="font-semibold text-lg mb-2 line-clamp-2 text-white group-hover:text-primary transition-colors leading-snug">${item.title}</h3>
+                            <p class="text-muted text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">${item.desc}</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500 border-t border-white/5 pt-3 mt-auto">
+                                <span><i class="far fa-clock mr-1"></i>${item.time}</span>
+                                <div class="flex items-center gap-3">
+                                    <span><i class="far fa-eye mr-1"></i>${item.read}</span>
+                                    <span><i class="far fa-heart mr-1"></i>${item.likeCount}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                newsList.appendChild(card);
+                
+                // 绑定卡片点击事件
+                card.querySelector('.news-card-link').addEventListener('click', () => {
+                    openNewsDetail(item.id);
+                });
+            });
+        }
+
+        // 4. 资讯详情功能
+        const newsDetailModal = document.getElementById('newsDetailModal');
+        const modalContent = document.getElementById('modalContent');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const detailLikeBtn = document.getElementById('detailLikeBtn');
+        const detailLikeCount = document.getElementById('detailLikeCount');
+        
+        function openNewsDetail(newsId) {
+            const news = allNewsData.find(item => item.id === newsId) || moreNewsData.find(item => item.id === newsId);
+            if (!news) return;
+            
+            currentNewsId = newsId;
+            
+            // 填充详情内容
+            document.getElementById('detailCategory').textContent = getCategoryName(news.category);
+            document.getElementById('detailTitle').textContent = news.title;
+            document.getElementById('detailTime').textContent = news.time;
+            document.getElementById('detailRead').textContent = `${news.read}阅读`;
+            document.getElementById('detailImg').src = news.img;
+            document.getElementById('detailImg').alt = news.title;
+            document.getElementById('detailContent').innerHTML = news.content;
+            
+            // 更新点赞按钮状态
+            updateLikeButton(news);
+            
+            // 显示模态框
+            newsDetailModal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 更新点赞按钮状态
+        function updateLikeButton(news) {
+            const likeIcon = detailLikeBtn.querySelector('i');
+            if (news.liked) {
+                detailLikeBtn.classList.add('active');
+                likeIcon.classList.remove('far', 'fa-heart');
+                likeIcon.classList.add('fas', 'fa-heart');
+                detailLikeCount.textContent = `${news.likeCount} 已点赞`;
+            } else {
+                detailLikeBtn.classList.remove('active');
+                likeIcon.classList.remove('fas', 'fa-heart');
+                likeIcon.classList.add('far', 'fa-heart');
+                detailLikeCount.textContent = `${news.likeCount} 点赞`;
+            }
+        }
+
+        // 点赞功能
+        detailLikeBtn.addEventListener('click', () => {
+            if (!currentNewsId) return;
+            
+            let news = allNewsData.find(item => item.id === currentNewsId);
+            if (!news) {
+                news = moreNewsData.find(item => item.id === currentNewsId);
+            }
+            
+            if (news) {
+                // 切换点赞状态
+                news.liked = !news.liked;
+                news.likeCount = news.liked ? news.likeCount + 1 : news.likeCount - 1;
+                
+                // 更新按钮状态
+                updateLikeButton(news);
+                
+                // 动画反馈
+                detailLikeBtn.classList.add('animate-pulse');
+                setTimeout(() => {
+                    detailLikeBtn.classList.remove('animate-pulse');
+                }, 500);
+                
+                // 更新列表
+                renderNews(displayedNews);
+            }
+        });
+
+        // 关闭详情
+        function closeNewsDetail() {
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            newsDetailModal.classList.add('opacity-0', 'pointer-events-none');
+            document.body.style.overflow = '';
+            currentNewsId = null;
+        }
+
+        // 绑定关闭事件
+        closeModalBtn.addEventListener('click', closeNewsDetail);
+        newsDetailModal.addEventListener('click', (e) => {
+            if (e.target === newsDetailModal) closeNewsDetail();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeNewsDetail();
+        });
+
+        // 5. 搜索功能
+        function handleSearch(keyword) {
+            if (!keyword.trim()) {
+                document.getElementById('searchResultTip').classList.add('hidden');
+                displayedNews = currentCategory === 'all' ? [...newsData] : newsData.filter(item => item.category === currentCategory);
+                renderNews(displayedNews);
+                return;
+            }
+            
+            const searchResult = allNewsData.filter(item => 
+                item.title.includes(keyword) || item.desc.includes(keyword) || item.content.includes(keyword)
+            );
+            
+            document.getElementById('searchResultTip').classList.remove('hidden');
+            document.getElementById('searchKeyword').textContent = keyword;
+            document.getElementById('searchResultCount').textContent = searchResult.length;
+            
+            displayedNews = searchResult;
+            renderNews(displayedNews);
+            loadMoreCount = 1;
+        }
+
+        // 绑定搜索事件
+        const desktopSearchInput = document.getElementById('desktopSearchInput');
+        const desktopSearchIcon = document.getElementById('desktopSearchIcon');
+        const desktopSearchBtn = document.getElementById('desktopSearchBtn');
+        const mobileSearchInput = document.getElementById('mobileSearchInput');
+        const mobileSearchIcon = document.getElementById('mobileSearchIcon');
+        const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+        
+        [desktopSearchInput, mobileSearchInput].forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleSearch(input.value);
+            });
+        });
+        
+        desktopSearchIcon.addEventListener('click', () => handleSearch(desktopSearchInput.value));
+        desktopSearchBtn.addEventListener('click', () => handleSearch(desktopSearchInput.value));
+        mobileSearchIcon.addEventListener('click', () => handleSearch(mobileSearchInput.value));
+        mobileSearchBtn.addEventListener('click', () => handleSearch(mobileSearchInput.value));
+
+        // 6. 分类标签切换
+        const newsTabs = document.querySelectorAll('.news-tab');
+        newsTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 清空搜索框
+                desktopSearchInput.value = '';
+                mobileSearchInput.value = '';
+                document.getElementById('searchResultTip').classList.add('hidden');
+                
+                // 切换激活状态
+                newsTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // 筛选资讯
+                currentCategory = tab.dataset.category;
+                displayedNews = currentCategory === 'all' ? [...newsData] : newsData.filter(item => item.category === currentCategory);
+                
+                renderNews(displayedNews);
+                loadMoreCount = 1;
+            });
+        });
+
+        // 7. 加载更多
+        const loadMoreBtn = document.getElementById('loadMore');
+        loadMoreBtn.addEventListener('click', () => {
+            loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>加载中...';
+            loadMoreBtn.disabled = true;
+            
+            setTimeout(() => {
+                allNewsData = [...allNewsData, ...moreNewsData];
+                
+                const searchKeyword = desktopSearchInput.value.trim() || mobileSearchInput.value.trim();
+                let moreNews = [];
+                
+                if (searchKeyword) {
+                    moreNews = moreNewsData.filter(item => 
+                        item.title.includes(searchKeyword) || item.desc.includes(searchKeyword) || item.content.includes(searchKeyword)
+                    );
+                } else if (currentCategory === 'all') {
+                    moreNews = [...moreNewsData];
+                } else {
+                    moreNews = moreNewsData.filter(item => item.category === currentCategory);
+                }
+                
+                displayedNews = [...displayedNews, ...moreNews];
+                renderNews(displayedNews);
+                
+                if (searchKeyword) {
+                    document.getElementById('searchResultCount').textContent = displayedNews.length;
+                }
+                
+                loadMoreBtn.innerHTML = '<span>加载更多</span> <i class="fas fa-chevron-down group-hover:translate-y-1 transition-transform"></i>';
+                loadMoreBtn.disabled = false;
+                
+                if (loadMoreCount >= 2) {
+                    loadMoreBtn.innerHTML = '<span>已加载全部资讯</span> <i class="fas fa-check"></i>';
+                    loadMoreBtn.disabled = true;
+                    loadMoreBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+                
+                loadMoreCount++;
+            }, 800);
+        });
+
+        // 8. 实时更新时间
+        function updateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hour = String(now.getHours()).padStart(2, '0');
+            const minute = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('updateTime').textContent = `最后更新：${year}-${month}-${day} ${hour}:${minute}`;
+        }
+
+        // 初始化
+        updateTime();
+        displayedNews = [...newsData];
+        renderNews(displayedNews);
+        setInterval(updateTime, 60000);
+    </script>
+</body>
+</html>

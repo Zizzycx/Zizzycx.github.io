@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+ <html lang="zh-CN">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>烦恼吞噬黑洞</title>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     <style>
+         * {
+             margin: 0;
+             padding: 0;
+             box-sizing: border-box;
+         }
+         body {
+             overflow: hidden;
+             background: #0f172a; /* Slate 900 */
+             font-family: 'Noto Sans SC', "微软雅黑", sans-serif;
+             min-height: 100vh;
+         }
+         
+         /* Unified Back Button */
+         .back-home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .back-home-btn:hover {
+            background: rgba(168, 85, 247, 0.2); /* Purple tint */
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+
+         #blackHoleCanvas {
+             display: block;
+             width: 100vw;
+             height: 100vh;
+             /* Removed static image to let canvas shine, or use consistent aurora bg if preferred */
+             background: radial-gradient(circle at center, #1a1a2e 0%, #0f172a 100%);
+             z-index: 1;
+             position: relative;
+         }
+         .input-panel {
+             position: fixed;
+             bottom: 40px;
+             left: 50%;
+             transform: translateX(-50%);
+             display: flex;
+             gap: 15px;
+             z-index: 100;
+             background: rgba(30, 41, 59, 0.7); /* Slate 800 glass */
+             backdrop-filter: blur(12px);
+             padding: 20px 30px;
+             border-radius: 24px; /* Rounded corners */
+             border: 1px solid rgba(255, 255, 255, 0.1);
+             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+         }
+         /* 左侧颜色控制面板样式 */
+         .color-control-panel {
+             position: fixed;
+             left: 40px;
+             top: 50%;
+             transform: translateY(-50%);
+             z-index: 100;
+             background: rgba(30, 41, 59, 0.7); /* Slate 800 glass */
+             backdrop-filter: blur(12px);
+             padding: 25px;
+             border-radius: 24px;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+             display: flex;
+             flex-direction: column;
+             gap: 15px;
+             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+         }
+         
+         /* 控制面板切换按钮样式 */
+         .color-panel-toggle {
+             cursor: pointer;
+             text-align: center;
+             transition: all 0.3s ease;
+         }
+         
+         .color-panel-toggle:hover {
+             color: #fff;
+             text-shadow: 0 0 10px rgba(100, 100, 255, 0.5);
+         }
+         
+         /* 控制面板内容样式 */
+         .color-panel-content {
+             max-height: 0;
+             overflow: hidden;
+             opacity: 0;
+             transition: all 0.4s ease;
+         }
+         
+         /* 悬停或点击时显示面板内容 */
+         .color-control-panel:hover .color-panel-content,
+         .color-control-panel.active .color-panel-content {
+             max-height: 500px;
+             opacity: 1;
+             margin-top: 15px;
+         }
+         
+         /* 颜色按钮的悬停效果 */
+         .color-panel-content button {
+             transition: all 0.2s ease;
+             border-radius: 12px !important; /* Rounded buttons */
+         }
+         
+         .color-panel-content button:hover {
+             transform: scale(1.05);
+             box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+         }
+         
+         #worryInput {
+             padding: 12px 20px;
+             width: 350px;
+             border: 1px solid rgba(255, 255, 255, 0.2);
+             border-radius: 12px;
+             background: rgba(15, 23, 42, 0.8); /* Darker input */
+             color: #e2e8f0;
+             font-size: 16px;
+             font-family: 'Noto Sans SC', sans-serif;
+             transition: all 0.3s ease;
+         }
+         #worryInput:focus {
+             outline: none;
+             border-color: #a855f7; /* Purple 500 */
+             box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+         }
+         #submitBtn {
+             padding: 12px 30px;
+             border: none;
+             border-radius: 12px;
+             background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%); /* Purple Gradient */
+             color: #fff;
+             cursor: pointer;
+             font-size: 16px;
+             font-weight: 600;
+             transition: all 0.3s ease;
+             box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+             font-family: 'Noto Sans SC', sans-serif;
+         }
+         #submitBtn:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 6px 20px rgba(168, 85, 247, 0.6);
+             filter: brightness(1.1);
+         }
+         #submitBtn:active {
+             transform: translateY(0);
+         }
+         
+         /* Custom Color Picker Styling */
+         input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 100%;
+            height: 40px;
+            border-radius: 12px;
+            overflow: hidden;
+            padding: 0;
+         }
+         input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+         }
+         input[type="color"]::-webkit-color-swatch {
+            border: none;
+         }
+     </style>
+ </head>
+ <body>
+     <!-- Unified Back Button -->
+     <a href="main.html" class="back-home-btn">
+        <i class="fas fa-arrow-left"></i> 返回主页
+     </a>
+
+     <canvas id="blackHoleCanvas"></canvas>
+     
+     <div class="input-panel">
+         <input type="text" id="worryInput" placeholder="在这里写下你的烦恼...">
+         <button id="submitBtn"><i class="fas fa-paper-plane"></i> 让黑洞吞噬</button>
+     </div>
+     
+     <div class="color-control-panel">
+         <div class="color-panel-toggle">
+             <div style="color: #e2e8f0; font-size: 18px; font-weight: bold;"><i class="fas fa-palette"></i> 星球颜色</div>
+             <div style="color: #94a3b8; font-size: 12px; margin-top: 5px;">自定义你的情绪色彩</div>
+         </div>
+         <div class="color-panel-content">
+             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;">
+                 <button style="padding: 15px; border: none; background: linear-gradient(135deg, #6666ff 0%, #4444aa 100%); color: white; cursor: pointer;" onclick="selectedPlanetColor = 'blue'">忧郁蓝</button>
+                 <button style="padding: 15px; border: none; background: linear-gradient(135deg, #ff6633 0%, #aa4411 100%); color: white; cursor: pointer;" onclick="selectedPlanetColor = 'orange'">活力橙</button>
+                 <button style="padding: 15px; border: none; background: linear-gradient(135deg, #33cc66 0%, #229944 100%); color: white; cursor: pointer;" onclick="selectedPlanetColor = 'green'">治愈绿</button>
+                 <button style="padding: 15px; border: none; background: linear-gradient(135deg, #cc33ff 0%, #9922aa 100%); color: white; cursor: pointer;" onclick="selectedPlanetColor = 'purple'">神秘紫</button>
+                 <button style="padding: 15px; border: none; background: linear-gradient(135deg, #ff3333 0%, #aa2222 100%); color: white; cursor: pointer;" onclick="selectedPlanetColor = 'red'">愤怒红</button>
+                 <button style="padding: 15px; border: none; background: linear-gradient(135deg, #ffff33 0%, #aaaa22 100%); color: white; cursor: pointer;" onclick="selectedPlanetColor = 'yellow'">警示黄</button>
+                 <button style="padding: 15px; border: none; background: linear-gradient(135deg, #33ffff 0%, #22aaaa 100%); color: white; cursor: pointer;" onclick="selectedPlanetColor = 'cyan'">冷静青</button>
+                 <button style="padding: 15px; border: none; background: linear-gradient(135deg, #ff33ff 0%, #aa22aa 100%); color: white; cursor: pointer;" onclick="selectedPlanetColor = 'pink'">温柔粉</button>
+             </div>
+             
+             <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 15px;">
+                 <div style="color: #cbd5e1; font-size: 14px; margin-bottom: 10px;">自定义颜色</div>
+                 <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;">
+                     <input type="color" id="customColorPicker" value="#6666ff">
+                     <button id="customColorBtn" style="padding: 10px 20px; border: none; border-radius: 12px; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white; cursor: pointer; font-weight: bold;">应用</button>
+                 </div>
+             </div>
+         </div>
+     </div>
+     <script>
+         const canvas = document.getElementById('blackHoleCanvas');
+         const ctx = canvas.getContext('2d');
+         let centerX = canvas.width / 2;
+         let centerY = canvas.height / 2;
+         let worryParticles = [];
+         let blackHoleRotation = 0;
+         // 当前选中的星球颜色（默认为蓝色）
+         let selectedPlanetColor = 'blue';
+         // 自定义颜色模式
+         let customColorMode = false;
+         let customCoreColor = [255, 255, 200];
+         let customParticleColor = [200, 200, 255];
+         let customGlowColor = [100, 150, 255];
+         let customDetailColor = [255, 255, 255];
+         
+         // 页面加载完成后绑定事件
+         document.addEventListener('DOMContentLoaded', function() {
+             // 自定义颜色应用按钮事件
+             const customColorBtn = document.getElementById('customColorBtn');
+             if (customColorBtn) {
+                 customColorBtn.addEventListener('click', applyCustomColor);
+             }
+             
+             // 颜色面板切换事件
+             const colorPanelToggle = document.querySelector('.color-panel-toggle');
+             if (colorPanelToggle) {
+                 colorPanelToggle.addEventListener('click', toggleColorPanel);
+             }
+         });
+         
+         // 自定义颜色应用函数
+         function applyCustomColor() {
+             const colorPicker = document.getElementById('customColorPicker');
+             const hexColor = colorPicker.value;
+             
+             // 将十六进制颜色转换为RGB
+             const r = parseInt(hexColor.slice(1, 3), 16);
+             const g = parseInt(hexColor.slice(3, 5), 16);
+             const b = parseInt(hexColor.slice(5, 7), 16);
+             
+             // 基于选择的颜色生成星球的各种颜色变体
+             customCoreColor = [Math.min(255, r + 30), Math.min(255, g + 30), Math.min(255, b + 30)];
+             customParticleColor = [r, g, b];
+             customGlowColor = [Math.max(0, r - 30), Math.max(0, g - 30), Math.max(0, b - 30)];
+             customDetailColor = [Math.min(255, r + 50), Math.min(255, g + 50), Math.min(255, b + 50)];
+             
+             customColorMode = true;
+             selectedPlanetColor = 'custom';
+              
+             // 重新初始化星球颜色
+             for (let i = 0; i < worryParticles.length; i++) {
+                 let particle = worryParticles[i];
+                 // 将颜色属性添加到粒子对象
+                 particle.coreColor = `rgba(${customCoreColor[0]}, ${customCoreColor[1]}, ${customCoreColor[2]}, 1)`;
+                 particle.color = `rgba(${customParticleColor[0]}, ${customParticleColor[1]}, ${customParticleColor[2]}, 1)`; // 保持与原有代码的属性名一致
+                 particle.glowColor = `rgba(${customGlowColor[0]}, ${customGlowColor[1]}, ${customGlowColor[2]}, 0.7)`;
+                 particle.detailColor = `rgba(${customDetailColor[0]}, ${customDetailColor[1]}, ${customDetailColor[2]}, 0.6)`;
+             }
+         }
+         
+         // 颜色面板切换函数
+         function toggleColorPanel() {
+             const panel = document.querySelector('.color-control-panel');
+             panel.classList.toggle('active');
+         }
+         // 适配窗口
+         function resizeCanvas() {
+             canvas.width = window.innerWidth;
+             canvas.height = window.innerHeight;
+             centerX = canvas.width / 2;
+             centerY = canvas.height / 2;
+         }
+         window.addEventListener('resize', resizeCanvas);
+         resizeCanvas();
+         // 绘制逼真的黑洞（无热斑，不覆盖背景）
+         function drawBlackHole(deltaTime = 0) {
+             const holeRadius = 180; // 与背景黑洞中心匹配的半径
+             // 使用时间差控制黑洞旋转速度增量
+             blackHoleRotation += 0.005 * deltaTime * 60;
+             
+             // 降低所有元素的透明度，只保留效果不覆盖背景
+             
+             // 第一层：引力透镜效应光晕（更透明）
+             const lensGradient = ctx.createRadialGradient(
+                 centerX, centerY, holeRadius * 0.8,
+                 centerX, centerY, holeRadius * 1.5
+             );
+             lensGradient.addColorStop(0, 'rgba(255, 255, 200, 0.05)');
+             lensGradient.addColorStop(0.5, 'rgba(255, 220, 100, 0.03)');
+             lensGradient.addColorStop(0.8, 'rgba(255, 180, 50, 0.01)');
+             lensGradient.addColorStop(1, 'rgba(255, 150, 0, 0)');
+             ctx.fillStyle = lensGradient;
+             ctx.beginPath();
+             ctx.arc(centerX, centerY, holeRadius * 1.5, 0, Math.PI * 2);
+             ctx.fill();
+             
+             // 第二层：旋转的吸积盘外环（更透明）
+             ctx.save();
+             ctx.translate(centerX, centerY);
+             // 使用时间差控制黑洞旋转
+             ctx.rotate(blackHoleRotation);
+             
+             // 多层吸积盘效果
+             for(let i = 3; i > 0; i--) {
+                 const diskRadius = holeRadius * (0.9 + i * 0.15);
+                 const diskGradient = ctx.createRadialGradient(0, 0, holeRadius * 0.8, 0, 0, diskRadius);
+                 
+                 if(i === 3) {
+                     diskGradient.addColorStop(0, 'rgba(255, 200, 100, 0.05)');
+                     diskGradient.addColorStop(0.7, 'rgba(255, 150, 50, 0.03)');
+                     diskGradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
+                 } else if(i === 2) {
+                     diskGradient.addColorStop(0, 'rgba(200, 150, 255, 0.05)');
+                     diskGradient.addColorStop(0.8, 'rgba(150, 100, 255, 0.03)');
+                     diskGradient.addColorStop(1, 'rgba(100, 50, 255, 0)');
+                 } else {
+                     diskGradient.addColorStop(0, 'rgba(100, 200, 255, 0.05)');
+                     diskGradient.addColorStop(0.9, 'rgba(50, 150, 255, 0.03)');
+                     diskGradient.addColorStop(1, 'rgba(0, 100, 255, 0)');
+                 }
+                 
+                 ctx.fillStyle = diskGradient;
+                 ctx.beginPath();
+                 ctx.arc(0, 0, diskRadius, 0, Math.PI * 2);
+                 ctx.fill();
+             }
+             ctx.restore();
+             
+             // 第三层：事件视界光晕（更透明）
+             const eventHorizonGradient = ctx.createRadialGradient(
+                 centerX, centerY, holeRadius * 0.7,
+                 centerX, centerY, holeRadius * 1.1
+             );
+             eventHorizonGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+             eventHorizonGradient.addColorStop(0.7, 'rgba(50, 20, 80, 0.1)');
+             eventHorizonGradient.addColorStop(1, 'rgba(30, 10, 50, 0)');
+             ctx.fillStyle = eventHorizonGradient;
+             ctx.beginPath();
+             ctx.arc(centerX, centerY, holeRadius * 1.1, 0, Math.PI * 2);
+             ctx.fill();
+             
+             // 移除第四层：黑洞本体（事件视界），不再绘制不透明的黑洞中心
+         }
+         // 绘制星球粒子（彗星拖尾效果）
+         function drawWorryParticles(deltaTime = 0) {
+             // 先绘制所有粒子的拖尾
+             worryParticles.forEach(particle => {
+                 if (particle.trail.length > 0) {
+                     ctx.save();
+                       
+                     // 使用用户提供的Comet类设计实现彗星拖尾效果
+                     const trailLength = particle.trail.length;
+                     const trailSize = particle.size * 0.7;
+                     
+                     // 从尾部到头部绘制轨迹点，使尾部先绘制（层次感）
+                     for (let i = trailLength - 1; i >= 0; i--) {
+                         const point = particle.trail[i];
+                         const progress = i / trailLength;
+                         
+                         // 动态透明度（尾部渐隐）
+                         ctx.globalAlpha = (1 - progress) * 0.7;
+                         
+                         // 动态大小（尾部渐小）
+                         const size = trailSize * (1 - progress * 0.8);
+                         
+                         // 创建渐变（颜色随进度变化，更像彗星）
+                         const gradient = ctx.createRadialGradient(
+                             point.x, point.y, 0,
+                             point.x, point.y, size
+                         );
+                         
+                         // 颜色从黄渐变到蓝（更像彗星）
+                         gradient.addColorStop(0, `rgba(255, 255, 200, ${0.9 * (1 - progress)})`);
+                         gradient.addColorStop(0.5, `rgba(200, 230, 255, ${0.6 * (1 - progress)})`);
+                         gradient.addColorStop(1, `rgba(100, 150, 255, 0)`);
+                         
+                         ctx.fillStyle = gradient;
+                         ctx.beginPath();
+                         ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+                         ctx.fill();
+                     }
+                     
+                     ctx.restore();
+                 }
+             });
+             // 再绘制星球本体
+             worryParticles.forEach((particle, index) => {
+                 // 记录轨迹点（使用unshift添加到头部，更符合Comet类设计）
+                 particle.trail.unshift({ x: particle.x, y: particle.y });
+                 if (particle.trail.length > 20) { // 轨迹长度设为20，与Comet类一致
+                     particle.trail.pop();
+                 }
+                 // 螺旋向心运动（改为逆时针旋转）
+                 // 使用时间差控制运动速度，确保不同帧率下运动一致
+                 const rotationIncrement = (particle.rotateSpeed + (0.001 / (particle.distance / 100))) * deltaTime * 60;
+                 const distanceIncrement = (particle.inwardSpeed + (0.25 / (particle.distance / 100))) * deltaTime * 60;
+                 
+                 particle.angle -= rotationIncrement;
+                 particle.distance -= distanceIncrement;
+                 
+                 // 计算位置
+                 particle.x = centerX + Math.cos(particle.angle) * particle.distance;
+                 particle.y = centerY + Math.sin(particle.angle) * particle.distance;
+                 // 星球大小随距离递减（保持更大的基础大小和最小尺寸）
+                 particle.size = Math.max(15, particle.initialSize * (particle.distance / particle.initialDistance * 0.8 + 0.2)); // 最小15像素，保持较大体积
+                 // 绘制星球（更丰富的渐变效果，类似星球）
+                 const planetGradient = ctx.createRadialGradient(
+                     particle.x, particle.y, 0,
+                     particle.x, particle.y, particle.size
+                 );
+                 // 星球核心颜色
+                 planetGradient.addColorStop(0, particle.coreColor);
+                 // 星球表面颜色
+                 planetGradient.addColorStop(0.6, particle.color);
+                 // 星球光晕
+                 planetGradient.addColorStop(0.8, particle.glowColor);
+                 // 透明边缘
+                 planetGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                 
+                 ctx.fillStyle = planetGradient;
+                 ctx.beginPath();
+                 ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                 ctx.fill();
+                 
+                 // 绘制星球表面细节（可选）
+                 if (particle.size > 10) {
+                     ctx.strokeStyle = particle.detailColor;
+                     ctx.lineWidth = 1;
+                     ctx.beginPath();
+                     ctx.arc(particle.x, particle.y, particle.size * 0.7, 0, Math.PI * 2);
+                     ctx.stroke();
+                 }
+                 // 绘制烦恼文字
+                 if (particle.distance > 100) {
+                     ctx.fillStyle = '#fff';
+                     ctx.font = `${Math.min(14, particle.size * 1.2)}px 微软雅黑`;
+                     ctx.textAlign = 'center';
+                     ctx.textBaseline = 'middle';
+                     ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+                     ctx.shadowBlur = 5;
+                     ctx.fillText(particle.worry, particle.x, particle.y);
+                     ctx.shadowBlur = 0;
+                 }
+                 // 进入黑洞后消失并触发闪光
+                 if (particle.distance < 40) {
+                     drawAbsorbFlash(particle.x, particle.y);
+                     worryParticles.splice(index, 1);
+                 }
+             });
+         }
+         // 吞噬闪光效果（简单闪烁，无溅射）
+         function drawAbsorbFlash(x, y) {
+             ctx.save();
+             const flashRadius = 40; // 增大闪光半径
+             const flashGradient = ctx.createRadialGradient(
+                 x, y, 0,
+                 x, y, flashRadius
+             );
+             flashGradient.addColorStop(0, 'rgba(255, 255, 255, 1)'); // 更亮的中心
+             flashGradient.addColorStop(0.3, 'rgba(255, 255, 200, 0.8)');
+             flashGradient.addColorStop(0.6, 'rgba(255, 220, 120, 0.4)');
+             flashGradient.addColorStop(1, 'rgba(255, 180, 80, 0)');
+              
+             ctx.fillStyle = flashGradient;
+             ctx.beginPath();
+             ctx.arc(x, y, flashRadius, 0, Math.PI * 2);
+             ctx.fill();
+             ctx.restore();
+         }
+         // 添加时间差控制变量
+         let lastTime = performance.now();
+         // 动画循环
+         function animate(currentTime) {
+             // 计算时间差（秒）
+             const deltaTime = (currentTime - lastTime) / 1000;
+             lastTime = currentTime;
+             
+             ctx.clearRect(0, 0, canvas.width, canvas.height);
+             drawBlackHole(deltaTime);
+             drawWorryParticles(deltaTime);
+             requestAnimationFrame(animate);
+         }
+         animate(performance.now());
+         // 提交烦恼生成星球粒子
+         document.getElementById('submitBtn').addEventListener('click', () => {
+             const worryText = document.getElementById('worryInput').value.trim();
+             if (!worryText) return;
+             const initialDistance = Math.max(canvas.width, canvas.height) * 0.55; // 初始位置更靠近黑洞中心
+             const initialAngle = Math.random() * Math.PI * 2;
+             const initialSize = Math.random() * 20 + 25; // 进一步增大星球体积（25-45）
+             
+             let particleColor, coreColor, glowColor, detailColor;
+              
+             // 检查是否使用自定义颜色
+             if (selectedPlanetColor === 'custom' && customColorMode) {
+                 coreColor = `rgba(${customCoreColor[0]}, ${customCoreColor[1]}, ${customCoreColor[2]}, 1)`;
+                 particleColor = `rgba(${customParticleColor[0]}, ${customParticleColor[1]}, ${customParticleColor[2]}, 1)`;
+                 glowColor = `rgba(${customGlowColor[0]}, ${customGlowColor[1]}, ${customGlowColor[2]}, 0.7)`;
+                 detailColor = `rgba(${customDetailColor[0]}, ${customDetailColor[1]}, ${customDetailColor[2]}, 0.6)`;
+             } else {
+                 // 根据选中的星球颜色设置不同的颜色方案
+                 switch (selectedPlanetColor) {
+                     case 'blue':
+                         coreColor = `rgba(${80 + Math.random() * 50}, ${120 + Math.random() * 50}, ${255}, 1)`;
+                         particleColor = `rgba(${100 + Math.random() * 50}, ${150 + Math.random() * 50}, ${255}, 0.8)`;
+                         glowColor = `rgba(${150 + Math.random() * 50}, ${200 + Math.random() * 50}, ${255}, 0.5)`;
+                         detailColor = `rgba(${50 + Math.random() * 50}, ${100 + Math.random() * 50}, ${200}, 0.6)`;
+                         break;
+                     case 'orange':
+                         coreColor = `rgba(${255}, ${120 + Math.random() * 50}, ${60 + Math.random() * 50}, 1)`;
+                         particleColor = `rgba(${255}, ${150 + Math.random() * 50}, ${100 + Math.random() * 50}, 0.8)`;
+                         glowColor = `rgba(${255}, ${180 + Math.random() * 50}, ${150 + Math.random() * 50}, 0.5)`;
+                         detailColor = `rgba(${200 + Math.random() * 50}, ${100 + Math.random() * 50}, ${50 + Math.random() * 50}, 0.6)`;
+                         break;
+                     case 'green':
+                         coreColor = `rgba(${60 + Math.random() * 50}, ${200 + Math.random() * 50}, ${120 + Math.random() * 50}, 1)`;
+                         particleColor = `rgba(${80 + Math.random() * 50}, ${220 + Math.random() * 50}, ${150 + Math.random() * 50}, 0.8)`;
+                         glowColor = `rgba(${120 + Math.random() * 50}, ${255 + Math.random() * 0}, ${200 + Math.random() * 50}, 0.5)`;
+                         detailColor = `rgba(${40 + Math.random() * 50}, ${150 + Math.random() * 50}, ${80 + Math.random() * 50}, 0.6)`;
+                         break;
+                     case 'purple':
+                         coreColor = `rgba(${150 + Math.random() * 50}, ${80 + Math.random() * 50}, ${220 + Math.random() * 50}, 1)`;
+                         particleColor = `rgba(${180 + Math.random() * 50}, ${100 + Math.random() * 50}, ${255 + Math.random() * 0}, 0.8)`;
+                         glowColor = `rgba(${200 + Math.random() * 50}, ${150 + Math.random() * 50}, ${255 + Math.random() * 0}, 0.5)`;
+                         detailColor = `rgba(${120 + Math.random() * 50}, ${60 + Math.random() * 50}, ${180 + Math.random() * 50}, 0.6)`;
+                         break;
+                     case 'red':
+                         coreColor = `rgba(${220 + Math.random() * 35}, ${60 + Math.random() * 50}, ${60 + Math.random() * 50}, 1)`;
+                         particleColor = `rgba(${255 + Math.random() * 0}, ${80 + Math.random() * 50}, ${80 + Math.random() * 50}, 0.8)`;
+                         glowColor = `rgba(${255 + Math.random() * 0}, ${120 + Math.random() * 50}, ${120 + Math.random() * 50}, 0.5)`;
+                         detailColor = `rgba(${180 + Math.random() * 50}, ${40 + Math.random() * 50}, ${40 + Math.random() * 50}, 0.6)`;
+                         break;
+                     case 'yellow':
+                         coreColor = `rgba(${255}, ${220 + Math.random() * 35}, ${60 + Math.random() * 50}, 1)`;
+                         particleColor = `rgba(${255}, ${255}, ${100 + Math.random() * 50}, 0.8)`;
+                         glowColor = `rgba(${255}, ${255}, ${150 + Math.random() * 50}, 0.5)`;
+                         detailColor = `rgba(${200 + Math.random() * 50}, ${180 + Math.random() * 50}, ${40 + Math.random() * 50}, 0.6)`;
+                         break;
+                     case 'cyan':
+                         coreColor = `rgba(${60 + Math.random() * 50}, ${200 + Math.random() * 50}, ${220 + Math.random() * 35}, 1)`;
+                         particleColor = `rgba(${100 + Math.random() * 50}, ${255}, ${255}, 0.8)`;
+                         glowColor = `rgba(${150 + Math.random() * 50}, ${255}, ${255}, 0.5)`;
+                         detailColor = `rgba(${40 + Math.random() * 50}, ${180 + Math.random() * 50}, ${200 + Math.random() * 50}, 0.6)`;
+                         break;
+                     case 'pink':
+                         coreColor = `rgba(${220 + Math.random() * 35}, ${60 + Math.random() * 50}, ${160 + Math.random() * 50}, 1)`;
+                         particleColor = `rgba(${255 + Math.random() * 0}, ${100 + Math.random() * 50}, ${200 + Math.random() * 50}, 0.8)`;
+                         glowColor = `rgba(${255 + Math.random() * 0}, ${150 + Math.random() * 50}, ${255 + Math.random() * 0}, 0.5)`;
+                         detailColor = `rgba(${180 + Math.random() * 50}, ${40 + Math.random() * 50}, ${160 + Math.random() * 50}, 0.6)`;
+                         break;
+                 }
+             }
+             
+             // 添加调试信息
+             console.log('创建星球:', {
+                 worryText,
+                 selectedPlanetColor,
+                 initialSize,
+                 particleColor,
+                 coreColor,
+                 glowColor,
+                 detailColor
+             });
+             
+             worryParticles.push({
+                 worry: worryText,
+                 x: centerX + Math.cos(initialAngle) * initialDistance,
+                 y: centerY + Math.sin(initialAngle) * initialDistance,
+                 angle: initialAngle,
+                 distance: initialDistance,
+                 initialDistance: initialDistance,
+                 rotateSpeed: Math.random() * 0.01 + 0.0075, // 减缓旋转速度到原来的50%
+                 inwardSpeed: Math.random() * 0.5 + 0.3, // 减缓向内速度到原来的50%
+                 initialSize: initialSize,
+                 size: initialSize,
+                 color: particleColor,
+                 coreColor: coreColor,
+                 glowColor: glowColor,
+                 detailColor: detailColor,
+                 trail: []
+             });
+             
+             // 调试：检查星球数组长度
+             console.log('星球总数:', worryParticles.length);
+             document.getElementById('worryInput').value = '';
+         });
+         // 回车提交
+         document.getElementById('worryInput').addEventListener('keydown', (e) => {
+             if (e.key === 'Enter') document.getElementById('submitBtn').click();
+         });
+     </script>
+ </body>
+ </html>

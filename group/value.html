@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轻氧 - 低压力价值 | 年轻人的轻生活指南</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1', // Indigo 500
+                        secondary: '#a855f7', // Purple 500
+                        dark: '#0f172a', // Slate 900
+                        darker: '#020617', // Slate 950
+                        surface: '#1e293b', // Slate 800
+                        muted: '#94a3b8', // Slate 400
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 4px 20px rgba(0, 0, 0, 0.2)',
+                        'card-hover': '0 8px 30px rgba(99, 102, 241, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- 自定义样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1;
+            }
+            .glass-panel {
+                @apply bg-surface/50 backdrop-blur-md border border-white/10;
+            }
+            .nav-link.active {
+                @apply text-primary font-medium;
+            }
+            .value-tab.active {
+                @apply bg-gradient-to-r from-primary to-secondary text-white shadow-md border-transparent;
+            }
+            .value-tab:not(.active) {
+                @apply bg-white/5 text-slate-300 hover:bg-white/10 transition-colors border border-white/10;
+            }
+            .task-completed {
+                @apply bg-green-900/20 text-green-400 border-green-800/30;
+            }
+            
+            /* Unified Back Button Style */
+            .back-home-btn {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #e2e8f0;
+                padding: 10px 20px;
+                border-radius: 9999px;
+                font-weight: 500;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+            .back-home-btn:hover {
+                background: rgba(99, 102, 241, 0.2);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+                border-color: rgba(99, 102, 241, 0.5);
+            }
+
+            /* Growth Value Badge */
+            .growth-badge {
+                position: fixed;
+                top: 85px; /* Below header */
+                right: 20px;
+                background: rgba(15, 23, 42, 0.8);
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 8px 16px;
+                border-radius: 9999px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                z-index: 40;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .growth-badge:hover {
+                transform: scale(1.05);
+                border-color: rgba(168, 85, 247, 0.4);
+            }
+            @media (min-width: 768px) {
+                .growth-badge {
+                    top: 24px;
+                    right: 24px;
+                    background: rgba(30, 41, 59, 0.5);
+                }
+            }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/"
+  }
+}
+</script>
+</head>
+<body class="bg-dark text-slate-200 font-sans antialiased selection:bg-primary/30">
+    <!-- Back to Hub Button -->
+    <a href="main.html" class="back-home-btn">
+        <i class="fas fa-arrow-left"></i> 返回主页
+    </a>
+
+    <!-- Growth Value Display -->
+    <div class="growth-badge group">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-green-500/30 group-hover:animate-pulse">
+            <i class="fas fa-seedling text-sm"></i>
+        </div>
+        <div class="flex flex-col">
+            <span class="text-[10px] text-muted uppercase tracking-wider font-bold">成长值</span>
+            <span id="totalGrowthValue" class="text-sm font-bold text-white leading-none">0</span>
+        </div>
+    </div>
+
+    <!-- 全局导航栏 -->
+    <header class="sticky top-0 z-50 bg-dark/80 backdrop-blur-md shadow-sm border-b border-white/5">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-center md:justify-between pl-36 md:pl-4">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-primary text-2xl"><i class="fas fa-wind"></i></span>
+                <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">轻氧阅读</span>
+            </a>
+
+            <!-- 桌面端导航 -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="nav-link text-muted hover:text-white transition-colors">轻资讯</a>
+                <a href="value.html" class="nav-link active hover:text-primary transition-colors">低压力价值</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 低压力价值板块 -->
+    <section id="value" class="py-12 md:py-20 container mx-auto px-4">
+        <!-- 板块标题区 -->
+        <div class="text-center mb-12 md:mb-16">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold mb-4 text-white text-shadow">
+                低压力<span class="text-primary">价值</span>
+            </h1>
+            <p class="text-muted max-w-2xl mx-auto mb-8 text-lg">
+                拒绝焦虑，轻松获取有价值的小知识、小技巧，让成长更轻松
+            </p>
+            
+            <!-- 核心Slogan -->
+            <div class="inline-flex items-center gap-2 bg-surface/50 border border-white/10 px-6 py-3 rounded-full text-primary font-medium shadow-sm backdrop-blur-sm">
+                <i class="fas fa-leaf text-lg"></i>
+                <span>每天5分钟，轻松涨知识</span>
+            </div>
+        </div>
+
+        <!-- 价值分类标签 -->
+        <div class="flex flex-wrap gap-3 mb-10 justify-center">
+            <button class="value-tab active px-6 py-3 rounded-full font-medium transition-all" data-type="task">每日任务</button>
+            <button class="value-tab px-6 py-3 rounded-full font-medium transition-all" data-type="relax">解压小技巧</button>
+            <button class="value-tab px-6 py-3 rounded-full font-medium transition-all" data-type="heal">情绪疗愈</button>
+            <button class="value-tab px-6 py-3 rounded-full font-medium transition-all" data-type="life">生活美学</button>
+        </div>
+
+        <!-- 核心内容区 -->
+        <div id="valueContent" class="glass-panel rounded-3xl shadow-xl p-8 md:p-10 mb-10">
+            <!-- 每日任务 -->
+            <div class="value-content active" data-type="task">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="w-14 h-14 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-primary border border-primary/20">
+                        <i class="fas fa-calendar-check text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">今日轻任务列表</h2>
+                </div>
+                
+                <!-- 任务 1: 呼吸练习 (In-place) -->
+                <div id="task-breath-card" class="task-card bg-dark/50 rounded-2xl p-6 border border-white/10 card-hover mb-6 transition-colors" data-task-id="task_breath">
+                    <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                        <div class="task-icon-container flex-shrink-0 w-16 h-16 rounded-full bg-white/5 shadow-sm flex items-center justify-center text-primary text-2xl border border-white/10 transition-colors">
+                            <i class="fas fa-lungs task-icon"></i>
+                        </div>
+                        <div class="flex-grow w-full">
+                            <h3 class="font-bold text-xl mb-2 text-white">深呼吸练习</h3>
+                            <p class="text-slate-400 leading-relaxed mb-4">
+                                完成1次 4-7-8 呼吸法练习，调节自主神经系统，快速缓解焦虑情绪。
+                            </p>
+                            <div class="flex items-center justify-between md:justify-start md:gap-4 w-full">
+                                <button class="task-action-btn px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-medium hover:brightness-110 transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2 text-sm" onclick="completeTask(event, 'task_breath', 10)">
+                                    <i class="fas fa-check"></i> 标记完成
+                                </button>
+                                <span class="text-xs text-slate-500"><i class="fas fa-star text-yellow-500 mr-1"></i>成长值 +10</span>
+                            </div>
+                            <!-- 完成反馈提示 -->
+                            <div class="task-feedback mt-4 p-3 bg-green-900/20 border border-green-500/20 rounded-xl hidden text-green-400 text-sm animate-pulse">
+                                <i class="fas fa-check-circle mr-2"></i> 任务完成！获得成长值+10 ✨
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 任务 2: 听白噪音 -->
+                <div id="task-noise-card" class="task-card bg-dark/50 rounded-2xl p-6 border border-white/10 card-hover mb-6 transition-colors" data-task-id="task_noise">
+                    <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                        <div class="task-icon-container flex-shrink-0 w-16 h-16 rounded-full bg-white/5 shadow-sm flex items-center justify-center text-purple-400 text-2xl border border-white/10 transition-colors">
+                            <i class="fas fa-headphones-alt task-icon"></i>
+                        </div>
+                        <div class="flex-grow w-full">
+                            <h3 class="font-bold text-xl mb-2 text-white">听觉疗愈</h3>
+                            <p class="text-slate-400 leading-relaxed mb-4">
+                                聆听 5 分钟白噪音（雨声、森林或咖啡馆），屏蔽外界干扰，找回内心平静。
+                            </p>
+                            <div class="flex items-center justify-between md:justify-start md:gap-4 w-full">
+                                <a href="indexzenmix.html" class="task-action-btn px-6 py-2 bg-white/10 border border-white/20 text-white rounded-full font-medium hover:bg-white/20 transition-all flex items-center gap-2 text-sm" onclick="completeTask(event, 'task_noise', 15)">
+                                    去完成 <i class="fas fa-arrow-right"></i>
+                                </a>
+                                <span class="text-xs text-slate-500"><i class="fas fa-star text-yellow-500 mr-1"></i>成长值 +15</span>
+                            </div>
+                            <div class="task-feedback mt-4 p-3 bg-green-900/20 border border-green-500/20 rounded-xl hidden text-green-400 text-sm">
+                                <i class="fas fa-check-circle mr-2"></i> 任务完成！获得成长值+15 ✨
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 任务 3: 解压游戏 -->
+                <div id="task-game-card" class="task-card bg-dark/50 rounded-2xl p-6 border border-white/10 card-hover mb-6 transition-colors" data-task-id="task_game">
+                    <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                        <div class="task-icon-container flex-shrink-0 w-16 h-16 rounded-full bg-white/5 shadow-sm flex items-center justify-center text-green-400 text-2xl border border-white/10 transition-colors">
+                            <i class="fas fa-gamepad task-icon"></i>
+                        </div>
+                        <div class="flex-grow w-full">
+                            <h3 class="font-bold text-xl mb-2 text-white">专注力漫步</h3>
+                            <p class="text-slate-400 leading-relaxed mb-4">
+                                游玩一把恐龙跑酷，在简单的跳跃与躲避中放空大脑，体验心流状态。
+                            </p>
+                            <div class="flex items-center justify-between md:justify-start md:gap-4 w-full">
+                                <a href="1.html" class="task-action-btn px-6 py-2 bg-white/10 border border-white/20 text-white rounded-full font-medium hover:bg-white/20 transition-all flex items-center gap-2 text-sm" onclick="completeTask(event, 'task_game', 20)">
+                                    去完成 <i class="fas fa-arrow-right"></i>
+                                </a>
+                                <span class="text-xs text-slate-500"><i class="fas fa-star text-yellow-500 mr-1"></i>成长值 +20</span>
+                            </div>
+                             <div class="task-feedback mt-4 p-3 bg-green-900/20 border border-green-500/20 rounded-xl hidden text-green-400 text-sm">
+                                <i class="fas fa-check-circle mr-2"></i> 任务完成！获得成长值+20 ✨
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 任务 4: 烦恼黑洞 -->
+                <div id="task-worry-card" class="task-card bg-dark/50 rounded-2xl p-6 border border-white/10 card-hover mb-6 transition-colors" data-task-id="task_worry">
+                    <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                        <div class="task-icon-container flex-shrink-0 w-16 h-16 rounded-full bg-white/5 shadow-sm flex items-center justify-center text-orange-400 text-2xl border border-white/10 transition-colors">
+                            <i class="fas fa-trash-alt task-icon"></i>
+                        </div>
+                        <div class="flex-grow w-full">
+                            <h3 class="font-bold text-xl mb-2 text-white">情绪大扫除</h3>
+                            <p class="text-slate-400 leading-relaxed mb-4">
+                                将心中的焦虑与烦恼写下来，扔进宇宙黑洞，体验彻底释放的快感。
+                            </p>
+                            <div class="flex items-center justify-between md:justify-start md:gap-4 w-full">
+                                <a href="页面1.html" class="task-action-btn px-6 py-2 bg-white/10 border border-white/20 text-white rounded-full font-medium hover:bg-white/20 transition-all flex items-center gap-2 text-sm" onclick="completeTask(event, 'task_worry', 25)">
+                                    去完成 <i class="fas fa-arrow-right"></i>
+                                </a>
+                                <span class="text-xs text-slate-500"><i class="fas fa-star text-yellow-500 mr-1"></i>成长值 +25</span>
+                            </div>
+                             <div class="task-feedback mt-4 p-3 bg-green-900/20 border border-green-500/20 rounded-xl hidden text-green-400 text-sm">
+                                <i class="fas fa-check-circle mr-2"></i> 任务完成！获得成长值+25 ✨
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 解压小技巧 -->
+            <div class="value-content hidden" data-type="relax">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="w-14 h-14 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-primary border border-primary/20">
+                        <i class="fas fa-brain text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">专业解压技巧</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-dark/50 rounded-2xl p-6 border border-white/10 card-hover">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-white/5 rounded-xl shadow-sm flex items-center justify-center text-primary border border-white/10">
+                                <i class="fas fa-lungs"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg mb-2 text-white">478呼吸减压法</h3>
+                                <p class="text-slate-400 text-sm leading-relaxed">
+                                    采用4秒吸气7秒屏息8秒呼气的节律，激活副交感神经系统，降低皮质醇水平。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark/50 rounded-2xl p-6 border border-white/10 card-hover">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-white/5 rounded-xl shadow-sm flex items-center justify-center text-primary border border-white/10">
+                                <i class="fas fa-wave-square"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg mb-2 text-white">白噪音环境调节</h3>
+                                <p class="text-slate-400 text-sm leading-relaxed">
+                                    选择40-60分贝的自然白噪音，如森林声、雨声或溪流声，可有效屏蔽环境干扰。
+                                </p>
+                                <a href="indexzenmix.html" class="mt-2 inline-flex items-center text-xs font-bold text-primary hover:text-secondary transition-colors">
+                                    去听白噪音 <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 情绪疗愈 -->
+            <div class="value-content hidden" data-type="heal">
+                 <div class="flex items-center gap-4 mb-8">
+                    <div class="w-14 h-14 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-primary border border-primary/20">
+                        <i class="fas fa-heart text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">情绪疗愈指南</h2>
+                </div>
+                <div class="bg-dark/50 rounded-2xl p-6 border border-white/10">
+                    <p class="text-slate-400 text-center py-8">
+                        <i class="fas fa-coffee mb-2 text-4xl text-slate-600 block"></i>
+                        内容正在精心酿造中...
+                    </p>
+                </div>
+            </div>
+
+            <!-- 生活美学 -->
+            <div class="value-content hidden" data-type="life">
+                 <div class="flex items-center gap-4 mb-8">
+                    <div class="w-14 h-14 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-primary border border-primary/20">
+                        <i class="fas fa-coffee text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">生活美学实践</h2>
+                </div>
+                <div class="bg-dark/50 rounded-2xl p-6 border border-white/10">
+                    <p class="text-slate-400 text-center py-8">
+                        <i class="fas fa-paint-brush mb-2 text-4xl text-slate-600 block"></i>
+                        内容正在精心酿造中...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部信息 -->
+    <footer class="bg-dark/50 border-t border-white/5 py-8 mt-12 backdrop-blur-sm">
+        <div class="container mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>Mindful Space © 2025 | 每一个深呼吸，都是爱自己</p>
+        </div>
+    </footer>
+
+    <!-- 交互功能JS -->
+    <script>
+        // 1. 成长值系统与任务管理
+        const StorageKeys = {
+            GROWTH_VALUE: 'mindful_growth_value',
+            COMPLETED_TASKS: 'mindful_completed_tasks'
+        };
+
+        // 初始化数据
+        let growthValue = parseInt(localStorage.getItem(StorageKeys.GROWTH_VALUE) || '0');
+        let completedTasks = JSON.parse(localStorage.getItem(StorageKeys.COMPLETED_TASKS) || '[]');
+
+        // 更新成长值显示
+        function updateGrowthDisplay() {
+            const displayEl = document.getElementById('totalGrowthValue');
+            displayEl.textContent = growthValue;
+            
+            // 简单的动画效果
+            displayEl.classList.remove('scale-100');
+            displayEl.classList.add('scale-125', 'text-green-400');
+            setTimeout(() => {
+                displayEl.classList.remove('scale-125', 'text-green-400');
+                displayEl.classList.add('scale-100');
+            }, 300);
+        }
+
+        // 渲染单个任务的状态
+        function renderTaskState(taskId) {
+            const card = document.querySelector(`.task-card[data-task-id="${taskId}"]`);
+            if (!card) return;
+
+            const btn = card.querySelector('.task-action-btn');
+            const feedback = card.querySelector('.task-feedback');
+            const iconContainer = card.querySelector('.task-icon-container');
+            const icon = card.querySelector('.task-icon');
+
+            // 更新卡片样式
+            card.classList.add('border-green-800/30', 'bg-green-900/10');
+            
+            // 更新按钮状态
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> 已完成';
+                btn.className = 'px-6 py-2 bg-green-600/20 text-green-400 border border-green-600/30 rounded-full font-medium cursor-not-allowed opacity-80 flex items-center gap-2 text-sm';
+                // 移除href属性以防止再次点击跳转 (如果是链接)
+                if(btn.tagName === 'A') {
+                    btn.removeAttribute('href');
+                    btn.style.pointerEvents = 'none';
+                } else {
+                    btn.disabled = true;
+                }
+            }
+
+            // 更新图标状态
+            if (iconContainer && icon) {
+                iconContainer.classList.remove('bg-white/5', 'text-primary', 'text-purple-400', 'text-green-400', 'text-orange-400');
+                iconContainer.classList.add('bg-green-500/20', 'text-green-400', 'border-green-500/30');
+                
+                // 替换图标类名 (保留 fa-solid/fas)
+                const currentIconClass = Array.from(icon.classList).find(c => c.startsWith('fa-') && c !== 'fas' && c !== 'task-icon');
+                if(currentIconClass) {
+                    icon.classList.remove(currentIconClass);
+                    icon.classList.add('fa-check');
+                }
+            }
+
+            // 显示反馈
+            if (feedback) {
+                feedback.classList.remove('hidden');
+            }
+        }
+
+        // 完成任务逻辑 (全局暴露给onclick)
+        window.completeTask = function(event, taskId, reward) {
+            // 如果任务已完成，直接返回
+            if (completedTasks.includes(taskId)) {
+                // 如果是链接，阻止默认跳转，因为已经完成了
+                if (event) event.preventDefault();
+                return;
+            }
+
+            // 1. 更新数据
+            growthValue += reward;
+            completedTasks.push(taskId);
+
+            // 2. 保存到本地存储
+            localStorage.setItem(StorageKeys.GROWTH_VALUE, growthValue.toString());
+            localStorage.setItem(StorageKeys.COMPLETED_TASKS, JSON.stringify(completedTasks));
+
+            // 3. 更新UI逻辑
+            // 如果是链接 (A标签)，不要立即更新UI状态（防止移除href导致无法跳转）
+            // 如果是按钮 (Button)，立即更新
+            if (event && event.currentTarget && event.currentTarget.tagName === 'A') {
+                updateGrowthDisplay();
+                // 允许浏览器继续执行默认的链接跳转行为
+            } else {
+                updateGrowthDisplay();
+                renderTaskState(taskId);
+            }
+        };
+
+        // 页面显示时检查状态 (兼容 BFCache - 往返缓存)
+        window.addEventListener('pageshow', function(event) {
+             // 重新从localStorage加载最新数据
+            growthValue = parseInt(localStorage.getItem(StorageKeys.GROWTH_VALUE) || '0');
+            completedTasks = JSON.parse(localStorage.getItem(StorageKeys.COMPLETED_TASKS) || '[]');
+            updateGrowthDisplay();
+            
+            // 恢复所有已完成任务的状态
+            completedTasks.forEach(taskId => {
+                renderTaskState(taskId);
+            });
+        });
+
+        // 页面首次加载初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            updateGrowthDisplay();
+            completedTasks.forEach(taskId => {
+                renderTaskState(taskId);
+            });
+        });
+
+        // 2. 标签切换功能
+        const valueTabs = document.querySelectorAll('.value-tab');
+        const valueContents = document.querySelectorAll('.value-content');
+        
+        valueTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 切换标签激活状态
+                valueTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // 切换内容显示
+                const type = tab.dataset.type;
+                valueContents.forEach(content => {
+                    if (content.dataset.type === type) {
+                        content.classList.remove('hidden');
+                        content.classList.add('active');
+                    } else {
+                        content.classList.add('hidden');
+                        content.classList.remove('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

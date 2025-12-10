@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindful Space | 心灵休憩所</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            background-size: 200% 200%;
+            animation: aurora 15s ease infinite;
+        }
+
+        @keyframes aurora {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .title-gradient {
+            background: linear-gradient(to right, #818cf8, #e879f9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-center items-center p-6">
+    <div class="aurora-bg"></div>
+
+    <header class="text-center mb-16 relative z-10">
+        <h1 class="text-5xl md:text-7xl font-bold mb-4 tracking-tight title-gradient">Mindful Space</h1>
+        <p class="text-xl text-slate-300 font-light tracking-widest">在这里，放下世界的喧嚣</p>
+    </header>
+
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl w-full relative z-10">
+        
+        <!-- Link to Index.html (News/Reading) -->
+        <a href="index.html" class="glass-card rounded-3xl p-8 flex flex-col items-center text-center group cursor-pointer">
+            <div class="w-20 h-20 rounded-full bg-orange-500/20 flex items-center justify-center mb-6 group-hover:bg-orange-500/40 transition-colors">
+                <i class="fas fa-book-open text-3xl text-orange-300"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-3 text-white">轻阅资讯</h2>
+            <p class="text-slate-400 text-sm">低压力价值阅读，每天5分钟，轻松获取生活美学与疗愈知识。</p>
+            <div class="mt-auto pt-6 text-orange-300 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                开始阅读 <i class="fas fa-arrow-right ml-1"></i>
+            </div>
+        </a>
+
+        <!-- Link to indexzenmix.html (White Noise) -->
+        <a href="indexzenmix.html" class="glass-card rounded-3xl p-8 flex flex-col items-center text-center group cursor-pointer">
+            <div class="w-20 h-20 rounded-full bg-indigo-500/20 flex items-center justify-center mb-6 group-hover:bg-indigo-500/40 transition-colors">
+                <i class="fas fa-headphones text-3xl text-indigo-300"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-3 text-white">ZenMix 白噪音</h2>
+            <p class="text-slate-400 text-sm">聆听自然之声，雨声、风声、咖啡馆，定制你的专属专注与助眠背景音。</p>
+            <div class="mt-auto pt-6 text-indigo-300 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                开始聆听 <i class="fas fa-arrow-right ml-1"></i>
+            </div>
+        </a>
+
+        <!-- Link to 1.html (Game) -->
+        <a href="1.html" class="glass-card rounded-3xl p-8 flex flex-col items-center text-center group cursor-pointer">
+            <div class="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-6 group-hover:bg-green-500/40 transition-colors">
+                <i class="fas fa-gamepad text-3xl text-green-300"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-3 text-white">恐龙漫步</h2>
+            <p class="text-slate-400 text-sm">经典像素风格跑酷游戏，简单的跳跃与躲避，放空大脑的绝佳方式。</p>
+            <div class="mt-auto pt-6 text-green-300 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                开始游戏 <i class="fas fa-arrow-right ml-1"></i>
+            </div>
+        </a>
+
+        <!-- Link to 页面1.html (Black Hole) -->
+        <a href="页面1.html" class="glass-card rounded-3xl p-8 flex flex-col items-center text-center group cursor-pointer">
+            <div class="w-20 h-20 rounded-full bg-purple-500/20 flex items-center justify-center mb-6 group-hover:bg-purple-500/40 transition-colors">
+                <i class="fas fa-circle-notch fa-spin text-3xl text-purple-300"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-3 text-white">烦恼黑洞</h2>
+            <p class="text-slate-400 text-sm">写下你的焦虑与烦恼，看着它们被深邃的宇宙黑洞吞噬殆尽。</p>
+            <div class="mt-auto pt-6 text-purple-300 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                释放压力 <i class="fas fa-arrow-right ml-1"></i>
+            </div>
+        </a>
+
+    </main>
+
+    <footer class="mt-16 text-slate-500 text-sm relative z-10">
+        &copy; 2025 Mindful Space. Relax, Breathe, Let go.
+    </footer>
+</body>
+</html>

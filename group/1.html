@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>恐龙跑酷 - Mindful Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Modern Reset & Base */
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+SC:wght@400;700&display=swap');
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Noto Sans SC', sans-serif;
+          background-color: #1a202c; /* Slate 900 */
+          color: #e2e8f0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          overflow: hidden;
+        }
+
+        /* Unified Back Button */
+        .back-home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 14px;
+        }
+        .back-home-btn:hover {
+            background: #48bb78;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(72, 187, 120, 0.5);
+            border-color: #48bb78;
+        }
+
+        /* App Container styled like an Arcade Cabinet */
+        .app-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+          max-width: 900px;
+          padding: 20px;
+          background: #2d3748;
+          border-radius: 20px;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 2px #4a5568;
+          border: 4px solid #4a5568;
+        }
+
+        /* Header */
+        .app-header {
+          text-align: center;
+          margin-bottom: 20px;
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0 10px;
+        }
+
+        .app-header h1 {
+          font-family: 'Press Start 2P', cursive;
+          font-size: 1.2rem;
+          color: #48bb78; /* Green */
+          text-shadow: 2px 2px 0px #000;
+        }
+
+        /* Game Stats */
+        .game-info {
+          display: flex;
+          gap: 15px;
+          font-family: 'Noto Sans SC', sans-serif; /* Changed for better Chinese rendering */
+          font-weight: bold;
+          font-size: 0.9rem;
+          color: #a0aec0;
+          align-items: center;
+        }
+
+        .score-box {
+            background: #1a202c;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #4a5568;
+        }
+        
+        .highlight-text { color: #f6ad55; } /* Orange */
+
+        /* Canvas Area */
+        .game-main {
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          border-radius: 10px;
+          overflow: hidden;
+          border: 4px solid #1a202c;
+          box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .game-canvas {
+          background-color: #f7fafc; /* Keep canvas light for contrast with sprites */
+          width: 100%;
+          display: block;
+        }
+
+        /* Overlay Styling */
+        .game-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background-color: rgba(26, 32, 44, 0.85);
+          backdrop-filter: blur(4px);
+          z-index: 10;
+          color: white;
+          text-align: center;
+        }
+
+        .overlay-content h2 {
+          font-family: 'Noto Sans SC', sans-serif;
+          font-weight: 900;
+          font-size: 2rem;
+          color: #f6e05e;
+          margin-bottom: 20px;
+          text-shadow: 4px 4px 0 #000;
+          letter-spacing: 2px;
+        }
+
+        .overlay-content p {
+            margin: 8px 0;
+            color: #cbd5e0;
+            font-size: 1.1rem;
+        }
+
+        .warning {
+            color: #fc8181;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+
+        /* Buttons */
+        .btn {
+          padding: 12px 24px;
+          font-family: 'Noto Sans SC', sans-serif;
+          font-weight: bold;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-top: 20px;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .start-btn {
+          background-color: #48bb78;
+          color: #1a202c;
+          box-shadow: 0 4px 0 #2f855a;
+        }
+
+        .start-btn:hover {
+          transform: translateY(2px);
+          box-shadow: 0 2px 0 #2f855a;
+        }
+        
+        .start-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .reset-btn {
+          background-color: #fc8181;
+          color: #1a202c;
+          box-shadow: 0 4px 0 #c53030;
+          margin-left: 10px;
+        }
+        
+        .reset-btn:hover { transform: translateY(2px); box-shadow: 0 2px 0 #c53030; }
+
+        /* Footer Controls */
+        .game-footer {
+          margin-top: 20px;
+          width: 100%;
+          background: #4a5568;
+          padding: 15px;
+          border-radius: 10px;
+          color: #e2e8f0;
+          font-size: 0.9rem;
+        }
+
+        .key-config {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .key-badge {
+            background: #2d3748;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border-bottom: 2px solid #1a202c;
+            font-family: monospace;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .controls-info p {
+            margin: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        
+        /* Input Styling override */
+        .key-setting input {
+            background: #2d3748;
+            border: 1px solid #718096;
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            width: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <a href="main.html" class="back-home-btn">
+        <i class="fas fa-arrow-left"></i> 退出游戏
+    </a>
+
+    <div class="app-container">
+        <header class="app-header">
+            <h1>恐龙快跑 <i class="fas fa-dragon"></i></h1>
+            <div class="game-info">
+                <div class="score-box">得分: <span id="score" class="highlight-text">0</span></div>
+                <div class="score-box">最高: <span id="high-score">0</span></div>
+                <div class="score-box">速度: <span id="speed">1.0x</span></div>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <canvas id="game-canvas" class="game-canvas" width="800" height="300"></canvas>
+            
+            <!-- Start Overlay -->
+            <div id="start-overlay" class="game-overlay">
+                <div class="overlay-content">
+                    <h2>准备好了吗?</h2>
+                    <p>按 <span class="key-badge">空格</span> 或 <span class="key-badge">↑</span> 跳跃</p>
+                    <p>躲避前方的障碍物!</p>
+                    <p class="warning">警告: 小心空中敌人!</p>
+                    <button class="btn start-btn" id="start-btn">
+                        <i class="fas fa-play"></i> 开始游戏
+                    </button>
+                    <div style="margin-top: 20px; font-size: 12px; color: #718096;">
+                        <i class="fas fa-bug"></i> 按 'D' 键显示调试信息
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Game Over Overlay -->
+            <div id="gameover-overlay" class="game-overlay" style="display: none;">
+                <div class="overlay-content">
+                    <h2 style="color: #fc8181;">游戏结束</h2>
+                    <p>最终得分: <span id="final-score" class="highlight-text">0</span></p>
+                    <p>穿越障碍数: <span id="defeated-obstacles">0</span></p>
+                    <div style="margin-top: 20px;">
+                        <button class="btn start-btn" onclick="startGame()">再玩一次</button>
+                        <button class="btn reset-btn" id="reset-btn"><i class="fas fa-redo"></i> 返回菜单</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="game-footer">
+            <div class="key-config">
+                <div class="controls-info">
+                    <p><i class="fas fa-arrow-up text-green-400"></i> 跳跃: 空格 / ↑</p>
+                    <p><i class="fas fa-arrow-down text-blue-400"></i> 下蹲: ↓</p>
+                    <p class="warning" style="font-size: 0.8em;"><i class="fas fa-dove"></i> 注意躲避飞鸟!</p>
+                </div>
+                
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <div class="key-setting">
+                        <label for="jump-key">跳跃键:</label>
+                        <input type="text" id="jump-key" maxlength="1" value=" ">
+                    </div>
+                    <div class="key-setting">
+                        <label for="duck-key">下蹲键:</label>
+                        <input type="text" id="duck-key" maxlength="1" value="↓">
+                    </div>
+                </div>
+                
+                <!-- Hidden debug elements required by original JS -->
+                <div id="obstacle-types" style="display:none;"></div>
+                <div id="difficulty" style="display:none;"></div>
+                <div id="debug-info" style="display: none; position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.8); padding: 5px; font-size: 10px;">
+                    数量: <span id="obstacle-count">0</span> | 
+                    上次: <span id="last-generated">0</span>s |
+                    状态: <span id="game-state">Ready</span>
+                </div>
+                <span id="final-high-score" style="display:none;"></span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Original JS Logic Preserved -->
+    <script>
+        // 游戏状态
+        const gameState = {
+            isRunning: false,
+            isGameOver: false,
+            score: 0,
+            highScore: localStorage.getItem('dinoHighScore') || 0,
+            speed: 1.0,
+            jumpKey: ' ',
+            duckKey: 'ArrowDown',
+            obstacleTypesUnlocked: 1, // 1:地面障碍物, 2:地面+飞行障碍物, 3:地面+飞行+特殊障碍物
+            defeatedObstacles: 0,
+            difficulty: '简单',
+            showDebugInfo: false,
+            lastObstacleTime: 0,
+            obstacleGenerationInterval: 1200 // 障碍物生成间隔（毫秒）
+        };
+
+        // 获取DOM元素
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const highScoreElement = document.getElementById('high-score');
+        const speedElement = document.getElementById('speed');
+        const obstacleTypesElement = document.getElementById('obstacle-types');
+        const difficultyElement = document.getElementById('difficulty');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const startOverlay = document.getElementById('start-overlay');
+        const gameoverOverlay = document.getElementById('gameover-overlay');
+        const finalScoreElement = document.getElementById('final-score');
+        const finalHighScoreElement = document.getElementById('final-high-score');
+        const defeatedObstaclesElement = document.getElementById('defeated-obstacles');
+        const jumpKeyInput = document.getElementById('jump-key');
+        const duckKeyInput = document.getElementById('duck-key');
+        const debugInfoElement = document.getElementById('debug-info');
+        const obstacleCountElement = document.getElementById('obstacle-count');
+        const lastGeneratedElement = document.getElementById('last-generated');
+        const gameStateElement = document.getElementById('game-state');
+
+        // 游戏对象
+        const dino = {
+            x: 50,
+            y: canvas.height - 80,
+            width: 40,
+            height: 60,
+            isJumping: false,
+            isDucking: false,
+            jumpVelocity: 0,
+            gravity: 0.5,
+            jumpStrength: -12,
+            duckHeight: 30,
+            normalHeight: 60,
+            color: '#4A5568',
+            eyeColor: 'white',
+            pupilColor: 'black',
+            maxJumpHeight: 150,
+            currentJumpHeight: 0
+        };
+
+        // 地面障碍物类型
+        const groundObstacleTypes = [
+            { width: 20, height: 40, color: '#4A5568', name: '小仙人掌' },
+            { width: 30, height: 50, color: '#2D3748', name: '中仙人掌' },
+            { width: 40, height: 35, color: '#718096', name: '矮仙人掌' }
+        ];
+
+        // 飞行障碍物类型 - 降低高度
+        const flyingObstacleTypes = [
+            { 
+                width: 35, 
+                height: 25, 
+                color: '#9F7AEA', 
+                name: '紫色翼龙', 
+                wingColor: '#805AD5', 
+                minAltitude: 180,
+                maxAltitude: 220
+            },
+            { 
+                width: 30, 
+                height: 20, 
+                color: '#F56565', 
+                name: '红色飞鸟', 
+                wingColor: '#C53030', 
+                minAltitude: 160,
+                maxAltitude: 200
+            },
+            { 
+                width: 40, 
+                height: 30, 
+                color: '#38B2AC', 
+                name: '青色飞龙', 
+                wingColor: '#2C7A7B', 
+                minAltitude: 140,
+                maxAltitude: 180
+            }
+        ];
+
+        // 特殊障碍物类型
+        const specialObstacleTypes = [
+            { 
+                width: 45, 
+                height: 35, 
+                color: '#F6E05E', 
+                name: '金色飞龙', 
+                wingColor: '#D69E2E', 
+                minAltitude: 130,
+                maxAltitude: 170, 
+                speedMultiplier: 1.2 
+            },
+            { 
+                width: 25, 
+                height: 40, 
+                color: '#ED8936', 
+                name: '火焰鸟', 
+                wingColor: '#DD6B20', 
+                minAltitude: 150,
+                maxAltitude: 190, 
+                speedMultiplier: 1.3 
+            }
+        ];
+
+        // 所有障碍物
+        const obstacles = [];
+
+        // 地面
+        const ground = {
+            y: canvas.height - 20,
+            height: 20,
+            color: '#744210'
+        };
+
+        // 云朵
+        const clouds = [];
+
+        // 粒子效果
+        const particles = [];
+
+        // 障碍物生成定时器
+        let obstacleInterval = null;
+
+        // 初始化游戏
+        function init() {
+            // 设置高分
+            highScoreElement.textContent = gameState.highScore;
+            obstacleTypesElement.textContent = '地面';
+            difficultyElement.textContent = gameState.difficulty;
+            
+            // 初始化云朵
+            for (let i = 0; i < 5; i++) {
+                clouds.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * 100 + 30,
+                    width: Math.random() * 40 + 20,
+                    height: Math.random() * 20 + 10,
+                    speed: Math.random() * 0.5 + 0.2,
+                    color: 'rgba(255, 255, 255, 0.8)'
+                });
+            }
+            
+            // 绘制初始游戏画面
+            draw();
+            
+            // 添加键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                // 按D键切换调试信息显示
+                if (e.key.toLowerCase() === 'd') {
+                    gameState.showDebugInfo = !gameState.showDebugInfo;
+                    debugInfoElement.style.display = gameState.showDebugInfo ? 'block' : 'none';
+                    if (gameState.isRunning) {
+                        draw();
+                    }
+                }
+            });
+        }
+
+        // 更新调试信息
+        function updateDebugInfo() {
+            if (!gameState.showDebugInfo) return;
+            
+            obstacleCountElement.textContent = obstacles.length;
+            
+            const currentTime = Date.now();
+            const timeSinceLastObstacle = gameState.lastObstacleTime > 0 ? 
+                Math.round((currentTime - gameState.lastObstacleTime) / 100) / 10 : 0;
+            lastGeneratedElement.textContent = timeSinceLastObstacle;
+            
+            gameStateElement.textContent = gameState.isRunning ? 
+                (gameState.isGameOver ? '游戏结束' : '运行中') : '未开始';
+        }
+
+        // 绘制游戏
+        function draw() {
+            // 清空画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制背景
+            drawBackground();
+            
+            // 绘制云朵
+            drawClouds();
+            
+            // 绘制地面
+            drawGround();
+            
+            // 绘制粒子
+            drawParticles();
+            
+            // 绘制恐龙
+            drawDino();
+            
+            // 绘制障碍物
+            drawObstacles();
+            
+            // 绘制分数 - Removed internal score draw as we moved it to HTML overlay
+            // drawScore();
+            
+            // 绘制警告
+            drawWarnings();
+            
+            // 更新调试信息
+            updateDebugInfo();
+        }
+
+        // 绘制背景
+        function drawBackground() {
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#E0F7FF');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#A0AEC0';
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - 100);
+            for (let i = 0; i < canvas.width; i += 100) {
+                ctx.lineTo(i, canvas.height - 100 + Math.sin(i * 0.01) * 20);
+            }
+            ctx.lineTo(canvas.width, canvas.height - 100);
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // 绘制云朵
+        function drawClouds() {
+            clouds.forEach(cloud => {
+                ctx.fillStyle = cloud.color;
+                ctx.beginPath();
+                ctx.ellipse(cloud.x, cloud.y, cloud.width / 2, cloud.height / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                if (gameState.isRunning) {
+                    cloud.x -= cloud.speed * gameState.speed;
+                    if (cloud.x < -cloud.width) {
+                        cloud.x = canvas.width + cloud.width;
+                        cloud.y = Math.random() * 100 + 30;
+                    }
+                }
+            });
+        }
+
+        // 绘制地面
+        function drawGround() {
+            ctx.fillStyle = ground.color;
+            ctx.fillRect(0, ground.y, canvas.width, ground.height);
+            
+            ctx.fillStyle = '#5D4037';
+            for (let i = 0; i < canvas.width; i += 30) {
+                ctx.fillRect(i, ground.y, 10, ground.height);
+            }
+        }
+
+        // 绘制粒子
+        function drawParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                
+                ctx.globalAlpha = particle.life;
+                ctx.fillStyle = particle.color;
+                ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
+                
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.life -= 0.02;
+                
+                if (particle.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        // 创建粒子效果
+        function createParticles(x, y, color, count = 10) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    size: Math.random() * 3 + 1,
+                    vx: Math.random() * 4 - 2,
+                    vy: Math.random() * 4 - 2,
+                    color: color,
+                    life: 1
+                });
+            }
+        }
+
+        // 绘制恐龙
+        function drawDino() {
+            const dinoHeight = dino.isDucking ? dino.duckHeight : dino.normalHeight;
+            const dinoY = dino.isDucking ? canvas.height - 50 : dino.y;
+            
+            ctx.fillStyle = dino.color;
+            ctx.fillRect(dino.x, dinoY, dino.width, dinoHeight);
+            
+            ctx.fillStyle = dino.eyeColor;
+            ctx.fillRect(dino.x + dino.width - 10, dinoY + 10, 8, 8);
+            ctx.fillStyle = dino.pupilColor;
+            ctx.fillRect(dino.x + dino.width - 8, dinoY + 12, 4, 4);
+            
+            if (!dino.isJumping) {
+                ctx.fillStyle = '#2D3748';
+                ctx.fillRect(dino.x + 5, dinoY + dinoHeight, 8, 10);
+                ctx.fillRect(dino.x + dino.width - 13, dinoY + dinoHeight, 8, 10);
+            }
+            
+            ctx.fillStyle = '#718096';
+            ctx.fillRect(dino.x - 10, dinoY + 10, 10, 5);
+            
+            if (gameState.isRunning && !dino.isJumping && !dino.isDucking) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                const runOffset = Math.sin(Date.now() * 0.01) * 3;
+                ctx.fillRect(dino.x, dinoY + dinoHeight + runOffset, dino.width, 5);
+            }
+            
+            if (dino.isJumping) {
+                dino.currentJumpHeight = canvas.height - 80 - dino.y;
+            } else {
+                dino.currentJumpHeight = 0;
+            }
+        }
+
+        // 绘制障碍物
+        function drawObstacles() {
+            obstacles.forEach(obstacle => {
+                ctx.save();
+                
+                if (obstacle.type === 'flying' || obstacle.type === 'special') {
+                    const floatOffset = Math.sin(Date.now() * 0.005 + obstacle.x * 0.01) * 3;
+                    ctx.translate(0, floatOffset);
+                    
+                    const wingFlap = Math.sin(Date.now() * 0.01 + obstacle.x * 0.02) * 5;
+                    
+                    ctx.fillStyle = obstacle.wingColor;
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        obstacle.x - 10, 
+                        obstacle.y + obstacle.height / 2 + wingFlap, 
+                        15, 
+                        8, 
+                        0, 
+                        0, 
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                    
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        obstacle.x + obstacle.width + 10, 
+                        obstacle.y + obstacle.height / 2 - wingFlap, 
+                        15, 
+                        8, 
+                        0, 
+                        0, 
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+                
+                ctx.fillStyle = obstacle.color;
+                
+                if (obstacle.type === 'flying' || obstacle.type === 'special') {
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        obstacle.x + obstacle.width / 2, 
+                        obstacle.y + obstacle.height / 2, 
+                        obstacle.width / 2, 
+                        obstacle.height / 2, 
+                        0, 
+                        0, 
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                    
+                    ctx.fillStyle = 'white';
+                    ctx.beginPath();
+                    ctx.arc(obstacle.x + obstacle.width * 0.7, obstacle.y + obstacle.height * 0.3, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.arc(obstacle.x + obstacle.width * 0.72, obstacle.y + obstacle.height * 0.32, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#F56565';
+                    ctx.beginPath();
+                    ctx.moveTo(obstacle.x + obstacle.width, obstacle.y + obstacle.height / 2);
+                    ctx.lineTo(obstacle.x + obstacle.width + 8, obstacle.y + obstacle.height / 2);
+                    ctx.lineTo(obstacle.x + obstacle.width, obstacle.y + obstacle.height / 2 + 4);
+                    ctx.closePath();
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                    
+                    ctx.fillStyle = '#2D3748';
+                    for (let i = 5; i < obstacle.height; i += 10) {
+                        ctx.fillRect(obstacle.x + 5, obstacle.y + i, obstacle.width - 10, 3);
+                    }
+                }
+                
+                ctx.restore();
+                
+                if (gameState.isRunning) {
+                    const speedMultiplier = obstacle.speedMultiplier || 1;
+                    obstacle.x -= (5 * gameState.speed * speedMultiplier);
+                }
+            });
+            
+            // 移除屏幕外的障碍物并增加分数
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                if (obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
+                    gameState.score += 1;
+                    gameState.defeatedObstacles += 1;
+                    scoreElement.textContent = gameState.score;
+                    
+                    if (gameState.score > gameState.highScore) {
+                        gameState.highScore = gameState.score;
+                        highScoreElement.textContent = gameState.highScore;
+                        localStorage.setItem('dinoHighScore', gameState.highScore);
+                    }
+                    
+                    if (gameState.score % 10 === 0) {
+                        gameState.speed += 0.1;
+                        speedElement.textContent = gameState.speed.toFixed(1) + 'x';
+                        updateDifficulty();
+                    }
+                    
+                    if (gameState.score > 0 && gameState.score % 15 === 0) {
+                        if (gameState.obstacleTypesUnlocked < 3) {
+                            gameState.obstacleTypesUnlocked += 1;
+                            updateObstacleTypesDisplay();
+                            createParticles(canvas.width / 2, 50, '#F6E05E', 30);
+                        }
+                    }
+                }
+            }
+        }
+
+        // 更新难度显示
+        function updateDifficulty() {
+            if (gameState.speed < 1.5) {
+                gameState.difficulty = '简单';
+            } else if (gameState.speed < 2.0) {
+                gameState.difficulty = '中等';
+            } else if (gameState.speed < 2.5) {
+                gameState.difficulty = '困难';
+            } else {
+                gameState.difficulty = '专家';
+            }
+            difficultyElement.textContent = gameState.difficulty;
+        }
+
+        // 更新障碍物类型显示
+        function updateObstacleTypesDisplay() {
+            if (gameState.obstacleTypesUnlocked === 1) {
+                obstacleTypesElement.textContent = '地面';
+            } else if (gameState.obstacleTypesUnlocked === 2) {
+                obstacleTypesElement.textContent = '地面+飞行';
+            } else {
+                obstacleTypesElement.textContent = '地面+飞行+特殊';
+            }
+        }
+
+        // 绘制警告
+        function drawWarnings() {
+            const warningDistance = 300;
+            
+            obstacles.forEach(obstacle => {
+                if ((obstacle.type === 'flying' || obstacle.type === 'special') && 
+                    obstacle.x < dino.x + warningDistance && 
+                    obstacle.x > dino.x - 50) {
+                    
+                    ctx.fillStyle = 'rgba(245, 101, 101, 0.7)';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.fillText('!', obstacle.x, 30);
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(obstacle.x, 40);
+                    ctx.lineTo(obstacle.x - 10, 50);
+                    ctx.lineTo(obstacle.x + 10, 50);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            });
+        }
+
+        // 生成障碍物 - 修复版本
+        function generateObstacle() {
+            if (!gameState.isRunning) {
+                return;
+            }
+            
+            let obstacleType;
+            const rand = Math.random();
+            
+            if (gameState.obstacleTypesUnlocked === 1) {
+                // 只生成地面障碍物
+                obstacleType = groundObstacleTypes[Math.floor(Math.random() * groundObstacleTypes.length)];
+                obstacles.push({
+                    x: canvas.width,
+                    y: canvas.height - obstacleType.height - ground.height,
+                    width: obstacleType.width,
+                    height: obstacleType.height,
+                    color: obstacleType.color,
+                    name: obstacleType.name,
+                    type: 'ground'
+                });
+            } else if (gameState.obstacleTypesUnlocked === 2) {
+                // 生成地面或飞行障碍物
+                if (rand < 0.4) {
+                    obstacleType = groundObstacleTypes[Math.floor(Math.random() * groundObstacleTypes.length)];
+                    obstacles.push({
+                        x: canvas.width,
+                        y: canvas.height - obstacleType.height - ground.height,
+                        width: obstacleType.width,
+                        height: obstacleType.height,
+                        color: obstacleType.color,
+                        name: obstacleType.name,
+                        type: 'ground'
+                    });
+                } else {
+                    obstacleType = flyingObstacleTypes[Math.floor(Math.random() * flyingObstacleTypes.length)];
+                    const altitude = Math.random() * (obstacleType.maxAltitude - obstacleType.minAltitude) + obstacleType.minAltitude;
+                    obstacles.push({
+                        x: canvas.width,
+                        y: altitude,
+                        width: obstacleType.width,
+                        height: obstacleType.height,
+                        color: obstacleType.color,
+                        wingColor: obstacleType.wingColor,
+                        name: obstacleType.name,
+                        type: 'flying'
+                    });
+                }
+            } else {
+                // 生成所有类型障碍物
+                if (rand < 0.3) {
+                    obstacleType = groundObstacleTypes[Math.floor(Math.random() * groundObstacleTypes.length)];
+                    obstacles.push({
+                        x: canvas.width,
+                        y: canvas.height - obstacleType.height - ground.height,
+                        width: obstacleType.width,
+                        height: obstacleType.height,
+                        color: obstacleType.color,
+                        name: obstacleType.name,
+                        type: 'ground'
+                    });
+                } else if (rand < 0.7) {
+                    obstacleType = flyingObstacleTypes[Math.floor(Math.random() * flyingObstacleTypes.length)];
+                    const altitude = Math.random() * (obstacleType.maxAltitude - obstacleType.minAltitude) + obstacleType.minAltitude;
+                    obstacles.push({
+                        x: canvas.width,
+                        y: altitude,
+                        width: obstacleType.width,
+                        height: obstacleType.height,
+                        color: obstacleType.color,
+                        wingColor: obstacleType.wingColor,
+                        name: obstacleType.name,
+                        type: 'flying'
+                    });
+                } else {
+                    obstacleType = specialObstacleTypes[Math.floor(Math.random() * specialObstacleTypes.length)];
+                    const altitude = Math.random() * (obstacleType.maxAltitude - obstacleType.minAltitude) + obstacleType.minAltitude;
+                    obstacles.push({
+                        x: canvas.width,
+                        y: altitude,
+                        width: obstacleType.width,
+                        height: obstacleType.height,
+                        color: obstacleType.color,
+                        wingColor: obstacleType.wingColor,
+                        name: obstacleType.name,
+                        type: 'special',
+                        speedMultiplier: obstacleType.speedMultiplier
+                    });
+                }
+            }
+            
+            // 更新最后生成时间
+            gameState.lastObstacleTime = Date.now();
+        }
+
+        // 更新恐龙位置
+        function updateDino() {
+            if (dino.isJumping) {
+                dino.y += dino.jumpVelocity;
+                dino.jumpVelocity += dino.gravity;
+                
+                if (dino.y >= canvas.height - 80) {
+                    dino.y = canvas.height - 80;
+                    dino.isJumping = false;
+                    dino.jumpVelocity = 0;
+                    dino.currentJumpHeight = 0;
+                }
+            }
+        }
+
+        // 检测碰撞
+        function checkCollision() {
+            const dinoHeight = dino.isDucking ? dino.duckHeight : dino.normalHeight;
+            const dinoY = dino.isDucking ? canvas.height - 50 : dino.y;
+            
+            for (let obstacle of obstacles) {
+                let collision = false;
+                
+                if (obstacle.type === 'flying' || obstacle.type === 'special') {
+                    const obstacleCenterX = obstacle.x + obstacle.width / 2;
+                    const obstacleCenterY = obstacle.y + obstacle.height / 2;
+                    const obstacleRadius = Math.max(obstacle.width, obstacle.height) / 2;
+                    
+                    const dinoCenterX = dino.x + dino.width / 2;
+                    const dinoCenterY = dinoY + dinoHeight / 2;
+                    const dinoRadius = Math.max(dino.width, dinoHeight) / 3;
+                    
+                    const distance = Math.sqrt(
+                        Math.pow(dinoCenterX - obstacleCenterX, 2) + 
+                        Math.pow(dinoCenterY - obstacleCenterY, 2)
+                    );
+                    
+                    collision = distance < (dinoRadius + obstacleRadius);
+                } else {
+                    collision = (
+                        dino.x < obstacle.x + obstacle.width &&
+                        dino.x + dino.width > obstacle.x &&
+                        dinoY < obstacle.y + obstacle.height &&
+                        dinoY + dinoHeight > obstacle.y
+                    );
+                }
+                
+                if (collision) {
+                    createParticles(
+                        obstacle.x + obstacle.width / 2, 
+                        obstacle.y + obstacle.height / 2, 
+                        obstacle.color, 
+                        15
+                    );
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 游戏循环
+        function gameLoop() {
+            if (!gameState.isRunning) {
+                return;
+            }
+            
+            // 更新恐龙
+            updateDino();
+            
+            // 检查碰撞
+            if (checkCollision()) {
+                gameOver();
+                return;
+            }
+            
+            // 绘制游戏
+            draw();
+            
+            // 继续游戏循环
+            requestAnimationFrame(gameLoop);
+        }
+
+        // 开始游戏 - 修复版本
+        function startGame() {
+            gameState.isRunning = true;
+            gameState.isGameOver = false;
+            gameState.score = 0;
+            gameState.speed = 1.0;
+            gameState.obstacleTypesUnlocked = 1;
+            gameState.defeatedObstacles = 0;
+            gameState.difficulty = '简单';
+            gameState.lastObstacleTime = Date.now();
+            
+            // 重置恐龙
+            dino.y = canvas.height - 80;
+            dino.isJumping = false;
+            dino.isDucking = false;
+            dino.jumpVelocity = 0;
+            dino.currentJumpHeight = 0;
+            
+            // 清空障碍物和粒子
+            obstacles.length = 0;
+            particles.length = 0;
+            
+            // 更新UI
+            scoreElement.textContent = '0';
+            speedElement.textContent = '1.0x';
+            difficultyElement.textContent = '简单';
+            updateObstacleTypesDisplay();
+            startOverlay.style.display = 'none';
+            gameoverOverlay.style.display = 'none';
+            startBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
+            
+            // 开始游戏循环
+            gameLoop();
+            
+            // 清除现有定时器
+            if (obstacleInterval) {
+                clearInterval(obstacleInterval);
+            }
+            
+            // 开始生成障碍物
+            obstacleInterval = setInterval(() => {
+                generateObstacle();
+            }, gameState.obstacleGenerationInterval);
+            
+            // 立即生成第一个障碍物
+            generateObstacle();
+        }
+
+        // 暂停游戏
+        function pauseGame() {
+            gameState.isRunning = false;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 继续';
+            if (obstacleInterval) {
+                clearInterval(obstacleInterval);
+                obstacleInterval = null;
+            }
+        }
+
+        // 游戏结束
+        function gameOver() {
+            gameState.isRunning = false;
+            gameState.isGameOver = true;
+            
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 重新开始';
+            finalScoreElement.textContent = gameState.score;
+            finalHighScoreElement.textContent = gameState.highScore;
+            defeatedObstaclesElement.textContent = gameState.defeatedObstacles;
+            gameoverOverlay.style.display = 'flex';
+            
+            if (obstacleInterval) {
+                clearInterval(obstacleInterval);
+                obstacleInterval = null;
+            }
+            
+            createParticles(dino.x + dino.width / 2, dino.y + dino.height / 2, '#F56565', 30);
+        }
+
+        // 重置游戏
+        function resetGame() {
+            gameState.isRunning = false;
+            gameState.isGameOver = false;
+            gameState.score = 0;
+            gameState.speed = 1.0;
+            gameState.obstacleTypesUnlocked = 1;
+            gameState.defeatedObstacles = 0;
+            gameState.difficulty = '简单';
+            
+            dino.y = canvas.height - 80;
+            dino.isJumping = false;
+            dino.isDucking = false;
+            dino.jumpVelocity = 0;
+            dino.currentJumpHeight = 0;
+            
+            obstacles.length = 0;
+            particles.length = 0;
+            
+            scoreElement.textContent = '0';
+            speedElement.textContent = '1.0x';
+            difficultyElement.textContent = '简单';
+            updateObstacleTypesDisplay();
+            startOverlay.style.display = 'flex';
+            gameoverOverlay.style.display = 'none';
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 开始游戏';
+            
+            if (obstacleInterval) {
+                clearInterval(obstacleInterval);
+                obstacleInterval = null;
+            }
+            
+            draw();
+        }
+
+        // 处理键盘事件
+        function handleKeyDown(e) {
+            if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                e.preventDefault();
+            }
+            
+            if (e.key === gameState.jumpKey || e.key === ' ' || e.key === 'ArrowUp') {
+                if (gameState.isRunning && !dino.isJumping && !dino.isDucking) {
+                    dino.isJumping = true;
+                    dino.jumpVelocity = dino.jumpStrength;
+                    createParticles(dino.x + dino.width / 2, dino.y + dino.height, '#4A5568', 8);
+                } else if (!gameState.isRunning && !gameState.isGameOver) {
+                    startGame();
+                } else if (gameState.isGameOver) {
+                    resetGame();
+                    startGame();
+                }
+            }
+            
+            if (e.key === gameState.duckKey || e.key === 'ArrowDown') {
+                if (gameState.isRunning && !dino.isJumping) {
+                    dino.isDucking = true;
+                }
+            }
+        }
+
+        function handleKeyUp(e) {
+            if (e.key === gameState.duckKey || e.key === 'ArrowDown') {
+                dino.isDucking = false;
+            }
+        }
+
+        // 事件监听
+        startBtn.addEventListener('click', () => {
+            if (!gameState.isRunning && !gameState.isGameOver) {
+                startGame();
+            } else if (gameState.isRunning) {
+                pauseGame();
+            } else if (gameState.isGameOver) {
+                resetGame();
+                startGame();
+            }
+        });
+
+        resetBtn.addEventListener('click', resetGame);
+
+        // 键位设置
+        jumpKeyInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                gameState.jumpKey = this.value;
+            }
+        });
+
+        duckKeyInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                gameState.duckKey = this.value;
+            }
+        });
+
+        // 键盘事件监听
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+
+        // 初始化游戏
+        init();
+        
+        // 初始绘制
+        draw();
+    </script>
+</body>
+</html>
