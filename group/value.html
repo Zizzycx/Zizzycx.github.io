@@ -93,7 +93,7 @@
             /* Growth Value Badge */
             .growth-badge {
                 position: fixed;
-                top: 85px; /* Below header */
+                top: 120px; /* Increased to ensure visibility below header */
                 right: 20px;
                 background: rgba(15, 23, 42, 0.8);
                 backdrop-filter: blur(8px);
@@ -103,7 +103,7 @@
                 display: flex;
                 align-items: center;
                 gap: 8px;
-                z-index: 40;
+                z-index: 60; /* Higher Z-index to float above other elements */
                 box-shadow: 0 4px 12px rgba(0,0,0,0.3);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
@@ -113,7 +113,7 @@
             }
             @media (min-width: 768px) {
                 .growth-badge {
-                    top: 24px;
+                    top: 100px; /* Moved down to clear desktop header */
                     right: 24px;
                     background: rgba(30, 41, 59, 0.5);
                 }
